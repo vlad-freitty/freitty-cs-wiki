@@ -1,0 +1,1301 @@
+<meta charset="utf-8">
+<title>Freitty CS Wiki</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+/* Old wiki components (tools, working materials, reference pages), scoped under .legacy and recoloured to the tokens below */
+__LEGACY_CSS__
+</style>
+<style>
+/* Layout: sticky top bar + collapsible left index (document codes like a dock ledger) + reading column; Tier-0 documents carry a hazard stripe. */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#eef1f5; --fg:#16202c; --muted:#5a6676; --line:#d9dfe7;
+  --accent:#1d55a6; --accent-soft:#e3ecf9; --accent-fg:#ffffff;
+  --hazard:#e8a317; --hazard-ink:#1b1505;
+  --ok:#1f7a4d; --ok-soft:#e1f3e9; --warn:#a86200; --warn-soft:#fcefd9; --crit:#b42318; --crit-soft:#fde4e1; --idle:#6b7280; --idle-soft:#eceef1;
+  --mark:#ffe58a;
+  --font:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+  --r:8px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141b; --surface:#161d26; --surface-2:#1d2631; --fg:#e6ebf1; --muted:#9aa6b5; --line:#2a3542;
+  --accent:#6ea2ef; --accent-soft:#1c2d47; --accent-fg:#0b1220;
+  --hazard:#f0b43c; --hazard-ink:#1b1505;
+  --ok:#5cc58f; --ok-soft:#163327; --warn:#f0a94a; --warn-soft:#3a2a12; --crit:#f2867b; --crit-soft:#3d1a17; --idle:#9aa3ae; --idle-soft:#232b35;
+  --mark:#6b5a12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141b; --surface:#161d26; --surface-2:#1d2631; --fg:#e6ebf1; --muted:#9aa6b5; --line:#2a3542;
+  --accent:#6ea2ef; --accent-soft:#1c2d47; --accent-fg:#0b1220;
+  --hazard:#f0b43c; --hazard-ink:#1b1505;
+  --ok:#5cc58f; --ok-soft:#163327; --warn:#f0a94a; --warn-soft:#3a2a12; --crit:#f2867b; --crit-soft:#3d1a17; --idle:#9aa3ae; --idle-soft:#232b35;
+  --mark:#6b5a12; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--font);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+code,.mono{font-family:var(--mono);font-size:.9em}
+h1,h2,h3{text-wrap:balance;line-height:1.25}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;gap:12px;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap;color:var(--fg)}
+.brand:hover{text-decoration:none}
+.brand .mk{width:28px;height:28px;border-radius:6px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-family:var(--mono);font-size:13px}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px;line-height:1}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);width:36px;height:36px;display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+.icon-btn:hover{border-color:var(--accent)}
+.srch{position:relative;flex:1;max-width:560px;margin-left:auto}
+.srch input{width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:8px 12px 8px 34px}
+.srch svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.srch-res{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:0 12px 32px rgba(0,0,0,.16);max-height:min(70vh,560px);overflow:auto}
+.srch-res .cnt{padding:8px 12px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line)}
+.srch-it{display:block;padding:9px 12px;border-bottom:1px solid var(--line);color:var(--fg);cursor:pointer}
+.srch-it:hover,.srch-it.on{background:var(--accent-soft);text-decoration:none}
+.srch-it .l{font-size:12px;color:var(--muted)}
+.srch-it .s{font-size:13px;color:var(--muted);margin-top:2px}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+.me-chip{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--fg);background:var(--surface)}
+.me-chip b{font-family:var(--mono)}
+.me-chip.due{border-color:var(--crit);color:var(--crit)}
+
+/* layout */
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:calc(100vh - 60px)}
+body.noside .layout{grid-template-columns:minmax(0,1fr)}
+body.noside .side{display:none}
+.side{border-right:1px solid var(--line);background:var(--surface);padding:10px 10px 40px max(10px,env(safe-area-inset-left,0px));position:sticky;top:calc(env(safe-area-inset-top,0px) + 57px);height:calc(100vh - 57px - env(safe-area-inset-top,0px));overflow:auto}
+.side details.sg{margin-top:6px}
+.side summary.sgh{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 8px 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;border-radius:6px}
+.side summary.sgh::-webkit-details-marker{display:none}
+.side summary.sgh::before{content:"▸";font-size:10px;transition:transform .15s}
+.side details[open] > summary.sgh::before{transform:rotate(90deg)}
+.side summary.sgh:hover{color:var(--fg)}
+.side summary.sgh .n{margin-left:auto;font-family:var(--mono);letter-spacing:0}
+.side a{display:flex;gap:8px;align-items:baseline;padding:5px 8px;border-radius:6px;color:var(--fg);font-size:14px;line-height:1.3}
+.side a:hover{background:var(--surface-2);text-decoration:none}
+.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.side a .c{font-family:var(--mono);font-size:11.5px;color:var(--muted);min-width:56px;flex-shrink:0}
+.side a.on .c{color:var(--accent)}
+.side a .dot{margin-left:auto;flex-shrink:0;width:8px;height:8px;border-radius:50%;align-self:center}
+.side a .mt{margin-left:auto;font-size:10.5px;color:var(--muted);font-family:var(--mono)}
+.dot.ok{background:var(--ok)} .dot.re{background:var(--warn)} .dot.no{background:var(--crit)}
+.main{min-width:0;padding-block:24px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px;margin:0 auto}
+.read{max-width:800px}
+@media (max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .side{position:fixed;z-index:25;left:0;top:calc(env(safe-area-inset-top,0px) + 57px);width:min(300px,86vw);transform:translateX(-102%);transition:transform .2s;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+  body.noside .side{display:block}
+  .side.open{transform:none}
+  .brand small{display:none}
+  .me-chip span{display:none}
+}
+@media (max-width:560px){ .brand .t{display:none} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* shared bits */
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1.ptitle{font-size:28px;margin:6px 0 6px}
+.lead{color:var(--muted);max-width:70ch;margin:0 0 20px}
+.grid{display:grid;gap:12px}
+.g3{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+a.card{color:var(--fg);display:block}
+a.card:hover{border-color:var(--accent);text-decoration:none}
+.stat b{display:block;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:1;padding:4px 8px;border-radius:999px;background:var(--idle-soft);color:var(--idle);white-space:nowrap;font-weight:500}
+.chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.crit{background:var(--crit-soft);color:var(--crit)} .chip.acc{background:var(--accent-soft);color:var(--accent)}
+a.chip:hover{text-decoration:none;filter:brightness(.97)}
+.code{font-family:var(--mono);font-weight:600;font-size:12.5px;color:var(--accent);white-space:nowrap}
+.tier0{background:repeating-linear-gradient(-45deg,var(--hazard) 0 6px,var(--hazard-ink) 6px 12px);width:22px;height:10px;border-radius:2px;display:inline-block;vertical-align:middle}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.kb{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:7px 13px;cursor:pointer;font-weight:500;font-size:14px}
+.kb:hover{border-color:var(--accent)}
+.kb.pri{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.kb.sm{padding:4px 9px;font-size:13px}
+.kb:disabled{opacity:.5;cursor:not-allowed}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin:12px 0}
+.tbl table{border-collapse:collapse;width:100%;font-size:14px}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+.tbl th{background:var(--surface-2);font-weight:600;font-size:13px}
+.tbl tr:last-child td{border-bottom:0}
+.tbl td.num,.tbl th.num{text-align:right;font-variant-numeric:tabular-nums}
+.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 var(--r) var(--r) 0;margin:12px 0}
+.note.warn{border-color:var(--warn);background:var(--warn-soft)}
+.note.crit{border-color:var(--crit);background:var(--crit-soft)}
+.bar{height:8px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;align-items:center}
+.filters select,.filters input,.fld{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:6px 10px;font-size:14px;max-width:100%}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer}
+.seg button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* collapsible blocks */
+details.sec,details.blk,details.mat,details.lsec{border-top:1px solid var(--line)}
+details.sec > summary,details.blk > summary,details.mat > summary,details.lsec > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 0;scroll-margin-top:90px}
+details.sec > summary::-webkit-details-marker,details.blk > summary::-webkit-details-marker,details.mat > summary::-webkit-details-marker,details.lsec > summary::-webkit-details-marker{display:none}
+details.sec > summary::before,details.blk > summary::before,details.mat > summary::before,details.lsec > summary::before{content:"▸";color:var(--muted);font-size:12px;width:12px;flex-shrink:0;transition:transform .15s}
+details[open].sec > summary::before,details[open].blk > summary::before,details[open].mat > summary::before,details[open].lsec > summary::before{transform:rotate(90deg)}
+details.sec > summary h2,details.blk > summary h2{margin:0;font-size:19px}
+details.sec > summary:hover h2,details.blk > summary:hover h2{color:var(--accent)}
+.sec-b{padding:0 0 14px 22px}
+details.blk{border-top:0;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:0 14px;margin:0 0 12px}
+details.blk > summary h2{font-size:16px}
+details.mat{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:0 14px;margin:0 0 12px}
+details.mat > summary{font-weight:600}
+.mat-tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);border-radius:4px;padding:2px 6px;font-weight:600;flex-shrink:0}
+.toolsbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin:4px 0 6px}
+.lsec{border-top:1px solid var(--line)}
+
+/* old wiki inside the new design */
+.legacy{--surf:var(--surface);--surf2:var(--surface-2);--bord:var(--line);--tx:var(--fg);--mu:var(--muted);--wh:var(--fg);--pur:var(--accent);--blue:var(--accent);--teal:var(--ok);--red:var(--accent);--amb:var(--warn);
+  color:var(--fg);font-family:var(--font);font-size:14.5px;line-height:1.6;overflow-x:hidden}
+.legacy .page,.legacy .page.on{display:block;animation:none}
+.legacy .pi{background:none;border:0;padding:0;max-width:none;border-radius:0}
+.legacy .pi > h1:first-child{display:none}
+.legacy .pi h1{background:none;-webkit-text-fill-color:currentColor;color:var(--fg);font-size:22px}
+.legacy .pi h2{font-family:var(--font);font-size:17px;-webkit-text-fill-color:currentColor;color:var(--fg)}
+.legacy .pi h3{-webkit-text-fill-color:currentColor}
+.legacy .pi h4{-webkit-text-fill-color:currentColor}
+.legacy details.lsec > summary{padding:10px 0}
+.legacy details.lsec > summary h2{margin:0}
+.legacy .dbox{border-left-color:var(--crit)}
+.legacy .pi blockquote{border-left-color:var(--crit)}
+.legacy .tab.on,.legacy .price-tab.on,.legacy .net-tab.on,.legacy .pp-tab.on{color:var(--accent)}
+.legacy input,.legacy select,.legacy textarea{background:var(--surface);color:var(--fg);border-color:var(--line)}
+.legacy .leaflet-container{background:var(--surface-2)}
+.tool-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+@media (max-width:600px){.tool-wrap{padding:12px 10px}.sec-b{padding-left:4px}}
+
+/* home */
+.sit{display:flex;flex-direction:column;gap:6px}
+.sit .q{font-weight:600}
+.sit .a{font-size:13.5px;color:var(--muted)}
+.sit .refs{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
+.upd{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.upd:last-child{border-bottom:0}
+
+/* document */
+.dochead{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.dochead h1{margin:0;font-size:28px}
+.doc-grid{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:32px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 80px);align-self:start;font-size:13px;max-height:calc(100vh - 120px);overflow:auto}
+.toc a{display:block;padding:4px 8px;border-left:2px solid var(--line);color:var(--muted)}
+.toc a:hover{color:var(--fg);text-decoration:none;border-color:var(--accent)}
+@media (max-width:1150px){.doc-grid{grid-template-columns:minmax(0,1fr)}.toc{display:none}}
+.passport{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:4px 0 0}
+.passport div{background:var(--surface);padding:8px 12px;min-width:0}
+.passport dt{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.passport dd{margin:2px 0 0;font-weight:500;overflow-wrap:anywhere}
+.body p{margin:0 0 10px;max-width:74ch}
+.body p.np{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px;scroll-margin-top:90px}
+.body p.np .n{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:3px}
+.body p.ind{margin-left:16px;padding-left:12px;border-left:2px solid var(--line)}
+.body p.sub{font-weight:600;margin-top:8px}
+.body h3{font-size:16px;margin:16px 0 8px}
+.hit{background:var(--mark)!important;border-radius:4px;transition:background 1.6s}
+.body ul,.body ol{margin:0 0 10px;padding-left:22px;max-width:74ch}
+.body blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted)}
+.rel{display:flex;flex-wrap:wrap;gap:6px}
+.rel a,.rel span{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
+.rel span{color:var(--muted)}
+
+/* acknowledgement */
+.ack{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:16px;margin:24px 0 0;display:flex;flex-direction:column;gap:10px;scroll-margin-top:90px}
+.ack.ok{border-color:var(--ok)} .ack.need{border-color:var(--warn)}
+.ack h3{margin:0;font-size:17px}
+.ackbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-radius:var(--r);margin-bottom:14px;font-size:14px}
+.ackbar.ok{background:var(--ok-soft);color:var(--ok)} .ackbar.need{background:var(--warn-soft);color:var(--warn)} .ackbar.crit{background:var(--crit-soft);color:var(--crit)}
+.ackbar a{margin-left:auto;font-weight:600;color:inherit;text-decoration:underline}
+
+/* team & journal */
+.mx th.v{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:11.5px;padding:8px 4px;white-space:nowrap}
+.mx td.c{text-align:center;padding:6px 4px;font-family:var(--mono);font-size:13px}
+.mx td.c.ok{color:var(--ok)} .mx td.c.re{color:var(--warn)} .mx td.c.no{color:var(--crit)} .mx td.c.na{color:var(--line)}
+.who{display:flex;align-items:center;gap:8px;min-width:170px}
+.who img{width:24px;height:24px;border-radius:50%}
+.pick{position:relative}
+.pick .opts{position:absolute;z-index:5;left:0;right:0;top:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.pick .opts button{display:flex;gap:8px;align-items:center;width:100%;border:0;background:none;padding:8px 10px;cursor:pointer;text-align:left}
+.pick .opts button:hover{background:var(--surface-2)}
+.assign-panel{background:var(--surface-2);padding:12px;border-radius:var(--r)}
+.assign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 16px;margin:8px 0}
+.assign-grid label{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.ev-ack{color:var(--ok)} .ev-assign{color:var(--accent)} .ev-unassign{color:var(--muted)} .ev-role{color:var(--warn)} .ev-matrix{color:var(--muted)} .ev-person{color:var(--accent)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:var(--r);font-size:14px;z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:24}
+.steps{counter-reset:st;display:flex;flex-direction:column;gap:12px}
+.step{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px}
+.step .num{counter-increment:st;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700}
+.step .num::before{content:counter(st)}
+/* paragraph flags */
+.body p.np{grid-template-columns:44px minmax(0,1fr) auto}
+.flag-btn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px;opacity:.3;border-radius:4px;align-self:start;white-space:nowrap}
+.body p.np:hover .flag-btn,.flag-btn.has,.flag-btn:focus-visible{opacity:1}
+.flag-btn:hover{background:var(--surface-2)}
+.flag-btn.has{color:var(--warn);font-weight:600}
+.flagbox{margin:0 0 12px 48px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);font-size:14px;display:flex;flex-direction:column;gap:8px}
+.flagbox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:var(--r);padding:6px 8px;background:var(--surface);font:inherit}
+.fl{border-left:3px solid var(--warn);padding:6px 10px;background:var(--surface);border-radius:0 6px 6px 0}
+.fl.answered{border-color:var(--ok)} .fl.closed{border-color:var(--line)}
+.fl .ans{margin-top:4px;color:var(--ok)}
+/* quiz */
+.quiz{display:flex;flex-direction:column;gap:12px}
+.quiz fieldset{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin:0;min-width:0}
+.quiz legend{font-weight:600;padding:0 4px}
+.quiz label{display:flex;gap:8px;align-items:flex-start;padding:3px 0;cursor:pointer;font-size:14px}
+.quiz input{margin-top:4px;accent-color:var(--accent)}
+.quiz fieldset.bad{border-color:var(--crit);background:var(--crit-soft)}
+.quiz fieldset.good{border-color:var(--ok)}
+/* versions */
+.diff ins{background:var(--ok-soft);color:var(--ok);text-decoration:none;border-radius:3px}
+.diff del{background:var(--crit-soft);color:var(--crit);border-radius:3px}
+.dblk{border-left:3px solid var(--line);padding:6px 10px;margin:0 0 8px;border-radius:0 6px 6px 0;overflow-wrap:anywhere}
+.dblk.add{border-color:var(--ok);background:var(--ok-soft)} .dblk.rem{border-color:var(--crit);background:var(--crit-soft)} .dblk.chg{border-color:var(--warn);background:var(--surface)}
+.dblk .small{font-weight:600;color:var(--muted)}
+@media (max-width:600px){.flagbox{margin-left:0}}
+</style>
+
+<header class="top">
+  <button class="icon-btn" id="menuBtn" aria-label="Показати або сховати меню" title="Показати або сховати меню">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+  </button>
+  <a class="brand" href="#home"><span class="mk">CS</span><span class="t">Freitty CS Wiki<small>База знань Customer Support</small></span></a>
+  <div class="srch">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="si" type="search" placeholder="Пошук по всіх документах (Ctrl+K)" autocomplete="off" aria-label="Пошук">
+    <div class="srch-res" id="sres" hidden></div>
+  </div>
+  <a class="me-chip" id="meChip" href="#me">✓ <span>Мої ознайомлення</span> <b id="meCnt">—</b></a>
+</header>
+<div class="layout">
+  <nav class="side" id="side" aria-label="Навігація"></nav>
+  <main class="main" id="main"><div class="wrap"><p class="muted">Завантаження…</p></div></main>
+</div>
+<div id="toastHost"></div>
+
+<script id="wiki-data" type="application/json">__DATA__</script>
+<script>
+/* ===== Old wiki: data, tools and page builders (logic moved as-is, colours remapped) ===== */
+__LEGACY_JS__
+</script>
+<script>
+(function(){
+"use strict";
+const D = JSON.parse(document.getElementById('wiki-data').textContent);
+const X = __EXTRA__;
+X.registry.forEach(r => { if (!D.registry.some(x => x.code === r.code)) D.registry.push(r); });
+Object.assign(D.docs, X.docs);
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store = { get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+
+/* ---------------- roles ---------------- */
+const ROLES = [
+  {id:'ssr', name:'Sales & Service Representative', about:'Лінія low-touch: вхідні звернення всіх клієнтів, цілодобово, у три зміни.', src:'POL-09 п. 4.6, POL-13 п. 4.1'},
+  {id:'sup', name:'Старший зміни / CS супервайзер', about:'Оголошує кризу, приймає ескалації і передані розмови, контролює передачу зміни.', src:'POL-05, POL-08, POL-09 п. 8.1'},
+  {id:'kcr', name:'Key Clients Representative', about:'High-touch: ключові клієнти з особистим представником.', src:'POL-09 п. 4.6, POL-13'},
+  {id:'cx', name:'Customer Experience Specialist', about:'Tech-touch: самостійні замовлення через кабінет та Instabook.', src:'POL-09 п. 4.6'},
+  {id:'netcor', name:'Netcor', about:'Підрядник на лінії за договором. Доступи і ознайомлення — як у штату.', src:'POL-02, POL-04'},
+  {id:'head', name:'Head of Customer Support', about:'Керівник функції, власник більшості документів CS, адміністратор вікі.', src:'Легенда реєстру'},
+  {id:'it', name:'IT', about:'Видача і відкликання доступів, REG-12, MFA.', src:'POL-04'},
+];
+const ROLE_NAME = Object.fromEntries(ROLES.map(r => [r.id, r.name]));
+const LINE = ['ssr','sup','kcr','cx','netcor','head'];
+const DEFAULT_MATRIX = {
+  'POL-01':[...LINE,'it'], 'POL-02':[...LINE,'it'], 'POL-03':LINE, 'POL-04':[...LINE,'it'],
+  'POL-05':LINE, 'POL-06':LINE, 'POL-07':LINE, 'POL-08':LINE, 'POL-09':LINE, 'POL-10':LINE,
+  'POL-11':[...LINE,'it'], 'POL-12':[...LINE,'it'], 'POL-13':LINE, 'POL-14':['ssr','sup','kcr','head'],
+  'SOP-1.9':['ssr','sup','head'], 'SOP-1.7':['ssr','sup','head'], 'SOP-2.6':['ssr','sup','head'],
+};
+
+/* ---------------- old wiki → new structure ---------------- */
+// Static pages of the old wiki become "working materials" inside the document they belong to.
+const MAT = [
+  {p:16, to:'POL-06', also:['POL-16','POL-17','POL-03']},
+  {p:21, to:'SOP-2.1'}, {p:22, to:'SOP-2.1'}, {p:23, to:'SOP-1.5'}, {p:24, to:'SOP-2.6', also:['TPL-15']},
+  {p:25, to:'PRC-3.0'}, {p:26, to:'SOP-2.5'}, {p:27, to:'SOP-1.4', also:['POL-19']},
+  {p:31, to:'POL-09', also:['SOP-1.1']}, {p:32, to:'SOP-1.1', also:['POL-09']}, {p:33, to:'SOP-2.3'}, {p:34, to:'SOP-4.2'},
+  {p:35, to:'POL-19', also:['SOP-1.4']}, {p:36, to:'SOP-1.5'},
+  {p:41, to:'SOP-2.5'}, {p:42, to:'SOP-2.5'}, {p:43, to:'SOP-3.7', also:['SOP-2.5']}, {p:44, to:'PRC-8.0'},
+  {p:45, to:'TPL-01', also:['SOP-1.1']}, {p:46, to:'SOP-1.2', also:['WI-05']}, {p:47, to:'SOP-4.2', also:['TPL-13']},
+  {p:48, to:'WI-06', also:['SOP-1.3']}, {p:50, to:'SOP-3.5', also:['POL-14']},
+];
+// Interactive tools stay tools, linked from their documents.
+const TOOLS = [
+  {p:1, docs:['SOP-2.5','POL-03']}, {p:2, docs:['POL-03','SOP-2.5'], warn:true}, {p:4, docs:['SOP-1.1']},
+  {p:5, docs:['TPL-01','SOP-1.1']}, {p:6, docs:['SOP-3.1','WI-01']}, {p:7, docs:['SOP-2.6','TPL-15']},
+  {p:8, docs:['SOP-3.7','SOP-2.5']}, {p:9, docs:['POL-14','REG-11']},
+];
+// Knowledge that is not a rule: reference section without codes.
+const REFS = [{id:'11', kind:'old', p:11}, {id:'12', kind:'old', p:12}, {id:'13', kind:'old', p:13}, {id:'14', kind:'old', p:14}, {id:'15', kind:'old', p:15}, {id:'pitch', kind:'tool', p:11}];
+const LEG_OK = typeof PAGES !== 'undefined';
+const legTitle = (kind, p) => { if (!LEG_OK) return ''; const pg = PAGES.find(x => x.p === p && (kind === 'tool' ? x.tabs.includes('tools') : !x.tabs.includes('tools'))); return pg ? pg.t.replace(/^[^\p{L}\p{N}★]+/u, '').replace(/^★\s*/, '').trim() : 'Сторінка'; };
+const legKeys = (kind, p) => { const pg = LEG_OK && PAGES.find(x => x.p === p && (kind === 'tool' ? x.tabs.includes('tools') : !x.tabs.includes('tools'))); return pg ? pg.pl : ''; };
+function legacyRaw(kind, p){
+  if (!LEG_OK) return null;
+  try {
+    if (kind === 'tool') return pageContentHome(p);
+    const pg = PAGES.find(x => x.p === p && !x.tabs.includes('tools'));
+    const layer = pg && pg.tabs.find(t => /^s\d$/.test(t));
+    const fn = {s1:pageContentL1, s2:pageContentL2, s3:pageContentL3, s4:pageContentSOP, s5:pageContentSOP}[layer];
+    return fn ? fn(p) : null;
+  } catch (e) { console.warn('legacy page', p, e); return null; }
+}
+const MAT_BY = {}; MAT.forEach(m => (MAT_BY[m.to] = MAT_BY[m.to] || []).push(m));
+const ALSO_BY = {}; MAT.forEach(m => (m.also||[]).forEach(c => (ALSO_BY[c] = ALSO_BY[c] || []).push(m)));
+const TOOLS_BY = {}; TOOLS.forEach(t => t.docs.forEach(c => (TOOLS_BY[c] = TOOLS_BY[c] || []).push(t)));
+window.show = function(p){
+  if (TOOLS.some(t => t.p === p)) location.hash = 'tool-' + p;
+  else if (p === 11) location.hash = 'ref-pitch';
+  else { const m = MAT.find(x => x.p === p); const r = REFS.find(x => x.kind === 'old' && x.p === p);
+    location.hash = m ? 'doc-' + slug(m.to) + '--m-' + p : r ? 'ref-' + r.id : 'home'; }
+};
+
+/* ---------------- registry & docs ---------------- */
+const REG = {}; D.registry.forEach(r => REG[r.code] = r);
+Object.values(D.docs).forEach(d => {
+  if (!REG[d.code]) REG[d.code] = {code:d.code, title:d.title, level: d.code.startsWith('SOP')?'L3 Процедура':'', stream: d.meta['Потік']||'1.0 Звернення', tier: d.meta['Tier']||'', owner: d.meta['Власник']||'', status: d.status, version: d.version, related:[], note:'Документа немає в реєстрі v1.58 — потрібно додати рядок.', format:'', storage:''};
+});
+const ALL_CODES = Object.keys(REG);
+const TYPE_OF = c => c.split('-')[0];
+const TYPES = {POL:'Політики', STD:'Стандарти', PRC:'Процеси', SOP:'Процедури', WI:'Інструкції', TPL:'Шаблони', REG:'Записи і реєстри'};
+const codeKey = c => { const [t, rest] = c.split('-'); const order = Object.keys(TYPES).indexOf(t);
+  const parts = rest.split('.').map(x => isNaN(+x) ? x.charCodeAt(0)+1000 : +x); return [order, ...parts]; };
+const byCode = (a, b) => { const x = codeKey(a), y = codeKey(b); for (let i=0;i<Math.max(x.length,y.length);i++){ const d=(x[i]??-1)-(y[i]??-1); if(d) return d;} return 0; };
+ALL_CODES.sort(byCode);
+const slug = c => c.replace(/\./g, '_');
+const unslug = s => s.replace(/_/g, '.');
+const docVer = c => D.docs[c]?.version || REG[c]?.version || null;
+const docStatus = c => D.docs[c]?.status || REG[c]?.status || '—';
+const docTitle = c => D.docs[c]?.title || REG[c]?.title || c;
+const hasText = c => !!D.docs[c];
+const hasAny = c => !!(D.docs[c] || MAT_BY[c]);
+const tierN = c => { const t = D.docs[c]?.meta?.Tier || REG[c]?.tier || ''; const m = String(t).match(/\d/); return m ? +m[0] : null; };
+const ACKABLE = ALL_CODES.filter(hasAny);
+function historyRows(c){
+  const d = D.docs[c]; if (!d) return [];
+  const t = d.blocks.find(b => b.t === 'table' && /Версія/.test(b.rows[0]?.[0] || ''));
+  return t ? t.rows.slice(1) : [];
+}
+const vnum = v => parseFloat(String(v||'0').replace(/[^\d.]/g,'')) || 0;
+const dmy = s => { const m = String(s||'').match(/(\d{2})\.(\d{2})\.(\d{4})/); return m ? `${m[3]}-${m[2]}-${m[1]}` : ''; };
+function statusChip(s){
+  const cls = s==='Чинний'?'ok': s==='Чернетка'?'warn': s==='Не створено'?'crit': s==='Потребує оновлення'?'warn':'';
+  return `<span class="chip ${cls}">${esc(s||'—')}</span>`;
+}
+function tierChip(c){ const t = tierN(c); if (t===null) return '';
+  return t===0 ? `<span class="chip crit" title="Tier 0 — критичний"><span class="tier0"></span>Tier 0</span>` : `<span class="chip">Tier ${t}</span>`; }
+
+/* ---------------- inline formatting & linkify ---------------- */
+function inline(text, ctx){
+  let h = esc(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*])\*([^*\s][^*]*?)\*/g, '$1<em>$2</em>').replace(/`([^`]+)`/g, '<code>$1</code>');
+  h = h.replace(/\b(POL|STD|PRC|SOP|WI|TPL|REG)-((?:E\.)?\d+(?:\.\d+)?)(?:(\s?(?:п\.|пп\.)\s?)(\d+(?:\.\d+)+))?|(\(?п\.\s?)(\d+\.\d+(?:\.\d+)?)/g,
+    (m, t, n, sep, pnum, bare, bnum) => {
+      if (t) { const code = `${t}-${n}`; if (!REG[code]) return m;
+        const href = '#doc-' + slug(code) + (pnum ? '--p-' + pnum.replace(/\./g,'-') : '');
+        return `<a href="${href}" title="${esc(docTitle(code))}">${code}${pnum ? sep + pnum : ''}</a>`; }
+      if (ctx && ctx.code && D.docs[ctx.code]) return `${bare}<a href="#doc-${slug(ctx.code)}--p-${bnum.replace(/\./g,'-')}">${bnum}</a>`;
+      return m;
+    });
+  return h;
+}
+
+/* ---------------- search index ---------------- */
+const norm = s => String(s||'').toLowerCase().replace(/[ʼ’'`]/g,"'").replace(/ё/g,'е');
+const strip = h => String(h || '').replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+let IDX = null;
+function buildIndex(){
+  IDX = [];
+  for (const c of ALL_CODES){
+    const r = REG[c];
+    IDX.push({route:'doc-'+slug(c), label:c, title:docTitle(c), where: TYPES[TYPE_OF(c)]||'', text: norm([c, docTitle(c), r.owner, r.note, r.stream].join(' ')), raw:[c, docTitle(c), r.note].filter(Boolean).join(' · '), boost:3});
+    const d = D.docs[c];
+    if (d){ let sec = '';
+      d.blocks.forEach((b, i) => {
+        if (b.t === 'h') { sec = b.text; return; }
+        const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : b.text;
+        const pm = b.t==='p' && b.text.match(/^(\d+(?:\.\d+)+)\.?\s/);
+        IDX.push({route:'doc-'+slug(c) + (pm ? '--p-'+pm[1].replace(/\./g,'-') : '--b-'+i), label:c, title:docTitle(c), where:sec, text:norm(txt), raw:txt, boost:0});
+      }); }
+  }
+  MAT.forEach(m => { const body = strip(legacyRaw('old', m.p)); IDX.push({route:'doc-'+slug(m.to)+'--m-'+m.p, label:m.to, title:legTitle('old', m.p), where:'Робочий матеріал', text:norm(legTitle('old', m.p)+' '+legKeys('old', m.p)+' '+body), raw:body, boost:1}); });
+  TOOLS.forEach(t => IDX.push({route:'tool-'+t.p, label:'Інструмент', title:legTitle('tool', t.p), where:t.docs.join(', '), text:norm(legTitle('tool', t.p)+' '+legKeys('tool', t.p)), raw:legKeys('tool', t.p), boost:2}));
+  REFS.forEach(r => { const body = r.kind==='old' ? strip(legacyRaw('old', r.p)) : ''; IDX.push({route:'ref-'+r.id, label:'Довідник', title:legTitle(r.kind, r.p), where:'', text:norm(legTitle(r.kind, r.p)+' '+legKeys(r.kind, r.p)+' '+body), raw:body || legKeys(r.kind, r.p), boost:1}); });
+  D.proposals.forEach(p => IDX.push({route:'prop-'+p.id, label:'Пропозиція', title:p.title, where:(p.for||[]).join(', '), text:norm(p.title+' '+p.blocks.map(b=>b.text||(b.rows||[]).map(r=>r.join(' ')).join(' ')).join(' ')), raw:p.title, boost:1}));
+  D.decisions.forEach(r => IDX.push({route:'decisions', label:'Рішення '+r.n, title:r.topic, where:r.status, text:norm(r.topic+' '+r.text), raw:r.text, boost:0}));
+}
+function search(q){
+  if (!IDX) buildIndex();
+  const words = norm(q).split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  const res = [];
+  for (const it of IDX){
+    if (!words.every(w => it.text.includes(w))) continue;
+    res.push({it, score: it.boost + (norm(it.title).includes(words[0]) ? 2 : 0) + (norm(it.label) === norm(q) ? 10 : 0)});
+  }
+  res.sort((a,b) => b.score - a.score);
+  return res.slice(0, 40).map(r => r.it);
+}
+function snippet(raw, q){
+  const words = norm(q).split(/\s+/).filter(Boolean); const n = norm(raw);
+  const i = Math.max(0, n.indexOf(words[0])); const s = Math.max(0, i - 50);
+  let h = esc((s ? '…' : '') + raw.slice(s, i + 140) + (i + 140 < raw.length ? '…' : ''));
+  for (const w of words){ if (w.length < 2) continue; h = h.replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m => `<mark>${m}</mark>`); }
+  return h;
+}
+
+/* ---------------- shared state (db) ---------------- */
+const S = { user:null, db:null, uid:null, admin:false, ready:false, own:null, assigned:null, myAssign:null, matrix:DEFAULT_MATRIX,
+  team:{acks:{}, people:{}, assign:{}}, audit:[], teamLoaded:false, dl:null, noAccess:false, flags:{}, gaps:{}, ownGaps:null };
+const myRole = () => S.assigned?.role || S.own?.role || null;
+const today = () => new Date().toISOString().slice(0,10);
+const roleReq = (role, m=S.matrix) => role ? Object.keys(m).filter(c => (m[c]||[]).includes(role) && REG[c] && hasAny(c)) : [];
+const reqFor = (role, items) => [...new Set([...roleReq(role), ...Object.keys(items||{}).filter(c => REG[c])])].sort(byCode);
+function ackState(c, acks){ const a = acks?.[c]; if (!a) return 'no'; return (a.v ?? null) === (docVer(c) ?? null) ? 'ok' : 're'; }
+const myItems = () => S.myAssign?.items || {};
+function myProgress(){
+  const req = reqFor(myRole(), myItems()); const own = S.own?.docs;
+  const ok = req.filter(c => ackState(c, own) === 'ok').length;
+  const overdue = Object.entries(myItems()).filter(([c, it]) => it.due && it.due < today() && ackState(c, own) !== 'ok').map(([c]) => c);
+  return {req, ok, overdue};
+}
+
+async function initShared(){
+  if (!window.claude?.use) { S.ready = true; S.noAccess = true; render(); return; }
+  const [user, db] = await Promise.all([claude.use('user'), claude.use('db')]);
+  S.user = user; S.db = db;
+  if (user) { S.uid = await user.id(); S.admin = await user.canEdit(); }
+  if (!db || !S.uid) { S.ready = true; S.noAccess = true; render(); return; }
+  const timer = setTimeout(() => { if (!S.ready){ S.ready = true; render(); } }, 10000);
+  db.doc('acks/' + S.uid).onSnapshot(s => { S.own = s.exists ? s.data() : {docs:{}, log:[]}; if (!s.metadata.fromCache) clearTimeout(timer); S.ready = true; render(); }, () => { clearTimeout(timer); S.ready = true; render(); });
+  db.doc('people/' + S.uid).onSnapshot(s => { S.assigned = s.exists ? s.data() : null; render(); }, () => {});
+  db.doc('assign/' + S.uid).onSnapshot(s => { S.myAssign = s.exists ? s.data() : null; render(); }, () => {});
+  db.collection('flags').onSnapshot(s => { S.flags = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
+  db.doc('gaps/' + S.uid).onSnapshot(s => { S.ownGaps = s.exists ? s.data() : null; }, () => {});
+  db.doc('config/matrix').onSnapshot(s => { const m = s.exists ? s.data()?.m : null; S.matrix = m && typeof m === 'object' ? m : DEFAULT_MATRIX; render(); }, () => {});
+  if (S.admin){
+    db.collection('acks').onSnapshot(s => { S.team.acks = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); S.teamLoaded = true; render(); }, () => { S.teamLoaded = true; render(); });
+    db.collection('people').onSnapshot(s => { S.team.people = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
+    db.collection('assign').onSnapshot(s => { S.team.assign = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
+    db.collection('gaps').onSnapshot(s => { S.gaps = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
+    db.collection('audit').orderBy('at', 'desc').limit(1000).onSnapshot(s => { S.audit = s.docs.map(d => d.data()); render(); }, () => {});
+  }
+  claude.use('downloads').then(x => { S.dl = x; render(); });
+}
+let ownChain = Promise.resolve(), adminChain = Promise.resolve();
+function writeOwn(next){
+  ownChain = ownChain.then(() => S.db.doc('acks/' + S.uid).set(next)).catch(e => { toast(e?.code === 'invalid_argument' ? 'Немає права відмічати ознайомлення: попросіть доступ рівня Contributor.' : 'Не вдалося зберегти. Спробуйте ще раз.'); });
+  return ownChain;
+}
+function adminWrite(fn, okMsg){
+  adminChain = adminChain.then(fn).then(() => okMsg && toast(okMsg), e => { console.warn(e); toast('Не вдалося зберегти. Перевірте, що у вас права редактора вікі.'); });
+  return adminChain;
+}
+const audit = ev => S.db.collection('audit').add({...ev, by:S.uid, at:new Date().toISOString()});
+function sign(code, quiz){
+  const own = S.own || {docs:{}, log:[]}; const at = new Date().toISOString(); const v = docVer(code);
+  const rec = quiz ? {v, at, quiz} : {v, at};
+  const next = {role: own.role || null, docs: {...(own.docs||{}), [code]: rec}, log: [...(own.log||[]), {t:'ack', c:code, ...rec}].slice(-2000)};
+  S.own = next; render(); writeOwn(next).then(() => toast(`Ознайомлення відмічено: ${code}${v?' v'+v:''}`));
+}
+function setMyRole(role){
+  const own = S.own || {docs:{}, log:[]}; const at = new Date().toISOString();
+  const next = {role, docs: own.docs || {}, log: [...(own.log||[]), {t:'role', role, at}].slice(-2000)};
+  S.own = next; render(); writeOwn(next);
+}
+function setPersonRole(id, role, isNew){
+  S.team.people[id] = {...(S.team.people[id]||{}), role}; render();
+  adminWrite(async () => {
+    if (role) await S.db.doc('people/'+id).set({role, at:new Date().toISOString(), by:S.uid}); else await S.db.doc('people/'+id).delete();
+    await audit({t: isNew ? 'person' : 'role', who:id, role: role || null});
+  }, isNew ? 'Людину додано' : 'Роль збережено');
+}
+function saveAssign(id, items){
+  const before = S.team.assign[id]?.items || {};
+  S.team.assign[id] = {items}; render();
+  adminWrite(async () => {
+    await S.db.doc('assign/'+id).set({items, at:new Date().toISOString(), by:S.uid});
+    for (const c of Object.keys(items)) if (!before[c] || before[c].due !== items[c].due) await audit({t:'assign', who:id, c, due:items[c].due || null});
+    for (const c of Object.keys(before)) if (!items[c]) await audit({t:'unassign', who:id, c});
+  }, 'Призначення збережено');
+}
+function saveMatrix(m, c, role, on){
+  S.matrix = m; render();
+  adminWrite(async () => { await S.db.doc('config/matrix').set({m, at:new Date().toISOString(), by:S.uid}); await audit({t:'matrix', c, role, on}); }, 'Перелік для ролі збережено');
+}
+let toastT; function toast(msg){ const h = $('#toastHost'); h.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`; clearTimeout(toastT); toastT = setTimeout(() => h.innerHTML = '', 3200); }
+const fmtDate = iso => { try { return new Date(iso).toLocaleString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}); } catch { return iso; } };
+const fmtDay = d => d ? d.split('-').reverse().join('.') : '';
+
+/* ---------------- paragraph flags (KCS: fix what you find) ---------------- */
+const FLAG_KIND = {outdated:'Застаріло', unclear:'Незрозуміло', practice:'На практиці інакше', other:'Інше'};
+const FLAG_ST = {open:'відкрита', answered:'є відповідь', closed:'закрита'};
+const FLAG = {open:null};
+function allFlags(){
+  const out = [];
+  Object.entries(S.flags).forEach(([uid, d]) => Object.entries(d?.items || {}).forEach(([id, f]) => out.push({...f, id, uid})));
+  return out.sort((a, b) => String(b.at).localeCompare(String(a.at)));
+}
+const openFlagsFor = (code, pid) => allFlags().filter(f => f.c === code && f.p === pid && f.status !== 'closed');
+function flagItem(f, withDoc){
+  return `<div class="fl ${esc(f.status)}"><div class="small">${withDoc?`<a class="code" href="#doc-${slug(f.c)}--${esc(f.p)}">${esc(f.c)} п. ${esc(String(f.p).replace(/^p-/,'').replace(/-/g,'.'))}</a> · `:''}<b>${esc(FLAG_KIND[f.kind]||f.kind)}</b> · <span data-pid="${esc(f.uid)}">…</span> · ${fmtDate(f.at)} · ${esc(FLAG_ST[f.status]||f.status)}</div>
+  <div>${esc(f.text)}</div>${f.answer?`<div class="ans small">Відповідь (<span data-pid="${esc(f.ansBy||'')}">…</span>, ${fmtDate(f.ansAt)}): ${esc(f.answer)}</div>`:''}
+  ${S.admin && f.status !== 'closed' ? `<div class="row" style="margin-top:6px"><input class="fld" id="ans-${esc(f.uid)}-${esc(f.id)}" placeholder="Відповідь автору" style="flex:1;min-width:180px"><button class="kb sm" data-flans="${esc(f.uid)}|${esc(f.id)}">Відповісти</button><button class="kb sm" data-flclose="${esc(f.uid)}|${esc(f.id)}">Закрити</button></div>` : ''}</div>`;
+}
+function flagBox(code, pid){
+  let h = `<div class="flagbox" id="fb-${pid}">` + openFlagsFor(code, pid).map(f => flagItem(f, false)).join('');
+  if (S.uid && !S.noAccess) h += `<div class="row"><label class="small" for="flKind">Що з пунктом</label><select id="flKind" class="fld">${Object.entries(FLAG_KIND).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
+    <textarea id="flText" placeholder="Що саме не так і як насправді? Без імен, телефонів і даних клієнтів."></textarea>
+    <div class="row"><button class="kb pri sm" data-flsend="${esc(code)}|${pid}">Надіслати власнику документа</button><button class="kb sm" data-flag="${esc(code)}|${pid}">Скасувати</button></div>`;
+  else h += `<p class="small muted" style="margin:0">Позначати пункти можна, коли вікі відкрито на claude.ai під вашим робочим акаунтом.</p>`;
+  return h + `</div>`;
+}
+let flagChain = Promise.resolve();
+function sendFlag(code, pid){
+  const text = ($('#flText')?.value || '').trim(); if (!text){ toast('Опишіть, що не так з пунктом'); return; }
+  const kind = $('#flKind').value; const id = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const item = {c:code, p:pid, kind, text:text.slice(0, 2000), at:new Date().toISOString(), status:'open', v:docVer(code)};
+  const exists = !!S.flags[S.uid]; const ref = S.db.doc('flags/' + S.uid);
+  S.flags[S.uid] = {items: {...(S.flags[S.uid]?.items || {}), [id]: item}}; FLAG.open = null; render();
+  flagChain = flagChain.then(() => exists ? ref.update({items:{[id]:item}}) : ref.set({items:{[id]:item}})).then(() => toast('Позначку надіслано'), () => toast('Не вдалося надіслати: потрібен доступ рівня Contributor.'));
+}
+function answerFlag(uid, id, close){
+  const input = document.getElementById(`ans-${uid}-${id}`); const answer = (input?.value || '').trim();
+  if (!close && !answer){ toast('Напишіть відповідь'); return; }
+  const patch = close ? {status:'closed', closedBy:S.uid, closedAt:new Date().toISOString()} : {status:'answered', answer:answer.slice(0, 2000), ansBy:S.uid, ansAt:new Date().toISOString()};
+  const items = {...(S.flags[uid]?.items || {})}; items[id] = {...items[id], ...patch}; S.flags[uid] = {items}; render();
+  flagChain = flagChain.then(() => S.db.doc('flags/' + uid).update({items:{[id]:patch}})).then(() => toast(close ? 'Позначку закрито' : 'Відповідь збережено'), () => toast('Не вдалося зберегти'));
+}
+// searches that found nothing = knowledge the base is missing
+let gapT;
+function logGap(q){
+  if (!S.db || !S.uid) return; clearTimeout(gapT);
+  gapT = setTimeout(() => {
+    const key = norm(q).replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 80); if (key.length < 3) return;
+    const items = {...(S.ownGaps?.items || {})}; const cur = items[key] || {n:0}; items[key] = {n:cur.n + 1, last:new Date().toISOString()};
+    const keys = Object.keys(items); if (keys.length > 200) keys.sort((a, b) => String(items[a].last).localeCompare(String(items[b].last))).slice(0, keys.length - 200).forEach(k => delete items[k]);
+    S.ownGaps = {items}; S.db.doc('gaps/' + S.uid).set({items}).catch(() => {});
+  }, 1500);
+}
+
+/* ---------------- understanding check (Tier 0) ---------------- */
+const QZ = {};
+function perm(code, qi, n){ const idx = [...Array(n).keys()]; let h = 7; for (const ch of code + ':' + qi) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  for (let i = n - 1; i > 0; i--){ h = (Math.imul(h, 1103515245) + 12345) >>> 0; const j = h % (i + 1); [idx[i], idx[j]] = [idx[j], idx[i]]; } return idx; }
+function refLink(code, ref){ const [k, n] = String(ref).split(':'); return k === 'p' ? `<a href="#doc-${slug(code)}--p-${n.replace(/\./g,'-')}">п. ${esc(n)}</a>` : `<a href="#doc-${slug(code)}--s-${esc(n)}">розділ ${esc(n)}</a>`; }
+function quizHtml(code){
+  const qz = QUIZ[code]; const st = QZ[code] || (QZ[code] = {ans:{}, res:null, tries:0});
+  return `<p class="small">Перевірка розуміння: ${qz.length} питання. Щоб відмітити ознайомлення, дайте правильні відповіді на всі. Неправильні можна виправити й перевірити ще раз.</p>
+  <div class="quiz">${qz.map((q, qi) => { const r = st.res?.[qi];
+    return `<fieldset class="${r === true ? 'good' : r === false ? 'bad' : ''}"><legend>${qi + 1}. ${esc(q.q)}</legend>${perm(code, qi, q.o.length).map(oi => `<label><input type="radio" name="qz-${slug(code)}-${qi}" data-qz="${esc(code)}|${qi}|${oi}" ${st.ans[qi] === oi ? 'checked' : ''}><span>${esc(q.o[oi])}</span></label>`).join('')}${r === false ? `<div class="small">Не так. Перечитайте ${refLink(code, q.ref)}.</div>` : ''}</fieldset>`; }).join('')}</div>
+  <p class="small muted" style="margin:0">Питання — проєкт, підготовлений разом зі створенням вікі; власник документа їх перевіряє.</p>
+  <div class="row"><button class="kb pri" data-qcheck="${esc(code)}">Перевірити і відмітити ознайомлення</button>${st.tries ? `<span class="small muted">Спроба ${st.tries + 1}</span>` : ''}</div>`;
+}
+function checkQuiz(code){
+  const qz = QUIZ[code]; const st = QZ[code] || (QZ[code] = {ans:{}, res:null, tries:0});
+  if (qz.some((q, qi) => st.ans[qi] === undefined)){ toast('Дайте відповідь на всі питання'); return; }
+  st.tries++; st.res = qz.map((q, qi) => st.ans[qi] === 0);
+  if (st.res.every(Boolean)){ const quiz = {score:qz.length, total:qz.length, tries:st.tries}; delete QZ[code]; sign(code, quiz); }
+  else { render(); toast(`Правильно ${st.res.filter(Boolean).length} з ${qz.length}. Виправте позначені питання.`); }
+}
+
+/* ---------------- version archive ---------------- */
+const vslug = v => String(v).replace(/\./g, '-');
+function versionsBlock(code){
+  const vs = D.versions?.[code] || []; if (!vs.length) return '';
+  return `<details class="blk" id="vers"><summary><h2>Версії документа <span class="muted small">${vs.length}</span></h2></summary><div class="tbl"><table><thead><tr><th>Версія</th><th>Статус</th><th>Дата документа</th><th>У вікі з</th><th></th></tr></thead><tbody>
+  ${vs.map(v => `<tr><td class="mono">v${esc(v.version)}</td><td>${v.current ? '<span class="chip ok">поточна</span>' : '<span class="chip">архів</span>'} ${statusChip(v.status)}</td><td class="small">${esc(v.date || '—')}</td><td class="small">${fmtDay(v.savedAt) || '—'}</td>
+   <td class="small">${v.current ? '' : `<a href="#doc-${slug(code)}--ver-${vslug(v.version)}">Текст</a> · <a href="#doc-${slug(code)}--diff-${vslug(v.version)}">Що змінилось</a>`}</td></tr>`).join('')}</tbody></table></div>
+  ${vs.length === 1 ? '<p class="small muted" style="padding-bottom:12px">Попередніх версій у вікі ще немає. Коли вийде нова версія, ця залишиться тут в архіві з повним текстом.</p>' : ''}</details>`;
+}
+function blockKey(b){ if (b.t === 'h') return 'h:' + b.text.replace(/^\d+\.\s*/, ''); if (b.t === 'p'){ const m = b.text.match(/^(\d+(?:\.\d+)+)\.?\s/); if (m) return 'p:' + m[1]; }
+  if (b.t === 'table') return 't:' + (b.rows[0] || []).join('|'); return 'x:' + (b.text || '').slice(0, 80); }
+const blockText = b => b.t === 'table' ? b.rows.map(r => r.join(' | ')).join('\n') : (b.text || '');
+function wordDiff(a, b){
+  const A = a.split(/(\s+)/), B = b.split(/(\s+)/); const n = A.length, m = B.length;
+  if (n * m > 600000) return `<del>${esc(a)}</del> <ins>${esc(b)}</ins>`;
+  const dp = Array.from({length:n + 1}, () => new Uint16Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) dp[i][j] = A[i] === B[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  let i = 0, j = 0, out = '';
+  while (i < n && j < m){ if (A[i] === B[j]){ out += esc(A[i]); i++; j++; } else if (dp[i + 1][j] >= dp[i][j + 1]) out += `<del>${esc(A[i++])}</del>`; else out += `<ins>${esc(B[j++])}</ins>`; }
+  while (i < n) out += `<del>${esc(A[i++])}</del>`; while (j < m) out += `<ins>${esc(B[j++])}</ins>`;
+  return out;
+}
+function diffHtml(oldB, newB){
+  const om = new Map(); oldB.filter(b => !b.passport).forEach(b => om.set(blockKey(b), b));
+  const seen = new Set(); let add = 0, rem = 0, chg = 0, h = '', pendingH = '';
+  newB.filter(b => !b.passport).forEach(b => {
+    const k = blockKey(b); seen.add(k);
+    if (b.t === 'h'){ pendingH = `<h3>${esc(b.text)}</h3>`; return; }
+    const o = om.get(k); const t = blockText(b); let piece = '';
+    if (!o){ add++; piece = `<div class="dblk add"><div class="small">Додано</div><div style="white-space:pre-wrap">${esc(t)}</div></div>`; }
+    else if (blockText(o) !== t){ chg++; piece = `<div class="dblk chg"><div class="small">Змінено</div><div class="diff" style="white-space:pre-wrap">${wordDiff(blockText(o), t)}</div></div>`; }
+    if (piece){ h += pendingH + piece; pendingH = ''; }
+  });
+  const removed = [...om.entries()].filter(([k]) => !seen.has(k) && !k.startsWith('h:'));
+  if (removed.length) h += `<h3>Видалено</h3>` + removed.map(([, b]) => { rem++; return `<div class="dblk rem"><div style="white-space:pre-wrap">${esc(blockText(b))}</div></div>`; }).join('');
+  return `<div class="row" style="margin:8px 0 14px"><span class="chip ok">+${add} додано</span><span class="chip warn">${chg} змінено</span><span class="chip crit">−${rem} видалено</span></div>` + (add + chg + rem ? h : '<div class="empty">Текст не змінився.</div>');
+}
+function viewOldVersion(code, anchor){
+  const kind = anchor.startsWith('diff-') ? 'diff' : 'ver'; const vs = anchor.slice(kind.length + 1).replace(/-/g, '.');
+  const old = D.archive?.[code]?.[vs]; const cur = D.docs[code];
+  if (!old) return `<div class="wrap"><div class="empty">Версії v${esc(vs)} документа ${esc(code)} немає в архіві. <a href="#doc-${slug(code)}">До поточної версії</a></div></div>`;
+  const head = `<div class="eyebrow"><a href="#doc-${slug(code)}">${code}</a> · <a href="#archive">архів версій</a></div><h1 class="ptitle">${esc(old.title || docTitle(code))}</h1>
+  <div class="note crit"><b>Архівна версія v${esc(vs)} — не чинна.</b> ${cur ? `Поточна версія: <a href="#doc-${slug(code)}">v${esc(cur.version)}</a>.` : ''} ${kind === 'ver' ? `<a href="#doc-${slug(code)}--diff-${vslug(vs)}">Що змінилось у поточній</a>` : `<a href="#doc-${slug(code)}--ver-${vslug(vs)}">Повний текст v${esc(vs)}</a>`}</div>`;
+  if (kind === 'ver') return `<div class="wrap"><article class="read">${head}${foldBar}<div class="body">${blocksHtml(old.blocks, {}, 'old-')}</div></article></div>`;
+  return `<div class="wrap"><article class="read">${head}<h2 style="font-size:18px">Зміни v${esc(vs)} → v${esc(cur?.version || '—')}</h2>${diffHtml(old.blocks, cur ? cur.blocks : [])}</article></div>`;
+}
+function viewArchive(){
+  const rows = []; Object.entries(D.archive || {}).forEach(([code, vv]) => Object.entries(vv).forEach(([v, x]) => rows.push({code, v, x})));
+  rows.sort((a, b) => byCode(a.code, b.code) || vnum(b.v) - vnum(a.v));
+  const dead = ALL_CODES.filter(c => docStatus(c) === 'Архів');
+  return `<div class="wrap"><div class="eyebrow">ISO 9001, 7.5.3 · застарілі версії зберігаються, але позначені</div><h1 class="ptitle">Архів версій</h1>
+  <p class="lead">Попередні версії документів з повним текстом і порівнянням з поточною. Документ потрапляє сюди автоматично, коли у вікі з'являється його нова версія. Документи зі статусом «Архів» не видаляються (правило №4 реєстру).</p>
+  <details class="blk" id="ar-v" open><summary><h2>Попередні версії <span class="muted small">${rows.length}</span></h2></summary>${rows.length ? `<div class="tbl"><table><thead><tr><th>Документ</th><th>Версія</th><th>Статус тоді</th><th>Дата</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><a class="code" href="#doc-${slug(r.code)}">${r.code}</a> ${esc(docTitle(r.code))}</td><td class="mono">v${esc(r.v)}</td><td>${statusChip(r.x.status)}</td><td class="small">${esc(r.x.date || '—')}</td><td class="small"><a href="#doc-${slug(r.code)}--ver-${vslug(r.v)}">Текст</a> · <a href="#doc-${slug(r.code)}--diff-${vslug(r.v)}">Що змінилось</a></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty" style="margin-bottom:14px">Попередніх версій поки немає: у вікі зараз перші версії всіх документів. Коли вийде нова версія документа, попередня з'явиться тут.</div>`}</details>
+  <details class="blk" id="ar-d" open><summary><h2>Документи зі статусом «Архів» <span class="muted small">${dead.length}</span></h2></summary>${dead.length ? `<div class="rel" style="padding-bottom:12px">${dead.map(c => `<a href="#doc-${slug(c)}">${c}</a>`).join('')}</div>` : '<p class="small muted" style="padding-bottom:12px">Немає.</p>'}</details></div>`;
+}
+function viewFlags(){
+  const all = allFlags(); let cur = 'open'; try { cur = sessionStorage.getItem('flst') || 'open'; } catch {}
+  const list = all.filter(f => cur === 'all' || f.status === cur || (cur === 'mine' && f.uid === S.uid));
+  const cnt = k => all.filter(f => f.status === k).length;
+  let h = `<div class="wrap"><div class="eyebrow">Зворотний зв'язок від команди</div><h1 class="ptitle">Позначки до пунктів</h1>
+  <p class="lead">Будь-хто може позначити пункт документа: застарів, незрозумілий або на практиці працює інакше. Наведіть на пункт і натисніть ⚑. Власник документа відповідає тут, а документ виправляється в наступній версії.</p>
+  <div class="seg">${[['open', 'Відкриті ' + cnt('open')], ['answered', 'З відповіддю ' + cnt('answered')], ['closed', 'Закриті ' + cnt('closed')], ['mine', 'Мої'], ['all', 'Усі ' + all.length]].map(([k, l]) => `<button class="${cur === k ? 'on' : ''}" data-flst="${k}">${l}</button>`).join('')}</div>`;
+  if (S.noAccess) h += `<div class="empty">Позначки видно, коли вікі відкрито на claude.ai.</div>`;
+  else h += list.length ? `<div style="display:flex;flex-direction:column;gap:8px">${list.map(f => flagItem(f, true)).join('')}</div>` : `<div class="empty">Тут поки порожньо.</div>`;
+  if (S.admin){
+    const agg = {}; Object.values(S.gaps).forEach(d => Object.entries(d?.items || {}).forEach(([q, x]) => { const a = agg[q] || (agg[q] = {n:0, people:0, last:''}); a.n += x.n || 1; a.people++; if (String(x.last) > a.last) a.last = x.last; }));
+    const top = Object.entries(agg).sort((a, b) => b[1].people - a[1].people || b[1].n - a[1].n).slice(0, 40);
+    h += `<details class="blk" id="fl-gaps" open style="margin-top:20px"><summary><h2>Пошуки без результатів <span class="muted small">${top.length}</span></h2></summary><p class="small muted">Що люди шукали і не знайшли — кандидати на нові документи або пункти. Видно лише адміністраторам.</p>
+    ${top.length ? `<div class="tbl"><table><thead><tr><th>Запит</th><th class="num">Людей</th><th class="num">Разів</th><th>Останній раз</th></tr></thead><tbody>${top.map(([q, a]) => `<tr><td>${esc(q)}</td><td class="num">${a.people}</td><td class="num">${a.n}</td><td class="small">${fmtDate(a.last)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted" style="padding-bottom:12px">Поки немає.</p>'}</details>`;
+  }
+  return h + `</div>`;
+}
+
+/* ---------------- sidebar ---------------- */
+const SITUATIONS = __SITUATIONS__;
+const QUIZ = (() => { const q = __QUIZ__; delete q._about; return q; })();
+const sgOpen = store.get('sg') || {};
+function sideHtml(route){
+  const own = S.own?.docs || {}; const req = new Set(reqFor(myRole(), myItems()));
+  const item = (href, label, code, extra='') => {
+    const on = route === href || (code && route.startsWith('doc-'+slug(code)+'--')) ? 'on' : '';
+    let dot = '';
+    if (code && req.has(code)) { const st = ackState(code, own); dot = `<span class="dot ${st}" title="${st==='ok'?'Ознайомлений(а)':st==='re'?'Нова версія — ознайомтесь знову':'Потрібне ознайомлення'}"></span>`; }
+    else if (extra) dot = `<span class="mt">${extra}</span>`;
+    return `<a class="${on}" href="#${href}">${code?`<span class="c">${code}</span>`:''}<span>${esc(label)}</span>${dot}</a>`;
+  };
+  const group = (id, label, inner, count) => `<details class="sg" data-sg="${id}" ${sgOpen[id] === false ? '' : 'open'}><summary class="sgh">${esc(label)}${count?`<span class="n">${count}</span>`:''}</summary>${inner}</details>`;
+  let h = group('work', 'Робота', item('home','Що робити, коли…') + item('me','Мої ознайомлення') + item('newbie','Шлях новачка') + item('questions','Відкриті питання і блокери') + item('flags','Позначки до пунктів', null, String(allFlags().filter(f => f.status === 'open').length || '')));
+  if (S.admin) h += group('admin', 'Адміністрування', item('team','Команда і призначення') + item('journal','Журнал ознайомлень (REG-13)') + item('roles','Ролі і доступи'));
+  if (LEG_OK) h += group('tools', 'Інструменти', TOOLS.map(t => item('tool-'+t.p, legTitle('tool', t.p))).join(''), TOOLS.length);
+  for (const t of Object.keys(TYPES)){
+    const list = ALL_CODES.filter(c => TYPE_OF(c) === t && hasAny(c));
+    if (!list.length) continue;
+    h += group('t-'+t, TYPES[t], list.map(c => item('doc-'+slug(c), docTitle(c), c, !hasText(c) ? 'мат.' : '')).join(''), list.length);
+  }
+  if (LEG_OK) h += group('ref', 'Довідник', REFS.map(r => item('ref-'+r.id, legTitle(r.kind, r.p))).join(''), REFS.length);
+  h += group('kb', 'База знань', item('registry','Реєстр документів') + (S.admin?'':item('roles','Ролі і доступи')) + item('core','Ядро v1') + item('ready','Готовність бази') + item('streams','Потоки') + item('proposals','Пропозиції змін') + item('decisions','Журнал рішень') + item('archive','Архів версій') + item('demand','Знімок попиту') + item('legend','Як влаштована база'));
+  return h;
+}
+
+/* ---------------- blocks with collapsible sections ---------------- */
+const COLLAPSED = /Паспорт|Пов.?язані документи|Відкриті питання|Історія версій/;
+function blocksHtml(blocks, ctx, prefix=''){
+  let h = '', list = null, inSec = false, k = 0;
+  const closeList = () => { if (list){ h += `</${list}>`; list = null; } };
+  blocks.forEach((b, i) => {
+    if (b.t !== 'li') closeList();
+    if (b.passport) return;
+    if (b.t === 'h'){
+      if (inSec) h += '</div></details>';
+      const m = b.text.match(/^(\d+)\./); const id = prefix + (m ? 's-'+m[1] : 'h-'+(k++));
+      h += `<details class="sec" id="${id}" ${COLLAPSED.test(b.text)?'':'open'}><summary><h2>${inline(b.text, ctx)}</h2></summary><div class="sec-b">`;
+      inSec = true; return;
+    }
+    if (b.t === 'h3') h += `<h3>${inline(b.text, ctx)}</h3>`;
+    else if (b.t === 'p'){
+      const m = b.text.match(/^(\d+(?:\.\d+)+)\.?\s+(.*)$/s);
+      if (m){ const pid = 'p-' + m[1].replace(/\./g,'-');
+        let fb = '';
+        if (ctx && ctx.flags){ const n = openFlagsFor(ctx.code, pid).length; fb = `<button class="flag-btn${n?' has':''}" data-flag="${esc(ctx.code)}|${pid}" title="Позначити пункт: застаріло, незрозуміло, на практиці інакше" aria-label="Позначити пункт ${m[1]}">⚑${n?' '+n:''}</button>`; }
+        h += `<p class="np${b.indent?' ind':''}" id="${prefix}${pid}"><span class="n">${m[1]}</span><span>${inline(m[2], ctx)}</span>${fb}</p>`;
+        if (ctx && ctx.flags && FLAG.open === ctx.code + '|' + pid) h += flagBox(ctx.code, pid); }
+      else h += `<p id="${prefix}b-${i}" class="${b.indent?'ind':''}${/:$/.test(b.text)?' sub':''}">${inline(b.text, ctx)}</p>`;
+    }
+    else if (b.t === 'li'){ const t = b.ord ? 'ol' : 'ul'; if (list !== t){ closeList(); h += `<${t}>`; list = t; } h += `<li>${inline(b.text, ctx)}</li>`; }
+    else if (b.t === 'quote') h += `<blockquote>${inline(b.text, ctx)}</blockquote>`;
+    else if (b.t === 'table'){
+      const [head, ...rest] = b.rows;
+      h += `<div class="tbl" id="${prefix}b-${i}"><table><thead><tr>${head.map(c => `<th>${inline(c, ctx)}</th>`).join('')}</tr></thead><tbody>${rest.map(r => `<tr>${r.map(c => `<td>${inline(c, ctx)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+  });
+  closeList(); if (inSec) h += '</div></details>';
+  return h;
+}
+const foldBar = `<div class="toolsbar"><button class="kb sm" data-fold="open">Розгорнути все</button><button class="kb sm" data-fold="close">Згорнути все</button></div>`;
+// Wrap each h2 group of an old wiki page into a collapsible block (DOM pass after render).
+function sectionize(root){
+  root.querySelectorAll('.pi[data-sec]').forEach(pi => {
+    const prefix = pi.dataset.sec; let cur = null, k = 0;
+    [...pi.children].forEach(el => {
+      if (el.tagName === 'H2'){
+        const d = document.createElement('details'); d.className = 'lsec'; d.id = prefix + '-s' + (k++); d.open = true;
+        const s = document.createElement('summary'); s.appendChild(el.cloneNode(true)); d.appendChild(s);
+        cur = document.createElement('div'); cur.className = 'sec-b'; d.appendChild(cur); el.replaceWith(d);
+      } else if (cur) cur.appendChild(el);
+    });
+  });
+}
+function openTo(el){ let d = el.closest('details'); while (d){ d.open = true; d = d.parentElement?.closest('details'); } }
+
+/* ---------------- views ---------------- */
+function refChip(ref){
+  const [code, p] = ref.split('#');
+  if (!REG[code]) return `<span class="chip">${esc(code)}</span>`;
+  return `<a class="chip acc mono" href="#doc-${slug(code)}${p?'--p-'+p.replace(/\./g,'-'):''}">${esc(code)}${p?' п. '+esc(p):''}</a>`;
+}
+function docLink(c){ return REG[c] ? `<a class="chip acc mono" href="#doc-${slug(c)}" title="${esc(docTitle(c))}">${c}</a>` : `<span class="chip">${esc(c)}</span>`; }
+function updatesFeed(){
+  const rows = [];
+  Object.keys(D.docs).forEach(c => { const h = historyRows(c)[0]; if (h) rows.push({c, v:h[0], date:h[1], who:h[2], text:h[3]}); });
+  rows.sort((a, b) => (dmy(b.date) || '').localeCompare(dmy(a.date) || '') || byCode(a.c, b.c));
+  return rows;
+}
+function viewHome(){
+  const {req, ok, overdue} = myProgress();
+  const pending = req.filter(c => ackState(c, S.own?.docs) !== 'ok');
+  const groups = [...new Set(SITUATIONS.map(s => s.g))];
+  let cur = 'Усі'; try { cur = sessionStorage.getItem('sitg') || 'Усі'; } catch {}
+  const list = SITUATIONS.filter(s => cur === 'Усі' || s.g === cur);
+  let h = `<div class="wrap"><div class="eyebrow">Навігатор оператора</div><h1 class="ptitle">Що робити, коли…</h1>
+  <p class="lead">Робочі ситуації з посиланням на пункт документа, де записано правило. Усі документи поки чернетки: якщо пункт розходиться з практикою, пишіть власнику документа.</p>`;
+  if (overdue.length) h += `<div class="ackbar crit">Прострочено ознайомлення: ${overdue.map(c => esc(c)).join(', ')}.<a href="#me">Мої ознайомлення</a></div>`;
+  else if (S.uid && myRole() && pending.length) h += `<div class="ackbar need">Вам потрібно ознайомитись ще з ${pending.length} з ${req.length} документів.<a href="#me">Мої ознайомлення</a></div>`;
+  else if (S.uid && !myRole() && !req.length) h += `<div class="ackbar need">Оберіть свою роль, щоб побачити, з якими документами вам потрібно ознайомитись.<a href="#me">Обрати роль</a></div>`;
+  const upd = updatesFeed().slice(0, 6);
+  h += `<details class="blk" id="home-upd" open><summary><h2>Останні зміни в документах</h2></summary><div>${upd.map(u => `<div class="upd"><div>${docLink(u.c)}</div><div><b>v${esc(u.v)}</b> <span class="muted small">${esc(u.date)} · ${esc(u.who)}</span><div class="small muted">${esc(u.text)}</div></div></div>`).join('')}</div></details>`;
+  h += `<details class="blk" id="home-sit" open><summary><h2>Ситуації</h2></summary><div style="padding-bottom:14px"><div class="seg" role="tablist">${['Усі',...groups].map(g => `<button class="${g===cur?'on':''}" data-sitg="${esc(g)}">${esc(g)}</button>`).join('')}</div>
+  <div class="grid g3">${list.map(s => `<div class="card sit"><div class="q">${esc(s.q)}</div><div class="a">${inline(s.a)}</div><div class="refs">${s.refs.map(refChip).join('')}</div></div>`).join('')}</div></div></details></div>`;
+  return h;
+}
+const RF = {type:'', stream:'', tier:'', status:'', owner:'', q:''};
+function viewRegistry(){
+  const rows = ALL_CODES.map(c => REG[c]);
+  const uniq = k => [...new Set(rows.map(r => String(r[k]||'')).filter(Boolean))].sort();
+  const sel = (k, label, opts) => `<select id="rf-${k}" data-rf="${k}" aria-label="${label}"><option value="">${label}: усі</option>${opts.map(o => `<option ${RF[k]===o?'selected':''} value="${esc(o)}">${esc(k==='type'?TYPES[o]:o)}</option>`).join('')}</select>`;
+  const f = rows.filter(r => (!RF.type || TYPE_OF(r.code)===RF.type) && (!RF.stream || r.stream===RF.stream) && (!RF.tier || String(r.tier)===RF.tier) && (!RF.status || docStatus(r.code)===RF.status) && (!RF.owner || r.owner===RF.owner) && (!RF.q || norm(r.code+' '+r.title).includes(norm(RF.q))));
+  return `<div class="wrap"><div class="eyebrow">Реєстр v1.58 + документи, додані після нього</div><h1 class="ptitle">Реєстр документів</h1>
+  <p class="lead">Усі документи бази CS. ✓ — є текст у вікі, «мат.» — є лише робочі матеріали зі старої вікі. Статус і версія беруться з самого документа, якщо він є.</p>
+  <div class="filters">${sel('type','Тип',Object.keys(TYPES))}${sel('stream','Потік',uniq('stream'))}${sel('tier','Tier',uniq('tier'))}${sel('status','Статус',[...new Set(rows.map(r=>docStatus(r.code)))].sort())}${sel('owner','Власник',uniq('owner'))}
+  <input id="rf-q" data-rf="q" placeholder="Код або назва" value="${esc(RF.q)}"><span class="muted small">${f.length} з ${rows.length}</span></div>
+  <div class="tbl"><table><thead><tr><th>Код</th><th>Назва</th><th>Потік</th><th>Tier</th><th>Власник</th><th>Статус</th><th class="num">Версія</th></tr></thead><tbody>
+  ${f.map(r => `<tr><td><a class="code" href="#doc-${slug(r.code)}">${r.code}</a> ${hasText(r.code)?'✓':MAT_BY[r.code]?'<span class="muted small">мат.</span>':''}</td><td>${esc(docTitle(r.code))}</td><td class="small">${esc(r.stream||'')}</td><td>${tierChip(r.code)}</td><td class="small">${esc(r.owner||'')}</td><td>${statusChip(docStatus(r.code))}</td><td class="num mono">${esc(docVer(r.code)||'—')}</td></tr>`).join('')}
+  </tbody></table></div></div>`;
+}
+function viewCore(){
+  return `<div class="wrap"><div class="eyebrow">core.yaml</div><h1 class="ptitle">Ядро v1</h1><p class="lead">Документи, без яких сьогодні втрачаємо клієнтів, гроші або безпеку. Рішення 6.3: ядро в пріоритеті (до затвердження).</p>
+  <div class="tbl"><table><thead><tr><th>Код</th><th>Документ</th><th>Чому в ядрі</th><th>Статус</th></tr></thead><tbody>
+  ${D.core.map(x => `<tr><td><a class="code" href="#doc-${slug(x.code)}">${x.code}</a></td><td>${esc(docTitle(x.code))}</td><td class="small">${esc(x.why)}</td><td>${statusChip(docStatus(x.code))}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function viewReady(){
+  const rows = ALL_CODES.map(c => REG[c]); const total = rows.length;
+  const cnt = f => rows.filter(f).length;
+  const st = {}; rows.forEach(r => { const s = docStatus(r.code); st[s] = (st[s]||0)+1; });
+  const critNo = rows.filter(r => tierN(r.code)===0 && docStatus(r.code)==='Не створено');
+  const noOwner = rows.filter(r => !r.owner || /Уточнити|\/|\+|запропоновано/.test(r.owner));
+  const cur = cnt(r => docStatus(r.code)==='Чинний');
+  const stat = (n, l) => `<div class="card stat"><b>${n}</b><span class="muted small">${l}</span></div>`;
+  const tiers = [0,1,2].map(t => ({t, n:cnt(r => tierN(r.code)===t), ok:cnt(r => tierN(r.code)===t && docStatus(r.code)==='Чинний')}));
+  return `<div class="wrap"><div class="eyebrow">Аналог аркуша «Зведення»</div><h1 class="ptitle">Готовність бази</h1>
+  <div class="grid g4">${stat(total,'документів у реєстрі')}${stat(Math.round(cur/total*100)+'%','чинних')}${stat(critNo.length,'критичних не створено')}${stat(noOwner.length,'без одного власника')}${stat(Object.keys(D.docs).length,'з текстом у вікі')}${stat(Object.keys(MAT_BY).filter(c=>!hasText(c)).length,'лише з матеріалами')}</div>
+  <details class="blk" id="rd-st" open style="margin-top:16px"><summary><h2>За статусом</h2></summary><div class="grid g4" style="padding-bottom:14px">${Object.entries(st).sort((a,b)=>b[1]-a[1]).map(([s,n]) => `<div class="card">${statusChip(s)}<div style="font-size:22px;font-weight:700;margin-top:6px">${n}</div><div class="bar"><i style="width:${n/total*100}%"></i></div></div>`).join('')}</div></details>
+  <details class="blk" id="rd-t" open><summary><h2>За Tier</h2></summary><div class="tbl"><table><thead><tr><th>Tier</th><th class="num">Усього</th><th class="num">Чинних</th><th>Частка чинних</th></tr></thead><tbody>${tiers.map(x => `<tr><td>Tier ${x.t}</td><td class="num">${x.n}</td><td class="num">${x.ok}</td><td style="min-width:140px"><div class="bar"><i style="width:${x.n?x.ok/x.n*100:0}%"></i></div></td></tr>`).join('')}</tbody></table></div></details>
+  <details class="blk" id="rd-c" open><summary><h2>Критичні (Tier 0), не створено</h2></summary><div class="rel" style="padding-bottom:14px">${critNo.map(r => `<a href="#doc-${slug(r.code)}" title="${esc(r.title)}">${r.code}</a>`).join('') || '<span>немає</span>'}</div></details>
+  <details class="blk" id="rd-o"><summary><h2>Власник не одна людина (правило №1)</h2></summary><div class="tbl"><table><thead><tr><th>Код</th><th>Документ</th><th>Власник у реєстрі</th></tr></thead><tbody>${noOwner.map(r => `<tr><td><a class="code" href="#doc-${slug(r.code)}">${r.code}</a></td><td>${esc(docTitle(r.code))}</td><td>${esc(r.owner||'—')}</td></tr>`).join('')}</tbody></table></div></details></div>`;
+}
+function viewStreams(){
+  const groups = {}; ALL_CODES.forEach(c => { const s = REG[c].stream || 'Інше'; (groups[s] = groups[s] || []).push(c); });
+  const keys = Object.keys(groups).sort((a,b) => { const na = parseFloat(a), nb = parseFloat(b); if (!isNaN(na) && !isNaN(nb)) return na-nb; if (!isNaN(na)) return -1; if (!isNaN(nb)) return 1; return a.localeCompare(b,'uk'); });
+  return `<div class="wrap"><div class="eyebrow">1.0–8.0, E і тематичні зони</div><h1 class="ptitle">Потоки</h1><p class="lead">Документи, згруповані за потоком із реєстру.</p>${foldBar}
+  ${keys.map((k, i) => `<details class="blk" id="st-${i}" open><summary><h2>${esc(k)} <span class="muted small">${groups[k].length}</span></h2></summary><div class="tbl"><table><tbody>${groups[k].map(c => `<tr><td style="width:96px"><a class="code" href="#doc-${slug(c)}">${c}</a></td><td>${esc(docTitle(c))} ${hasText(c)?'✓':MAT_BY[c]?'<span class="muted small">мат.</span>':''}</td><td style="width:150px">${statusChip(docStatus(c))}</td></tr>`).join('')}</tbody></table></div></details>`).join('')}</div>`;
+}
+function materialHtml(m, open){
+  const raw = legacyRaw('old', m.p);
+  const also = (m.also||[]).filter(c => REG[c]);
+  return `<details class="mat" id="m-${m.p}" ${open?'open':''}><summary><span class="mat-tag">Робочий матеріал</span><span>${esc(legTitle('old', m.p))}</span></summary>
+  <div style="padding-bottom:14px">${also.length?`<p class="small muted" style="margin:0 0 8px">Стосується також: ${also.map(docLink).join(' ')}</p>`:''}<div class="legacy"><div class="pi" data-sec="m-${m.p}">${raw || '<p>Цю сторінку в старій вікі не було реалізовано.</p>'}</div></div></div></details>`;
+}
+function ackPanel(code){
+  const v = docVer(code);
+  if (!hasAny(code)) return '';
+  const role = myRole(); const isReq = reqFor(role, myItems()).includes(code); const due = myItems()[code]?.due;
+  if (S.noAccess) return `<section class="ack" id="ack"><h3>Ознайомлення</h3><p class="muted">Кнопка ознайомлення працює, коли вікі відкрито на claude.ai під вашим робочим акаунтом.</p></section>`;
+  if (!S.ready) return `<section class="ack" id="ack"><h3>Ознайомлення</h3><p class="muted">Завантажую ваші ознайомлення…</p></section>`;
+  const a = S.own?.docs?.[code]; const state = ackState(code, S.own?.docs);
+  if (state === 'ok') return `<section class="ack ok" id="ack"><h3>✓ Ви ознайомлені з цим документом</h3><p class="small">${v?'Версія v'+esc(v)+' · ':''}${fmtDate(a.at)}${a.quiz?` · перевірка розуміння ${a.quiz.score}/${a.quiz.total}`:''}. Коли вийде нова версія, тут знову з'явиться кнопка.</p></section>`;
+  let changes = '';
+  if (state === 're'){ const rows = historyRows(code).filter(r => vnum(r[0]) > vnum(a.v));
+    changes = `<p class="small">Ви ознайомились з v${esc(a.v)} (${fmtDate(a.at)}). Поточна версія v${esc(v)}.${D.archive?.[code]?.[a.v] ? ` <a href="#doc-${slug(code)}--diff-${vslug(a.v)}">Показати зміни по пунктах</a>` : ''}</p>${rows.length?`<div class="note small"><b>Що змінилось:</b>${rows.map(r => `<div>v${esc(r[0])} · ${esc(r[1])}: ${esc(r[3])}</div>`).join('')}</div>`:''}`; }
+  return `<section class="ack ${isReq?'need':''}" id="ack"><h3>${state==='re'?'Вийшла нова версія документа':'Ознайомлення з документом'}</h3>${changes}
+  ${isReq?`<p class="small">Обов'язковий для вас${due?`, термін — <b>${fmtDay(due)}</b>`:''}${role?` (роль: ${esc(ROLE_NAME[role])})`:''}.</p>`:(role?'':`<p class="small muted"><a href="#me">Оберіть роль</a>, щоб бачити обов'язкові документи.</p>`)}
+  ${QUIZ[code] ? quizHtml(code) : `<div><button class="kb pri" data-sign="${esc(code)}">Ознайомлений(а) з ${esc(code)}${v?' v'+esc(v):''}</button></div>`}</section>`;
+}
+function viewDoc(code){
+  const r = REG[code]; if (!r) return `<div class="wrap"><div class="empty">Документа ${esc(code)} немає в реєстрі.</div></div>`;
+  const d = D.docs[code]; const ctx = {code};
+  const related = [...new Set([...(r.related||[]), ...(d?.related||[])])];
+  const props = D.proposals.filter(p => (p.for||[]).includes(code));
+  const mats = MAT_BY[code] || []; const also = ALSO_BY[code] || []; const tools = TOOLS_BY[code] || [];
+  const state = S.uid ? ackState(code, S.own?.docs) : null; const isReq = reqFor(myRole(), myItems()).includes(code);
+  let bar = '';
+  if (hasAny(code) && S.uid && S.ready){
+    if (state==='ok') bar = `<div class="ackbar ok">✓ Ви ознайомлені${S.own.docs[code].v?' з v'+esc(S.own.docs[code].v):''} · ${fmtDate(S.own.docs[code].at)}</div>`;
+    else if (isReq) bar = `<div class="ackbar ${state==='re'?'need':'crit'}">${state==='re'?'Нова версія документа. Ознайомтесь знову.':'Обов\'язковий для вас. Ви ще не ознайомлені.'}<a href="#doc-${slug(code)}--ack">Перейти до кнопки</a></div>`;
+  }
+  const regStatus = r.status && d && r.status !== d.status ? `<div class="note warn small">У реєстрі v1.58 статус «${esc(r.status)}»${r.version?`, версія ${esc(r.version)}`:''}. Документ новіший, реєстр потрібно оновити.</div>` : '';
+  const meta = d ? Object.entries(d.meta).filter(([k,v]) => v && k !== 'Код') : [['Рівень', r.level],['Потік', r.stream],['Tier', r.tier],['Власник', r.owner],['Статус', r.status],['Версія', r.version],['Формат', r.format],['Де зберігається', r.storage]].filter(x => x[1]);
+  const toc = d ? d.blocks.filter(b => b.t==='h').map(b => { const m = b.text.match(/^(\d+)\./); return m ? `<a href="#doc-${slug(code)}--s-${m[1]}">${esc(b.text)}</a>` : ''; }).join('') : '';
+  const matToc = mats.map(m => `<a href="#doc-${slug(code)}--m-${m.p}">▸ ${esc(legTitle('old', m.p))}</a>`).join('');
+  const draftNote = d?.source === 'claude-draft' ? `<div class="note warn small">Проєкт, підготовлений разом зі створенням вікі. Потребує перевірки власником і затвердження.</div>` : '';
+  return `<div class="wrap"><div class="doc-grid"><article class="read" style="min-width:0">
+  <div class="dochead"><div class="row"><span class="code">${code}</span>${tierChip(code)}${statusChip(docStatus(code))}${docVer(code)?`<span class="chip">v${esc(docVer(code))}</span>`:''}${d?.date?`<span class="chip">${esc(d.date)}</span>`:''}</div>
+  <h1>${esc(docTitle(code))}</h1></div>
+  ${bar}${draftNote}${regStatus}
+  <details class="blk" id="pass" ${d?'':'open'}><summary><h2>Паспорт документа</h2></summary><dl class="passport" style="margin-bottom:14px">${meta.map(([k,v]) => `<div><dt>${esc(k)}</dt><dd>${inline(String(v), ctx)}</dd></div>`).join('')}</dl></details>
+  ${r.note?`<div class="note small"><b>Примітка реєстру:</b> ${inline(r.note, ctx)}</div>`:''}
+  ${props.length?`<div class="note small"><b>Є пропозиції змін:</b> ${props.map(p => `<a href="#prop-${p.id}">${esc(p.title)}</a>`).join(' · ')}</div>`:''}
+  ${tools.length?`<div class="note small"><b>Інструменти до документа:</b> ${tools.map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join(' · ')}</div>`:''}
+  ${d ? `${foldBar}<div class="body">${blocksHtml(d.blocks, {code, flags:true})}</div>` : `<div class="note warn small">Офіційний текст документа ще не перенесено у вікі (джерело: ${esc(r.storage||'Notion / Freitty CS')}).${mats.length?' Нижче — робочі матеріали зі старої вікі, що стосуються цього документа.':''}</div>${mats.length?foldBar:''}`}
+  ${mats.length?`<h3 style="margin-top:22px">Робочі матеріали${d?' до документа':''}</h3>${mats.map(m => materialHtml(m, !d)).join('')}`:''}
+  ${also.length?`<p class="small muted">Пов'язані матеріали в інших документах: ${also.map(m => `<a href="#doc-${slug(m.to)}--m-${m.p}">${esc(legTitle('old', m.p))} (${m.to})</a>`).join(' · ')}</p>`:''}
+  ${ackPanel(code)}
+  ${versionsBlock(code)}
+  ${related.length?`<h3>Пов'язані документи (з реєстру)</h3><div class="rel">${related.map(c => REG[c]?`<a href="#doc-${slug(c)}" title="${esc(docTitle(c))}">${c}</a>`:`<span>${esc(c)}</span>`).join('')}</div>`:''}
+  ${code==='REG-13'?`<div class="note small">Журнал веде вікі автоматично. ${S.admin?'<a href="#journal">Відкрити журнал ознайомлень</a>.':'Журнал бачать керівник CS і редактори вікі.'}</div>`:''}
+  </article>${(toc||matToc)?`<aside class="toc" aria-label="Зміст"><div class="eyebrow" style="margin:0 0 6px 8px">Зміст</div>${toc}${matToc}${hasAny(code)?`<a href="#doc-${slug(code)}--ack">✓ Ознайомлення</a>`:''}</aside>`:''}</div></div>`;
+}
+function viewTool(p){
+  const t = TOOLS.find(x => x.p === p) || {p, docs:[]};
+  return `<div class="wrap"><div class="eyebrow">Інструмент</div><h1 class="ptitle">${esc(legTitle('tool', p))}</h1>
+  ${t.docs.length?`<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${t.docs.map(docLink).join('')}</div>`:''}
+  ${t.warn?`<div class="note warn small">Довідково. Джерело ціни — прайс Freitty Hub по локації (POL-03 п. 4.1). Якщо цифри тут і в Hub розходяться, правильна ціна — у Hub.</div>`:''}
+  ${p===9?`<div class="note small">Вкладка «Карта мережі» показує точки без підкладки карти: зображення карти з OpenStreetMap у вікі не завантажуються. Картки і матриця покриття працюють повністю.</div>`:''}
+  <div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`;
+}
+function viewRef(id){
+  const r = REFS.find(x => x.id === id); if (!r) return viewHome();
+  return `<div class="wrap"><article class="read" style="max-width:900px"><div class="eyebrow">Довідник · знання про продукт і клієнтів</div><h1 class="ptitle">${esc(legTitle(r.kind, r.p))}</h1>
+  <p class="lead">Довідковий матеріал зі старої вікі. Це знання, а не правило: обов'язкові вимоги — у політиках і процедурах.</p>${r.kind==='old'?foldBar:''}
+  <div class="legacy ${r.kind==='tool'?'tool-wrap':''}"><div class="pi" ${r.kind==='old'?`data-sec="r-${r.id}"`:''}>${legacyRaw(r.kind, r.p) || ''}</div></div></article></div>`;
+}
+function viewProposals(){
+  return `<div class="wrap"><div class="eyebrow">proposals/ · не злиті в документи</div><h1 class="ptitle">Пропозиції змін</h1><p class="lead">Зміни до існуючих документів з дизайн-сесії жовтня 2026. Вони не діють, доки власник документа не внесе їх у текст.</p>
+  <div class="grid g3">${D.proposals.map(p => `<a class="card" href="#prop-${p.id}"><div class="row" style="margin-bottom:6px">${(p.for||[]).map(c => `<span class="code">${esc(c)}</span>`).join(' ')}</div><div style="font-weight:600">${esc(p.title)}</div><div class="muted small" style="margin-top:6px">${esc(p.status||'')}${p.date?' · '+esc(p.date):''}</div></a>`).join('')}</div></div>`;
+}
+function viewProposal(id){
+  const p = D.proposals.find(x => x.id === id); if (!p) return viewProposals();
+  return `<div class="wrap"><article class="read"><div class="eyebrow"><a href="#proposals">Пропозиції змін</a></div><h1 class="ptitle">${esc(p.title)}</h1>
+  <div class="row" style="margin-bottom:12px"><span class="chip warn">${esc(p.status||'Пропозиція')}</span>${p.date?`<span class="chip">${esc(p.date)}</span>`:''}${p.author?`<span class="chip">Автор: ${esc(p.author)}</span>`:''}</div>
+  <div class="note small">Змінює: ${(p.for||[]).map(c => REG[c]?`<a href="#doc-${slug(c)}">${c} ${esc(docTitle(c))}</a>`:esc(c)).join(' · ')}</div>
+  ${foldBar}<div class="body">${blocksHtml(p.blocks, {}, 'pr-')}</div></article></div>`;
+}
+function viewDecisions(){
+  const cls = s => s==='Затверджено'?'ok': s==='Відкрито'?'crit':'warn';
+  return `<div class="wrap"><div class="eyebrow">decisions.md</div><h1 class="ptitle">Журнал рішень</h1><p class="lead">Затверджено: Влад, у розмові. Відкрито: чекає рішення. До затвердження: потрібне підтвердження Head of CS або CEO.</p>
+  <div class="tbl"><table><thead><tr><th>#</th><th>Тема</th><th>Рішення</th><th>Статус</th><th>Дата</th></tr></thead><tbody>
+  ${D.decisions.map(r => `<tr><td class="mono">${esc(r.n)}</td><td class="small">${esc(r.topic)}</td><td>${inline(r.text)}</td><td><span class="chip ${cls(r.status)}">${esc(r.status)}</span></td><td class="small mono">${esc(r.date)}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function viewDemand(){ const a = D.analytics;
+  return `<div class="wrap"><article class="read"><div class="eyebrow">${esc(a.source||'')} · ${esc(a.date||'')}</div><h1 class="ptitle">${esc(a.title)}</h1><p class="lead">${esc(a.note||'')}</p><div class="body">${blocksHtml(a.blocks, {}, 'an-')}</div></article></div>`; }
+function viewLegend(){
+  return `<div class="wrap"><article class="read"><div class="eyebrow">registry/legend.md</div><h1 class="ptitle">Як влаштована база</h1><p class="lead">Коди документів, потоки, пріоритети, статуси і правила ведення реєстру.</p>${foldBar}<div class="body">${blocksHtml(D.legend, {}, 'lg-')}</div></article></div>`;
+}
+function viewRoles(){
+  const counts = {}; if (S.admin) teamPeople().forEach(p => { if (p.role) counts[p.role] = (counts[p.role]||0)+1; });
+  return `<div class="wrap"><div class="eyebrow">POL-21 · проєкт</div><h1 class="ptitle">Ролі і доступи</h1>
+  <p class="lead">Робоча роль визначає, з якими документами людина ознайомлюється. Права у вікі визначає рівень доступу, який власник дає через Share. Правила описано в <a href="#doc-POL-21">POL-21</a>.</p>
+  <details class="blk" id="rl-roles" open><summary><h2>Робочі ролі</h2></summary><div class="tbl"><table><thead><tr><th>Роль</th><th>Хто це</th><th>Обов'язкові документи</th>${S.admin?'<th class="num">Людей</th>':''}</tr></thead><tbody>
+  ${ROLES.map(r => { const req = roleReq(r.id); return `<tr><td><b>${esc(r.name)}</b><div class="small muted">${inline(r.src)}</div></td><td class="small">${esc(r.about)}</td><td><div class="rel">${req.map(c => `<a href="#doc-${slug(c)}">${c}</a>`).join('') || '<span>—</span>'}</div></td>${S.admin?`<td class="num">${counts[r.id]||0}</td>`:''}</tr>`; }).join('')}
+  </tbody></table></div></details>
+  <details class="blk" id="rl-rights" open><summary><h2>Права у вікі</h2></summary><div class="tbl"><table><thead><tr><th>Рівень</th><th>Рівень у Share</th><th>Що може</th></tr></thead><tbody>
+   <tr><td><b>Адміністратор</b></td><td>Owner, Editor</td><td>Бачить журнал ознайомлень, призначає людям ролі і документи з терміном, веде перелік обов'язкових документів для ролей</td></tr>
+   <tr><td><b>Працівник</b></td><td>Contributor</td><td>Читає вікі, відмічає ознайомлення, бачить свої призначення</td></tr>
+   <tr><td><b>Читач</b></td><td>Viewer, Commenter</td><td>Лише читає; відмітити ознайомлення не може</td></tr>
+  </tbody></table></div><p class="small muted" style="padding-bottom:12px">Відмітку про ознайомлення ставить лише сама людина. Ніхто, включно з адміністратором, не може поставити, змінити чи видалити її за іншу людину.</p></details></div>`;
+}
+function viewMe(){
+  let h = `<div class="wrap"><div class="eyebrow">REG-13 · мої записи</div><h1 class="ptitle">Мої ознайомлення</h1>`;
+  if (S.noAccess) return h + `<div class="empty">Ознайомлення відмічаються, коли вікі відкрито на claude.ai під вашим робочим акаунтом.</div></div>`;
+  if (!S.ready) return h + `<div class="empty">Завантажую ваші ознайомлення…</div></div>`;
+  const role = myRole(); const assigned = S.assigned?.role; const items = myItems();
+  h += `<p class="lead">Кнопка «Ознайомлений(а)» фіксує, яку версію документа ви прочитали і коли. Нова версія документа потребує нового ознайомлення. Ваші відмітки бачите ви і керівник CS.</p>`;
+  h += `<div class="card" style="margin-bottom:16px"><label for="myRole" class="eyebrow">Моя роль</label><div style="margin-top:6px">${assigned ? `<b>${esc(ROLE_NAME[assigned]||assigned)}</b> <span class="muted small">— призначено керівником</span>` :
+    `<select id="myRole" class="fld"><option value="">Оберіть роль…</option>${ROLES.map(r => `<option value="${r.id}" ${role===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}</select>`}</div></div>`;
+  const {req, ok, overdue} = myProgress(); const own = S.own?.docs || {};
+  if (!req.length) return h + `<div class="empty">${role ? 'Для вашої ролі поки немає обов\'язкових документів.' : 'Оберіть роль, щоб побачити обов\'язкові документи.'}</div></div>`;
+  h += `<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><b>${ok} з ${req.length} виконано</b><span class="small ${overdue.length?'':'muted'}" style="${overdue.length?'color:var(--crit)':''}">${overdue.length ? 'Прострочено: '+overdue.length : req.length-ok ? 'Залишилось '+(req.length-ok) : 'Усе виконано'}</span></div><div class="bar" style="margin-top:8px"><i style="width:${ok/req.length*100}%"></i></div></div>`;
+  h += `<div class="tbl"><table><thead><tr><th>Документ</th><th>Чому</th><th>Термін</th><th>Моє ознайомлення</th></tr></thead><tbody>${req.map(c => {
+    const st = ackState(c, own); const a = own[c]; const it = items[c]; const late = it?.due && it.due < today() && st !== 'ok';
+    const cell = st==='ok' ? `<span class="chip ok">✓ ${a.v?'v'+esc(a.v)+' · ':''}${fmtDate(a.at)}</span>` : st==='re' ? `<a class="chip warn" href="#doc-${slug(c)}--ack">↻ Ознайомлені з v${esc(a.v)}, потрібна v${esc(docVer(c))}</a>` : `<a class="chip crit" href="#doc-${slug(c)}--ack">Ознайомитись</a>`;
+    const why = [roleReq(role).includes(c) ? 'роль' : '', it ? 'призначено' : ''].filter(Boolean).join(', ');
+    return `<tr><td><a class="code" href="#doc-${slug(c)}">${c}</a> ${esc(docTitle(c))}</td><td class="small">${why}</td><td class="small ${late?'':'muted'}" style="${late?'color:var(--crit);font-weight:600':''}">${it?.due ? fmtDay(it.due) : '—'}</td><td>${cell}</td></tr>`; }).join('')}</tbody></table></div>`;
+  const log = (S.own?.log || []).slice().reverse().slice(0, 30);
+  if (log.length) h += `<details class="blk" id="me-log"><summary><h2>Моя історія</h2></summary><div class="tbl"><table><tbody>${log.map(e => `<tr><td class="small mono">${fmtDate(e.at)}</td><td>${e.t==='ack'?`Ознайомлення: <a href="#doc-${slug(e.c)}">${esc(e.c)}</a>${e.v?' v'+esc(e.v):''}`:`Роль: ${esc(ROLE_NAME[e.role]||e.role)}`}</td></tr>`).join('')}</tbody></table></div></details>`;
+  return h + `</div>`;
+}
+function viewNewbie(){
+  let role = myRole() || 'ssr'; try { role = sessionStorage.getItem('nbrole') || role; } catch {}
+  const req = roleReq(role); const own = S.own?.docs || {};
+  const stage1 = ['POL-01','POL-02','POL-04'].filter(c => req.includes(c));
+  const stage2 = ['POL-06','POL-09','POL-08','POL-13','POL-05','SOP-1.9'].filter(c => req.includes(c));
+  const stage3 = req.filter(c => !stage1.includes(c) && !stage2.includes(c)).sort(byCode);
+  const li = c => { const st = S.uid ? ackState(c, own) : null; return `<div class="row" style="padding:4px 0">${st?`<span class="dot ${st}" style="display:inline-block;width:9px;height:9px;border-radius:50%"></span>`:''}<a class="code" href="#doc-${slug(c)}">${c}</a><span>${esc(docTitle(c))}</span></div>`; };
+  const step = (title, why, list) => list.length ? `<div class="step"><div class="num"></div><div class="card"><b>${title}</b><p class="small muted" style="margin:4px 0 8px">${inline(why)}</p>${list.map(li).join('')}</div></div>` : '';
+  return `<div class="wrap"><div class="eyebrow">Онбординг · SOP-6.2, SOP-6.4</div><h1 class="ptitle">Шлях новачка</h1>
+  <p class="lead">У якому порядку читати документи до виходу на лінію. Перелік залежить від ролі і збігається з обов'язковими документами в «Мої ознайомлення».</p>
+  <div class="filters"><label class="small muted" for="nbRole">Роль</label><select id="nbRole">${ROLES.map(r => `<option value="${r.id}" ${role===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}</select></div>
+  <div class="steps">${step('До видачі доступів', 'IT видає доступ лише після ознайомлення з POL-01 і POL-02 (POL-04 п. 5.2).', stage1)}
+  ${step('Перший тиждень: як ми працюємо', 'Парасолькова політика обслуговування, комунікація, ескалація, робочий час, збої і робоча зміна.', stage2)}
+  ${step('До допуску на самостійну роботу', 'Решта обов\'язкових документів ролі. Допуск — за SOP-6.4.', stage3)}
+  <div class="step"><div class="num"></div><div class="card"><b>Довідник і інструменти</b><p class="small muted" style="margin:4px 0 8px">Не обов'язкові, але потрібні в роботі з першого дня.</p><div class="rel">${REFS.map(r => `<a href="#ref-${r.id}">${esc(legTitle(r.kind, r.p))}</a>`).join('')}${TOOLS.slice(0,4).map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join('')}</div></div></div></div></div>`;
+}
+const CONFLICTS = [
+  {t:'Способи оплати: SOP-1.9 називає Stripe і EFS, POL-03 — лише Stripe.', refs:['SOP-1.9#10.7','POL-03#6.7']},
+  {t:'Перший адресат при підозрі на витік: POL-02 — Andy Havryliuk протягом години, POL-04 — IT, і лише потім Andy.', refs:['POL-02#8.1','POL-04#8.1']},
+  {t:'TPL-01 (скрипти) суперечить одразу POL-01, POL-03 (оплата на складі) і POL-06 («Absolutely, we handle that all the time»).', refs:['POL-03#13.2','POL-06']},
+  {t:'Order chat — єдине джерело правди за POL-09, POL-08, POL-13, але SOP-1.9 його не згадує (логування в HubSpot і передача в каналі команди).', refs:['POL-09#4.1','SOP-1.9#6.4']},
+  {t:'POL-13 описує три зміни, SOP-1.9 — лише денну і нічну. Тривалість перерв: SOP-1.9 відсилає до POL-13, POL-13 — до STD-06.', refs:['POL-13#4.1','SOP-1.9#7.5']},
+  {t:'Назви ролей розходяться: «старший зміни» (SOP-1.9) і «CS супервайзер» (POL-05, POL-08, POL-13); «Key Clients» і «Key Account Representative».', refs:['SOP-1.9','POL-13']},
+  {t:'Числа (строки, пороги) записані прямо в політиках, хоча за правилом №5 реєстру вони мають жити лише в STD.', refs:['POL-05#4.1','POL-10#7.1']},
+];
+function openQuestions(code){
+  const d = D.docs[code]; if (!d) return [];
+  let on = false, sub = ''; const items = [];
+  for (const b of d.blocks){
+    if (b.t === 'h'){ if (on) break; on = /Відкриті питання/.test(b.text); continue; }
+    if (!on || b.t !== 'p') continue;
+    const m = b.text.match(/^(\d+(?:\.\d+)+)\.?\s+(.*)$/s);
+    if (m) items.push({n:m[1], text:m[2], sub}); else sub = b.text;
+  }
+  return items;
+}
+function viewQuestions(){
+  const docs = Object.keys(D.docs).sort(byCode).map(c => ({c, items:openQuestions(c), owner:(D.docs[c].meta['Власник']||REG[c]?.owner||'—').replace(/\s*\(.*\)$/, '')})).filter(x => x.items.length);
+  const isBlock = it => /^Блок/i.test(it.sub);
+  const total = docs.reduce((n, x) => n + x.items.length, 0); const blocks = docs.reduce((n, x) => n + x.items.filter(isBlock).length, 0);
+  const owners = {}; docs.forEach(x => { owners[x.owner] = owners[x.owner] || {n:0, b:0}; owners[x.owner].n += x.items.length; owners[x.owner].b += x.items.filter(isBlock).length; });
+  return `<div class="wrap"><div class="eyebrow">Зібрано з розділів «Відкриті питання» всіх документів</div><h1 class="ptitle">Відкриті питання і блокери</h1>
+  <p class="lead">Що заважає затвердити документи і кому це вирішувати. Блокери — питання, без яких документ не затверджується.</p>
+  <div class="grid g4" style="margin-bottom:12px"><div class="card stat"><b>${total}</b><span class="muted small">відкритих питань</span></div><div class="card stat"><b>${blocks}</b><span class="muted small">блокують затвердження</span></div><div class="card stat"><b>${CONFLICTS.length}</b><span class="muted small">суперечностей між документами</span></div></div>
+  <details class="blk" id="q-own" open><summary><h2>За власниками</h2></summary><div class="tbl"><table><thead><tr><th>Власник</th><th class="num">Питань</th><th class="num">Блокерів</th></tr></thead><tbody>${Object.entries(owners).sort((a,b)=>b[1].b-a[1].b).map(([o,v]) => `<tr><td>${esc(o)}</td><td class="num">${v.n}</td><td class="num">${v.b}</td></tr>`).join('')}</tbody></table></div></details>
+  <details class="blk" id="q-conf" open><summary><h2>Суперечності між документами</h2></summary><div style="padding-bottom:12px"><p class="small muted">Знайдено під час перенесення документів у вікі, 17.11.2026.</p>${CONFLICTS.map(x => `<div class="upd"><div class="chip crit">!</div><div>${esc(x.t)}<div class="refs row" style="margin-top:4px">${x.refs.map(refChip).join('')}</div></div></div>`).join('')}</div></details>
+  ${docs.map(x => `<details class="blk" id="q-${slug(x.c)}"><summary><h2><span class="code">${x.c}</span> ${esc(docTitle(x.c))} <span class="muted small">${x.items.length}${x.items.some(isBlock)?' · блокерів '+x.items.filter(isBlock).length:''}</span></h2></summary><div style="padding-bottom:12px">${x.items.map(it => `<div class="upd"><div>${isBlock(it)?'<span class="chip crit">блокер</span>':'<span class="chip">питання</span>'}</div><div><a class="mono small" href="#doc-${slug(x.c)}--p-${it.n.replace(/\./g,'-')}">${it.n}</a> ${inline(it.text, {code:x.c})}</div></div>`).join('')}</div></details>`).join('')}</div>`;
+}
+
+/* ---------------- admin: team & assignments ---------------- */
+const TEAM = {q:'', hits:[], roleFilter:'', assignFor:null};
+function teamPeople(){
+  const ids = new Set([...Object.keys(S.team.people), ...Object.keys(S.team.acks), ...Object.keys(S.team.assign)]);
+  return [...ids].map(id => ({id, role: S.team.people[id]?.role || S.team.acks[id]?.role || null, assigned: !!S.team.people[id]?.role, acks: S.team.acks[id]?.docs || {}, items: S.team.assign[id]?.items || {}}));
+}
+function personStats(p){
+  const req = reqFor(p.role, p.items); const ok = req.filter(c => ackState(c, p.acks)==='ok').length;
+  const late = Object.entries(p.items).filter(([c, it]) => it.due && it.due < today() && ackState(c, p.acks) !== 'ok').length;
+  return {req, ok, late};
+}
+const avatar = id => `<img data-av="${esc(id)}" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">`;
+const nameSpan = id => `<span data-pid="${esc(id)}">…</span>`;
+function viewTeam(){
+  let h = `<div class="wrap"><div class="eyebrow">Адміністрування</div><h1 class="ptitle">Команда і призначення</h1>`;
+  if (!S.admin) return h + `<div class="empty">Ця сторінка доступна керівнику CS і редакторам вікі.</div></div>`;
+  const people = teamPeople().filter(p => !TEAM.roleFilter || p.role === TEAM.roleFilter);
+  let gaps = 0, done = 0, late = 0;
+  people.forEach(p => { const s = personStats(p); done += s.ok; gaps += s.req.length - s.ok; late += s.late; });
+  const full = people.filter(p => { const s = personStats(p); return s.req.length && s.ok === s.req.length; }).length;
+  h += `<p class="lead">Ролі людей, призначення документів з терміном і стан ознайомлень. Кожна дія записується в <a href="#journal">журнал REG-13</a>.</p>
+  <div class="grid g4" style="margin-bottom:16px">
+   <div class="card stat"><b>${people.length}</b><span class="muted small">людей</span></div>
+   <div class="card stat"><b>${full}</b><span class="muted small">виконали все обов'язкове</span></div>
+   <div class="card stat"><b>${gaps}</b><span class="muted small">ознайомлень бракує</span></div>
+   <div class="card stat"><b style="${late?'color:var(--crit)':''}">${late}</b><span class="muted small">прострочених призначень</span></div></div>
+  <details class="blk" id="tm-add" ${people.length?'':'open'}><summary><h2>Додати людину</h2></summary><div style="padding-bottom:14px">
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="pick" style="flex:1;min-width:220px"><input id="teamQ" class="fld" style="width:100%" placeholder="Ім'я колеги" value="${esc(TEAM.q)}" autocomplete="off"><div class="opts" id="teamOpts" hidden></div></div>
+   <select id="teamRoleNew" class="fld">${ROLES.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('')}</select></div>
+   <p class="small muted" style="margin:8px 0 0">Щоб людина могла відмічати ознайомлення, поділіться вікі з нею з рівнем доступу Contributor.</p></div></details>
+  <div class="filters"><select id="teamRoleFilter"><option value="">Усі ролі</option>${ROLES.map(r => `<option value="${r.id}" ${TEAM.roleFilter===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}</select></div>`;
+  if (!S.teamLoaded) h += `<div class="empty">Завантажую команду…</div>`;
+  else if (!people.length) h += `<div class="empty">Поки нікого немає. Додайте людей вище або поділіться вікі з командою: людина з'явиться тут, коли обере роль.</div>`;
+  else h += `<div class="tbl"><table><thead><tr><th>Людина</th><th>Роль</th><th class="num">Виконано</th><th class="num">Прострочено</th><th></th></tr></thead><tbody>
+  ${people.map(p => { const s = personStats(p);
+    return `<tr><td><div class="who">${avatar(p.id)}${nameSpan(p.id)}</div></td>
+    <td><select class="fld" data-setrole="${esc(p.id)}" aria-label="Роль">${p.role?'':'<option value="">—</option>'}${ROLES.map(r => `<option value="${r.id}" ${p.role===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}</select>${p.role && !p.assigned?'<div class="small muted">обрано самостійно</div>':''}</td>
+    <td class="num">${s.ok}/${s.req.length}</td><td class="num" style="${s.late?'color:var(--crit);font-weight:600':''}">${s.late}</td>
+    <td><button class="kb sm" data-assign="${esc(p.id)}">${TEAM.assignFor===p.id?'Закрити':'Призначити документи'}</button></td></tr>
+    ${TEAM.assignFor===p.id ? `<tr><td colspan="5">${assignPanel(p)}</td></tr>` : ''}`; }).join('')}
+  </tbody></table></div>`;
+  h += `<details class="blk" id="tm-mx"><summary><h2>Матриця: люди × документи</h2></summary>${matrixGrid(people)}</details>`;
+  h += `<details class="blk" id="tm-roles"><summary><h2>Обов'язкові документи для ролей</h2></summary>${matrixEditor()}</details>`;
+  return h + `</div>`;
+}
+function assignPanel(p){
+  const items = p.items; const def = new Date(Date.now() + 7*864e5).toISOString().slice(0,10);
+  const roleSet = new Set(roleReq(p.role));
+  return `<div class="assign-panel" id="ap-${esc(p.id)}"><div class="row"><b>Призначити документи</b><span class="small muted">Документи ролі вже обов'язкові; тут — додаткові з терміном.</span></div>
+  <div class="row" style="margin-top:8px"><label class="small" for="apDue">Термін</label><input type="date" id="apDue" class="fld" value="${def}"><span class="small muted">для нових документів; у вже призначених термін не змінюється</span></div>
+  <div class="assign-grid">${ACKABLE.map(c => `<label><input type="checkbox" data-apc="${esc(c)}" ${items[c]?'checked':''}> <span><span class="code">${c}</span> ${esc(docTitle(c))}${roleSet.has(c)?' <span class="muted small">(роль)</span>':''}${items[c]?.due?` <span class="muted small">до ${fmtDay(items[c].due)}</span>`:''}</span></label>`).join('')}</div>
+  <div class="row"><button class="kb pri sm" data-apsave="${esc(p.id)}">Зберегти призначення</button><button class="kb sm" data-assign="${esc(p.id)}">Скасувати</button></div></div>`;
+}
+function matrixGrid(people){
+  const docs = [...new Set([...Object.keys(S.matrix), ...people.flatMap(p => Object.keys(p.items))])].filter(c => REG[c] && hasAny(c)).sort(byCode);
+  if (!people.length) return `<p class="muted small">Немає людей.</p>`;
+  return `<div class="tbl mx"><table><thead><tr><th>Людина</th>${docs.map(c => `<th class="v" title="${esc(docTitle(c))}">${c}</th>`).join('')}</tr></thead><tbody>
+  ${people.map(p => { const req = reqFor(p.role, p.items);
+    return `<tr><td><div class="who">${avatar(p.id)}${nameSpan(p.id)}</div></td>${docs.map(c => { const isReq = req.includes(c); const st = ackState(c, p.acks); const a = p.acks[c];
+      if (!isReq && !a) return `<td class="c na">·</td>`;
+      const t = a ? `${a.v?'v'+a.v+' · ':''}${fmtDate(a.at)}` : 'Не ознайомлений(а)';
+      return `<td class="c ${st}" title="${esc(c+': '+t)}">${st==='ok'?'✓':st==='re'?'↻':isReq?'✗':''}</td>`; }).join('')}</tr>`; }).join('')}
+  </tbody></table></div><p class="small muted">✓ ознайомлений(а) з поточною версією · ↻ зі старою версією · ✗ обов'язковий, не ознайомлений(а) · · не обов'язковий</p>`;
+}
+function matrixEditor(){
+  return `<div class="tbl"><table><thead><tr><th>Документ</th>${ROLES.map(r => `<th class="small" style="text-align:center">${esc(r.name)}</th>`).join('')}</tr></thead><tbody>
+  ${ACKABLE.map(c => `<tr><td><span class="code">${c}</span> <span class="small">${esc(docTitle(c))}</span></td>${ROLES.map(r => `<td style="text-align:center"><input type="checkbox" aria-label="${esc(c+' — '+r.name)}" data-mx="${esc(c)}|${r.id}" ${(S.matrix[c]||[]).includes(r.id)?'checked':''}></td>`).join('')}</tr>`).join('')}
+  </tbody></table></div><p class="small muted" style="padding-bottom:12px">Зміни зберігаються одразу, діють для всієї команди і записуються в журнал.</p>`;
+}
+
+/* ---------------- admin: journal REG-13 ---------------- */
+const JF = {who:'', c:'', t:'', period:'30'};
+const EV_NAME = {flag:'Позначка до пункту', 'flag-answer':'Відповідь на позначку', ack:'Ознайомився(лась)', assign:'Призначено документ', unassign:'Призначення знято', role:'Змінено роль', person:'Додано в команду', matrix:'Змінено перелік для ролі'};
+function journalEvents(){
+  const ev = [];
+  Object.entries(S.team.acks).forEach(([uid, a]) => {
+    const log = a.log && a.log.length ? a.log : Object.entries(a.docs || {}).map(([c, x]) => ({t:'ack', c, v:x.v, at:x.at}));
+    log.forEach(e => ev.push({...e, who:uid, by:uid, self:true}));
+  });
+  S.audit.forEach(e => ev.push(e));
+  allFlags().forEach(f => { ev.push({t:'flag', who:f.uid, by:f.uid, self:true, c:f.c, p:f.p, at:f.at, text:f.text});
+    if (f.ansAt) ev.push({t:'flag-answer', who:f.uid, by:f.ansBy, c:f.c, p:f.p, at:f.ansAt, text:f.answer}); });
+  ev.sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  return ev;
+}
+function evText(e){
+  if (e.t === 'ack') return `${docLinkTxt(e.c)}${e.v?' v'+esc(e.v):''}${e.quiz?` · перевірка ${e.quiz.score}/${e.quiz.total}, спроба ${e.quiz.tries}`:''}`;
+  if (e.t === 'flag' || e.t === 'flag-answer') return `${docLinkTxt(e.c)} п. ${esc(String(e.p||'').replace(/^p-/,'').replace(/-/g,'.'))}: ${esc(String(e.text||'').slice(0, 120))}`;
+  if (e.t === 'assign') return `${docLinkTxt(e.c)}${e.due?' · термін '+fmtDay(e.due):''}`;
+  if (e.t === 'unassign') return docLinkTxt(e.c);
+  if (e.t === 'role' || e.t === 'person') return esc(ROLE_NAME[e.role] || e.role || '—');
+  if (e.t === 'matrix') return `${docLinkTxt(e.c)} → ${esc(ROLE_NAME[e.role]||e.role)}: ${e.on?'обов\'язковий':'не обов\'язковий'}`;
+  return '';
+}
+const docLinkTxt = c => REG[c] ? `<a href="#doc-${slug(c)}">${esc(c)}</a>` : esc(c||'');
+function filteredEvents(){
+  const from = JF.period ? new Date(Date.now() - (+JF.period)*864e5).toISOString() : '';
+  return journalEvents().filter(e => (!JF.who || e.who === JF.who) && (!JF.c || e.c === JF.c) && (!JF.t || e.t === JF.t) && (!from || String(e.at) >= from));
+}
+function viewJournal(){
+  let h = `<div class="wrap"><div class="eyebrow">REG-13 · веде вікі автоматично</div><h1 class="ptitle">Журнал ознайомлень</h1>`;
+  if (!S.admin) return h + `<div class="empty">Журнал бачать керівник CS і редактори вікі.</div></div>`;
+  const ev = filteredEvents(); const people = teamPeople();
+  h += `<p class="lead">Хто, коли і що зробив: ознайомлення з документами, призначення, зміни ролей і переліків. Записи не редагуються і не видаляються.</p>
+  <div class="filters">
+   <select id="jf-who" data-jf="who"><option value="">Усі люди</option>${people.map(p => `<option value="${esc(p.id)}" ${JF.who===p.id?'selected':''} data-pidopt="${esc(p.id)}">${esc(p.id.slice(0,6))}…</option>`).join('')}</select>
+   <select id="jf-c" data-jf="c"><option value="">Усі документи</option>${ACKABLE.map(c => `<option ${JF.c===c?'selected':''}>${c}</option>`).join('')}</select>
+   <select id="jf-t" data-jf="t"><option value="">Усі дії</option>${Object.entries(EV_NAME).map(([k,v]) => `<option value="${k}" ${JF.t===k?'selected':''}>${v}</option>`).join('')}</select>
+   <select id="jf-period" data-jf="period"><option value="7" ${JF.period==='7'?'selected':''}>7 днів</option><option value="30" ${JF.period==='30'?'selected':''}>30 днів</option><option value="90" ${JF.period==='90'?'selected':''}>90 днів</option><option value="" ${JF.period===''?'selected':''}>Увесь час</option></select>
+   <span class="muted small">${ev.length} записів</span><button class="kb sm" id="csvBtn" ${S.dl?'':'hidden'}>Завантажити CSV</button></div>`;
+  if (!S.teamLoaded) h += `<div class="empty">Завантажую журнал…</div>`;
+  else if (!ev.length) h += `<div class="empty">За обраний період записів немає.</div>`;
+  else h += `<div class="tbl"><table><thead><tr><th>Коли</th><th>Хто</th><th>Дія</th><th>Що</th><th>Ким</th></tr></thead><tbody>
+  ${ev.slice(0, 500).map(e => `<tr><td class="small mono">${fmtDate(e.at)}</td><td><div class="who">${avatar(e.who)}${nameSpan(e.who)}</div></td><td class="ev-${e.t}">${EV_NAME[e.t]||esc(e.t)}</td><td>${evText(e)}</td><td class="small">${e.self?'<span class="muted">сам(а)</span>':e.by?nameSpan(e.by):'—'}</td></tr>`).join('')}
+  </tbody></table></div>${ev.length>500?'<p class="small muted">Показано 500 останніх записів; повний перелік — у CSV.</p>':''}`;
+  return h + `</div>`;
+}
+async function fillNames(){
+  if (!S.user) return;
+  const els = [...document.querySelectorAll('[data-pid],[data-av],[data-pidopt]')]; if (!els.length) return;
+  const ids = [...new Set(els.map(e => e.dataset.pid || e.dataset.av || e.dataset.pidopt))];
+  const ps = await S.user.profiles(ids);
+  document.querySelectorAll('[data-pid]').forEach(e => e.textContent = ps[e.dataset.pid]?.name || 'Колега без імені');
+  document.querySelectorAll('[data-pidopt]').forEach(e => e.textContent = ps[e.dataset.pidopt]?.name || 'Колега без імені');
+  document.querySelectorAll('[data-av]').forEach(e => e.src = ps[e.dataset.av]?.avatarUrl || e.src);
+}
+async function exportCsv(){
+  const ids = [...new Set(journalEvents().flatMap(e => [e.who, e.by]).filter(Boolean))];
+  const ps = S.user ? await S.user.profiles(ids) : {};
+  const nm = id => id ? (ps[id]?.name || id) : '';
+  const rows = [['coli','khto','diia','dokument','versiia','termin','rol','kym']];
+  filteredEvents().forEach(e => rows.push([e.at, nm(e.who), EV_NAME[e.t]||e.t, e.c||'', e.v||'', e.due||'', ROLE_NAME[e.role]||e.role||'', e.self ? nm(e.who) : nm(e.by)]));
+  rows[0] = ['Коли','Хто','Дія','Документ','Версія','Термін','Роль','Ким'];
+  const csv = '﻿' + rows.map(r => r.map(x => `"${String(x ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  S.dl.save({filename:`REG-13-zhurnal-oznaiomlen-${today()}.csv`, data:new Blob([csv], {type:'text/csv'})}).catch(() => {});
+}
+
+/* ---------------- router ---------------- */
+let lastRoute = null;
+function parseRoute(){
+  const h = decodeURIComponent(location.hash.slice(1)) || 'home';
+  if (h.startsWith('doc-')){ const [base, anchor] = h.slice(4).split('--'); return {view:'doc', code:unslug(base), anchor}; }
+  if (h.startsWith('prop-')) return {view:'prop', id:h.slice(5)};
+  let m = h.match(/^tool-(\d+)$/); if (m) return {view:'tool', p:+m[1]};
+  m = h.match(/^ref-([\w]+)$/); if (m) return {view:'ref', id:m[1]};
+  m = h.match(/^old-(\d+)$/); if (m) return {view:'old', p:+m[1]};
+  return {view:h};
+}
+function render(){
+  const r = parseRoute(); const route = decodeURIComponent(location.hash.slice(1)) || 'home';
+  if (r.view === 'old'){ window.show(r.p); return; }
+  const oldVer = r.view === 'doc' && /^(ver|diff)-/.test(r.anchor || '');
+  const routeKey = r.view === 'doc' && !oldVer ? 'doc-' + slug(r.code) : route;
+  $('#side').innerHTML = sideHtml(route);
+  const prog = myProgress(); const chip = $('#meChip');
+  $('#meCnt').textContent = S.uid && prog.req.length ? `${prog.ok}/${prog.req.length}` : '—';
+  chip.classList.toggle('due', prog.overdue.length > 0);
+  const keep = routeKey === lastRoute; const y = window.scrollY;
+  if (keep && (r.view === 'tool' || (r.view === 'ref' && r.id === 'pitch'))) return; // interactive tools keep their own state
+  const openState = {}; if (keep) $('#main').querySelectorAll('details[id]').forEach(d => openState[d.id] = d.open);
+  let html;
+  switch (r.view){
+    case 'doc': html = oldVer ? viewOldVersion(r.code, r.anchor) : viewDoc(r.code); break;
+    case 'archive': html = viewArchive(); break;
+    case 'flags': html = viewFlags(); break;
+    case 'prop': html = viewProposal(r.id); break;
+    case 'tool': html = viewTool(r.p); break;
+    case 'ref': html = viewRef(r.id); break;
+    case 'registry': html = viewRegistry(); break;
+    case 'core': html = viewCore(); break;
+    case 'ready': html = viewReady(); break;
+    case 'streams': html = viewStreams(); break;
+    case 'proposals': html = viewProposals(); break;
+    case 'decisions': html = viewDecisions(); break;
+    case 'demand': html = viewDemand(); break;
+    case 'legend': html = viewLegend(); break;
+    case 'me': html = viewMe(); break;
+    case 'team': html = viewTeam(); break;
+    case 'journal': html = viewJournal(); break;
+    case 'roles': html = viewRoles(); break;
+    case 'newbie': html = viewNewbie(); break;
+    case 'questions': html = viewQuestions(); break;
+    default: html = viewHome();
+  }
+  const ae = document.activeElement; const focusId = ae && ae.id && $('#main').contains(ae) ? ae.id : null; const selStart = focusId && ae.selectionStart;
+  $('#main').innerHTML = html;
+  sectionize($('#main'));
+  if (keep) Object.entries(openState).forEach(([id, o]) => { const d = document.getElementById(id); if (d) d.open = o; });
+  if (focusId){ const el = document.getElementById(focusId); if (el){ el.focus(); try { if (selStart != null) el.setSelectionRange(selStart, selStart); } catch {} } }
+  if (keep) window.scrollTo(0, y);
+  else {
+    lastRoute = routeKey;
+    const anchor = r.view === 'doc' && !oldVer && r.anchor;
+    const el = anchor && document.getElementById(anchor);
+    if (el){ openTo(el); if (el.tagName === 'DETAILS') el.open = true; el.scrollIntoView({block:'start'});
+      if (/^(p|b)-/.test(anchor)){ el.classList.add('hit'); setTimeout(() => el.classList.remove('hit'), 2200); } }
+    else window.scrollTo(0, 0);
+    document.title = (r.view==='doc' ? r.code + ' · ' : '') + 'Freitty CS Wiki';
+    if (r.view === 'tool' || (r.view === 'ref' && r.id === 'pitch')) legacyInit(r.view === 'tool' ? r.p : 11);
+    if (r.view === 'ref' && r.id === '12') setTimeout(() => { try { showP('oo'); } catch {} }, 30);
+  }
+  fillNames();
+  closeDrawer();
+}
+function legacyInit(p){
+  setTimeout(() => { try {
+    if (p === 1) addLine();
+    if (p === 4) updProg();
+    if (p === 8) rstkInit();
+    if (p === 9){ if (typeof netLeafletMap !== 'undefined' && netLeafletMap){ try { netLeafletMap.remove(); } catch {} } netLeafletMap = null; netLeafletInited = false; netActiveServices = new Set(); netActiveTypes = new Set(); netCurrentTab = 'cards'; }
+  } catch (e) { console.warn('tool init', e); } }, 30);
+}
+window.addEventListener('hashchange', () => { lastRoute = null; render(); });
+
+/* ---------------- events ---------------- */
+document.addEventListener('toggle', e => { const d = e.target; if (d.matches && d.matches('details.sg')){ sgOpen[d.dataset.sg] = d.open; store.set('sg', sgOpen); } }, true);
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.rf){ RF[t.dataset.rf] = t.value; render(); }
+  if (t.dataset.qz){ const [c, qi, oi] = t.dataset.qz.split('|'); const st = QZ[c] || (QZ[c] = {ans:{}, res:null, tries:0}); st.ans[+qi] = +oi; }
+  if (t.dataset.jf !== undefined){ JF[t.dataset.jf] = t.value; render(); }
+  if (t.id === 'myRole' && t.value) setMyRole(t.value);
+  if (t.id === 'nbRole'){ try { sessionStorage.setItem('nbrole', t.value); } catch {} render(); }
+  if (t.id === 'teamRoleFilter'){ TEAM.roleFilter = t.value; render(); }
+  if (t.dataset.setrole && t.value) setPersonRole(t.dataset.setrole, t.value, false);
+  if (t.dataset.mx){ const [c, role] = t.dataset.mx.split('|'); const m = JSON.parse(JSON.stringify(S.matrix)); const set = new Set(m[c]||[]); t.checked ? set.add(role) : set.delete(role); m[c] = [...set]; saveMatrix(m, c, role, t.checked); }
+});
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.id === 'rf-q'){ RF.q = t.value; render(); }
+  if (t.id === 'teamQ'){ TEAM.q = t.value; if (!S.user) return; S.user.search(t.value).then(hits => { const o = $('#teamOpts'); if (!o) return;
+    o.innerHTML = hits.map(p => `<button data-addp="${esc(p.id)}"><img src="${esc(p.avatarUrl)}" alt="" width="20" height="20" style="border-radius:50%"><span></span></button>`).join(''); o.hidden = !hits.length;
+    o.querySelectorAll('button').forEach((b, i) => b.querySelector('span').textContent = hits[i].name || 'Колега'); }); }
+});
+document.addEventListener('focusin', e => { if (e.target.id === 'teamQ' && S.user) e.target.dispatchEvent(new Event('input', {bubbles:true})); });
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, a');
+  if (!t) { if (!e.target.closest('.srch')) $('#sres').hidden = true; return; }
+  if (t.dataset.sign){ sign(t.dataset.sign); return; }
+  if (t.dataset.qcheck){ checkQuiz(t.dataset.qcheck); return; }
+  if (t.dataset.flag){ FLAG.open = FLAG.open === t.dataset.flag ? null : t.dataset.flag; render(); if (FLAG.open) setTimeout(() => $('#flText')?.focus(), 0); return; }
+  if (t.dataset.flsend){ const [c, pid] = t.dataset.flsend.split('|'); sendFlag(c, pid); return; }
+  if (t.dataset.flans){ const [u, id] = t.dataset.flans.split('|'); answerFlag(u, id, false); return; }
+  if (t.dataset.flclose){ const [u, id] = t.dataset.flclose.split('|'); answerFlag(u, id, true); return; }
+  if (t.dataset.flst){ try { sessionStorage.setItem('flst', t.dataset.flst); } catch {} render(); return; }
+  if (t.dataset.sitg){ try { sessionStorage.setItem('sitg', t.dataset.sitg); } catch {} render(); return; }
+  if (t.dataset.fold){ const open = t.dataset.fold === 'open'; $('#main').querySelectorAll('details.sec, details.mat, details.lsec, details.blk').forEach(d => d.open = open); return; }
+  if (t.dataset.addp){ const role = $('#teamRoleNew').value; TEAM.q = ''; setPersonRole(t.dataset.addp, role, true); return; }
+  if (t.dataset.assign){ TEAM.assignFor = TEAM.assignFor === t.dataset.assign ? null : t.dataset.assign; render(); return; }
+  if (t.dataset.apsave){ const id = t.dataset.apsave; const panel = document.getElementById('ap-' + id); const due = $('#apDue').value || null;
+    const before = S.team.assign[id]?.items || {}; const items = {};
+    panel.querySelectorAll('[data-apc]').forEach(cb => { if (cb.checked){ const c = cb.dataset.apc; items[c] = before[c] || {due, at:new Date().toISOString(), by:S.uid}; } });
+    TEAM.assignFor = null; saveAssign(id, items); return; }
+  if (t.id === 'csvBtn'){ exportCsv(); return; }
+  if (t.id === 'menuBtn'){ toggleSide(); return; }
+  if (t.classList.contains('srch-it')){ $('#sres').hidden = true; $('#si').value = ''; }
+  if (!e.target.closest('.srch')) $('#sres').hidden = true;
+});
+const isNarrow = () => window.matchMedia('(max-width:900px)').matches;
+if (store.get('noside') === true) document.body.classList.add('noside');
+function toggleSide(){
+  if (!isNarrow()){ const hide = !document.body.classList.contains('noside'); document.body.classList.toggle('noside', hide); store.set('noside', hide); return; }
+  const s = $('#side'); const open = !s.classList.contains('open'); s.classList.toggle('open', open);
+  let sc = $('.scrim'); if (open && !sc){ sc = document.createElement('div'); sc.className = 'scrim'; sc.onclick = closeDrawer; document.body.appendChild(sc); } if (!open && sc) sc.remove();
+}
+function closeDrawer(){ $('#side').classList.remove('open'); const sc = $('.scrim'); if (sc) sc.remove(); }
+
+/* search box */
+const si = $('#si'), sres = $('#sres'); let sel = -1;
+si.addEventListener('input', () => {
+  const q = si.value.trim(); sel = -1;
+  if (q.length < 2){ sres.hidden = true; return; }
+  const res = search(q);
+  if (!res.length && q.length >= 3) logGap(q);
+  sres.innerHTML = res.length ? `<div class="cnt">Знайдено: ${res.length}${res.length===40?'+':''}</div>` + res.map(it => `<a class="srch-it" href="#${it.route}"><div class="l">${esc(it.label)} · ${esc(it.title)}${it.where?' · '+esc(it.where):''}</div><div class="s">${snippet(it.raw, q)}</div></a>`).join('') : `<div class="cnt">Нічого не знайдено. Спробуйте інше слово або код документа.</div>`;
+  sres.hidden = false;
+});
+si.addEventListener('keydown', e => {
+  const items = [...sres.querySelectorAll('.srch-it')];
+  if (e.key === 'Escape'){ sres.hidden = true; si.blur(); }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); sel = Math.max(0, Math.min(items.length-1, sel + (e.key==='ArrowDown'?1:-1))); items.forEach((x,i) => x.classList.toggle('on', i===sel)); items[sel]?.scrollIntoView({block:'nearest'}); }
+  if (e.key === 'Enter'){ const it = items[Math.max(sel,0)]; if (it){ location.hash = it.getAttribute('href'); sres.hidden = true; si.value = ''; si.blur(); } }
+});
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); si.focus(); si.select(); } });
+
+render();
+initShared().catch(() => { S.ready = true; S.noAccess = true; render(); });
+})();
+</script>
