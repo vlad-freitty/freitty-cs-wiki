@@ -110,4 +110,11 @@ html = (tpl.replace("__LEGACY_CSS__", legacy_css)
            .replace("__QUIZ__", quiz.replace("</", "<\\/"))
            .replace("__DATA__", data.replace("</", "<\\/")))
 io.open(OUT, "w", encoding="utf-8").write(html)
+# Standalone copy for static hosting (Vercel): the same page wrapped in a full document skeleton.
+skeleton = ('<!doctype html><html lang="uk"><head><meta charset="utf-8">'
+            '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
+            '<meta name="robots" content="noindex,nofollow">'
+            '<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
+            '</head><body>')
+io.open(os.path.join(ROOT, "dist", "index.html"), "w", encoding="utf-8").write(skeleton + html + "</body></html>")
 print("built", OUT, round(len(html.encode("utf-8")) / 1024), "KB", file=sys.stderr)

@@ -478,7 +478,7 @@ function myProgress(){
 }
 
 async function initShared(){
-  if (!window.claude?.use) { S.ready = true; S.noAccess = true; render(); return; }
+  if (!window.claude?.use) { S.ready = true; S.noAccess = true; S.offsite = true; render(); return; }
   const [user, db] = await Promise.all([claude.use('user'), claude.use('db')]);
   S.user = user; S.db = db;
   if (user) { S.uid = await user.id(); S.admin = await user.canEdit(); }
@@ -690,6 +690,7 @@ function viewFlags(){
 }
 
 /* ---------------- sidebar ---------------- */
+const ARTIFACT_URL = 'https://claude.ai/artifact/2d71rDBWh1Qb4b3zQ6sAcw';
 const SITUATIONS = __SITUATIONS__;
 const QUIZ = (() => { const q = __QUIZ__; delete q._about; return q; })();
 const sgOpen = store.get('sg') || {};
@@ -1195,7 +1196,7 @@ function render(){
     default: html = viewHome();
   }
   const ae = document.activeElement; const focusId = ae && ae.id && $('#main').contains(ae) ? ae.id : null; const selStart = focusId && ae.selectionStart;
-  $('#main').innerHTML = html;
+  $('#main').innerHTML = (S.offsite ? `<div class="wrap"><div class="note warn small" style="margin:0 0 16px">Це копія вікі тільки для читання. Відмітити ознайомлення, пройти перевірку розуміння, поставити позначку до пункту і побачити журнал можна у вікі на claude.ai: <a href="${ARTIFACT_URL}" target="_blank" rel="noopener">відкрити робочу версію</a>.</div></div>` : '') + html;
   sectionize($('#main'));
   if (keep) Object.entries(openState).forEach(([id, o]) => { const d = document.getElementById(id); if (d) d.open = o; });
   if (focusId){ const el = document.getElementById(focusId); if (el){ el.focus(); try { if (selStart != null) el.setSelectionRange(selStart, selStart); } catch {} } }
