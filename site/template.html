@@ -17,6 +17,7 @@ __LEGACY_CSS__
   --hazard:#e8a317; --hazard-ink:#1b1505;
   --ok:#1f7a4d; --ok-soft:#e1f3e9; --warn:#a86200; --warn-soft:#fcefd9; --crit:#b42318; --crit-soft:#fde4e1; --idle:#6b7280; --idle-soft:#eceef1;
   --mark:#ffe58a;
+  --g-blue:#2563c9; --g-violet:#7048c8; --g-teal:#0f8a83; --g-amber:#b7791f; --g-red:#c2410c; --g-orange:#c26a0c; --g-cyan:#0e7fa3; --g-green:#2f8a3b; --g-pink:#c0397a; --g-slate:#5b6b82;
   --font:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
   --r:8px;
@@ -26,13 +27,15 @@ __LEGACY_CSS__
   --accent:#6ea2ef; --accent-soft:#1c2d47; --accent-fg:#0b1220;
   --hazard:#f0b43c; --hazard-ink:#1b1505;
   --ok:#5cc58f; --ok-soft:#163327; --warn:#f0a94a; --warn-soft:#3a2a12; --crit:#f2867b; --crit-soft:#3d1a17; --idle:#9aa3ae; --idle-soft:#232b35;
-  --mark:#6b5a12; color-scheme:dark}}
+  --mark:#6b5a12; color-scheme:dark;
+  --g-blue:#7aa8f5; --g-violet:#a88cf0; --g-teal:#4fc9bf; --g-amber:#e8b45a; --g-red:#f2875a; --g-orange:#f0a25a; --g-cyan:#5ac2e3; --g-green:#6fcf7e; --g-pink:#ef84b5; --g-slate:#9badc6}}
 :root[data-theme="dark"]{
   --bg:#0f141b; --surface:#161d26; --surface-2:#1d2631; --fg:#e6ebf1; --muted:#9aa6b5; --line:#2a3542;
   --accent:#6ea2ef; --accent-soft:#1c2d47; --accent-fg:#0b1220;
   --hazard:#f0b43c; --hazard-ink:#1b1505;
   --ok:#5cc58f; --ok-soft:#163327; --warn:#f0a94a; --warn-soft:#3a2a12; --crit:#f2867b; --crit-soft:#3d1a17; --idle:#9aa3ae; --idle-soft:#232b35;
-  --mark:#6b5a12; color-scheme:dark}
+  --mark:#6b5a12; color-scheme:dark;
+  --g-blue:#7aa8f5; --g-violet:#a88cf0; --g-teal:#4fc9bf; --g-amber:#e8b45a; --g-red:#f2875a; --g-orange:#f0a25a; --g-cyan:#5ac2e3; --g-green:#6fcf7e; --g-pink:#ef84b5; --g-slate:#9badc6}
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--fg)}
 body{font-family:var(--font);font-size:15px;line-height:1.55}
@@ -73,20 +76,26 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
 body.noside .layout{grid-template-columns:minmax(0,1fr)}
 body.noside .side{display:none}
 .side{border-right:1px solid var(--line);background:var(--surface);padding:10px 10px 40px max(10px,env(safe-area-inset-left,0px));position:sticky;top:calc(env(safe-area-inset-top,0px) + 57px);height:calc(100vh - 57px - env(safe-area-inset-top,0px));overflow:auto}
-.side details.sg{margin-top:6px}
-.side summary.sgh{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 8px 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;border-radius:6px}
+.side details.sg{margin:4px 0 2px}
+.side summary.sgh{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:6px 8px;font-size:13.5px;font-weight:600;color:var(--fg);border-radius:8px;user-select:none}
 .side summary.sgh::-webkit-details-marker{display:none}
-.side summary.sgh::before{content:"▸";font-size:10px;transition:transform .15s}
-.side details[open] > summary.sgh::before{transform:rotate(90deg)}
-.side summary.sgh:hover{color:var(--fg)}
-.side summary.sgh .n{margin-left:auto;font-family:var(--mono);letter-spacing:0}
-.side a{display:flex;gap:8px;align-items:baseline;padding:5px 8px;border-radius:6px;color:var(--fg);font-size:14px;line-height:1.3}
-.side a:hover{background:var(--surface-2);text-decoration:none}
-.side a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
-.side a .c{font-family:var(--mono);font-size:11.5px;color:var(--muted);min-width:56px;flex-shrink:0}
-.side a.on .c{color:var(--accent)}
-.side a .dot{margin-left:auto;flex-shrink:0;width:8px;height:8px;border-radius:50%;align-self:center}
-.side a .mt{margin-left:auto;font-size:10.5px;color:var(--muted);font-family:var(--mono)}
+.side summary.sgh::after{content:"";width:7px;height:7px;border-right:1.8px solid var(--muted);border-bottom:1.8px solid var(--muted);transform:rotate(-45deg);margin:0 4px 0 2px;transition:transform .15s}
+.side details[open] > summary.sgh::after{transform:rotate(45deg)}
+.side summary.sgh:hover{background:var(--surface-2)}
+.side .gi{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;color:var(--gc);background:color-mix(in srgb,var(--gc) 15%,transparent)}
+.side .gl{flex:1;min-width:0}
+.side summary.sgh .n{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--gc);background:color-mix(in srgb,var(--gc) 12%,transparent);border-radius:999px;padding:1px 7px}
+.side .sgb{display:flex;flex-direction:column;gap:1px;margin:2px 0 6px 13px;padding-left:12px;border-left:2px solid color-mix(in srgb,var(--gc) 25%,transparent)}
+.side a{display:flex;gap:9px;align-items:center;padding:5px 8px;border-radius:7px;color:var(--fg);font-size:13.5px;line-height:1.3}
+.side a:hover{background:color-mix(in srgb,var(--gc) 9%,transparent);text-decoration:none}
+.side a.on{background:color-mix(in srgb,var(--gc) 16%,transparent);color:var(--fg);font-weight:600}
+.side a .ii{color:color-mix(in srgb,var(--gc) 75%,var(--muted));display:grid;place-items:center;flex-shrink:0}
+.side a.on .ii{color:var(--gc)}
+.side a .c{font-family:var(--mono);font-size:11px;color:var(--gc);background:color-mix(in srgb,var(--gc) 11%,transparent);border-radius:5px;padding:2px 5px;min-width:54px;text-align:center;flex-shrink:0}
+.side a .c.num{min-width:26px}
+.side a .lb{flex:1;min-width:0}
+.side a .dot{flex-shrink:0;width:8px;height:8px;border-radius:50%}
+.side a .mt{font-size:10.5px;color:var(--muted);font-family:var(--mono)}
 .dot.ok{background:var(--ok)} .dot.re{background:var(--warn)} .dot.no{background:var(--crit)}
 .main{min-width:0;padding-block:24px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:1080px;margin:0 auto}
@@ -243,17 +252,9 @@ details.mat > summary{font-weight:600}
 .step{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px}
 .step .num{counter-increment:st;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700}
 .step .num::before{content:counter(st)}
-/* paragraph flags */
-.body p.np{grid-template-columns:44px minmax(0,1fr) auto}
-.flag-btn{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px;opacity:.3;border-radius:4px;align-self:start;white-space:nowrap}
-.body p.np:hover .flag-btn,.flag-btn.has,.flag-btn:focus-visible{opacity:1}
-.flag-btn:hover{background:var(--surface-2)}
-.flag-btn.has{color:var(--warn);font-weight:600}
-.flagbox{margin:0 0 12px 48px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface-2);font-size:14px;display:flex;flex-direction:column;gap:8px}
-.flagbox textarea{width:100%;min-height:60px;border:1px solid var(--line);border-radius:var(--r);padding:6px 8px;background:var(--surface);font:inherit}
-.fl{border-left:3px solid var(--warn);padding:6px 10px;background:var(--surface);border-radius:0 6px 6px 0}
-.fl.answered{border-color:var(--ok)} .fl.closed{border-color:var(--line)}
-.fl .ans{margin-top:4px;color:var(--ok)}
+/* handbook */
+.body li.lvl1{margin-left:22px;list-style:circle}
+.pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;overflow-x:auto;white-space:pre;margin:8px 0 14px}
 /* quiz */
 .quiz{display:flex;flex-direction:column;gap:12px}
 .quiz fieldset{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin:0;min-width:0}
@@ -268,7 +269,6 @@ details.mat > summary{font-weight:600}
 .dblk{border-left:3px solid var(--line);padding:6px 10px;margin:0 0 8px;border-radius:0 6px 6px 0;overflow-wrap:anywhere}
 .dblk.add{border-color:var(--ok);background:var(--ok-soft)} .dblk.rem{border-color:var(--crit);background:var(--crit-soft)} .dblk.chg{border-color:var(--warn);background:var(--surface)}
 .dblk .small{font-weight:600;color:var(--muted)}
-@media (max-width:600px){.flagbox{margin-left:0}}
 </style>
 
 <header class="top">
@@ -345,6 +345,9 @@ const TOOLS = [
 // Knowledge that is not a rule: reference section without codes.
 const REFS = [{id:'11', kind:'old', p:11}, {id:'12', kind:'old', p:12}, {id:'13', kind:'old', p:13}, {id:'14', kind:'old', p:14}, {id:'15', kind:'old', p:15}, {id:'pitch', kind:'tool', p:11}];
 const LEG_OK = typeof PAGES !== 'undefined';
+const GUIDE = D.guide || [];
+const GUIDE_BY_DOC = {}; GUIDE.forEach(g => (g.related || []).forEach(c => (GUIDE_BY_DOC[c] = GUIDE_BY_DOC[c] || []).push(g)));
+const guideTitle = g => g.id === '00' ? 'Зміст і з чого почати' : g.title.replace(/\s*\(.*?\)\s*$/, '');
 const legTitle = (kind, p) => { if (!LEG_OK) return ''; const pg = PAGES.find(x => x.p === p && (kind === 'tool' ? x.tabs.includes('tools') : !x.tabs.includes('tools'))); return pg ? pg.t.replace(/^[^\p{L}\p{N}★]+/u, '').replace(/^★\s*/, '').trim() : 'Сторінка'; };
 const legKeys = (kind, p) => { const pg = LEG_OK && PAGES.find(x => x.p === p && (kind === 'tool' ? x.tabs.includes('tools') : !x.tabs.includes('tools'))); return pg ? pg.pl : ''; };
 function legacyRaw(kind, p){
@@ -405,6 +408,10 @@ function tierChip(c){ const t = tierN(c); if (t===null) return '';
 /* ---------------- inline formatting & linkify ---------------- */
 function inline(text, ctx){
   let h = esc(text);
+  h = h.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, t, href) => {
+    const g = href.match(/^(\d\d)_[^#]*\.md/); if (g) return `<a href="#guide-${g[1]}">${t}</a>`;
+    if (/^https?:/.test(href)) return `<a href="${href}" target="_blank" rel="noopener">${t}</a>`;
+    return t; });
   h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*])\*([^*\s][^*]*?)\*/g, '$1<em>$2</em>').replace(/`([^`]+)`/g, '<code>$1</code>');
   h = h.replace(/\b(POL|STD|PRC|SOP|WI|TPL|REG)-((?:E\.)?\d+(?:\.\d+)?)(?:(\s?(?:п\.|пп\.)\s?)(\d+(?:\.\d+)+))?|(\(?п\.\s?)(\d+\.\d+(?:\.\d+)?)/g,
     (m, t, n, sep, pnum, bare, bnum) => {
@@ -438,6 +445,11 @@ function buildIndex(){
   MAT.forEach(m => { const body = strip(legacyRaw('old', m.p)); IDX.push({route:'doc-'+slug(m.to)+'--m-'+m.p, label:m.to, title:legTitle('old', m.p), where:'Робочий матеріал', text:norm(legTitle('old', m.p)+' '+legKeys('old', m.p)+' '+body), raw:body, boost:1}); });
   TOOLS.forEach(t => IDX.push({route:'tool-'+t.p, label:'Інструмент', title:legTitle('tool', t.p), where:t.docs.join(', '), text:norm(legTitle('tool', t.p)+' '+legKeys('tool', t.p)), raw:legKeys('tool', t.p), boost:2}));
   REFS.forEach(r => { const body = r.kind==='old' ? strip(legacyRaw('old', r.p)) : ''; IDX.push({route:'ref-'+r.id, label:'Довідник', title:legTitle(r.kind, r.p), where:'', text:norm(legTitle(r.kind, r.p)+' '+legKeys(r.kind, r.p)+' '+body), raw:body || legKeys(r.kind, r.p), boost:1}); });
+  GUIDE.forEach(g => { let sec = '';
+    IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:'', text:norm(g.title), raw:g.title, boost:3});
+    g.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
+      const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : (b.text || '');
+      IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:sec, text:norm(txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')), raw:txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, ''), boost:1}); }); });
   D.proposals.forEach(p => IDX.push({route:'prop-'+p.id, label:'Пропозиція', title:p.title, where:(p.for||[]).join(', '), text:norm(p.title+' '+p.blocks.map(b=>b.text||(b.rows||[]).map(r=>r.join(' ')).join(' ')).join(' ')), raw:p.title, boost:1}));
   D.decisions.forEach(r => IDX.push({route:'decisions', label:'Рішення '+r.n, title:r.topic, where:r.status, text:norm(r.topic+' '+r.text), raw:r.text, boost:0}));
 }
@@ -463,7 +475,7 @@ function snippet(raw, q){
 
 /* ---------------- shared state (db) ---------------- */
 const S = { user:null, db:null, uid:null, admin:false, ready:false, own:null, assigned:null, myAssign:null, matrix:DEFAULT_MATRIX,
-  team:{acks:{}, people:{}, assign:{}}, audit:[], teamLoaded:false, dl:null, noAccess:false, flags:{}, gaps:{}, ownGaps:null };
+  team:{acks:{}, people:{}, assign:{}}, audit:[], teamLoaded:false, dl:null, noAccess:false };
 const myRole = () => S.assigned?.role || S.own?.role || null;
 const today = () => new Date().toISOString().slice(0,10);
 const roleReq = (role, m=S.matrix) => role ? Object.keys(m).filter(c => (m[c]||[]).includes(role) && REG[c] && hasAny(c)) : [];
@@ -487,14 +499,11 @@ async function initShared(){
   db.doc('acks/' + S.uid).onSnapshot(s => { S.own = s.exists ? s.data() : {docs:{}, log:[]}; if (!s.metadata.fromCache) clearTimeout(timer); S.ready = true; render(); }, () => { clearTimeout(timer); S.ready = true; render(); });
   db.doc('people/' + S.uid).onSnapshot(s => { S.assigned = s.exists ? s.data() : null; render(); }, () => {});
   db.doc('assign/' + S.uid).onSnapshot(s => { S.myAssign = s.exists ? s.data() : null; render(); }, () => {});
-  db.collection('flags').onSnapshot(s => { S.flags = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
-  db.doc('gaps/' + S.uid).onSnapshot(s => { S.ownGaps = s.exists ? s.data() : null; }, () => {});
   db.doc('config/matrix').onSnapshot(s => { const m = s.exists ? s.data()?.m : null; S.matrix = m && typeof m === 'object' ? m : DEFAULT_MATRIX; render(); }, () => {});
   if (S.admin){
     db.collection('acks').onSnapshot(s => { S.team.acks = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); S.teamLoaded = true; render(); }, () => { S.teamLoaded = true; render(); });
     db.collection('people').onSnapshot(s => { S.team.people = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
     db.collection('assign').onSnapshot(s => { S.team.assign = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
-    db.collection('gaps').onSnapshot(s => { S.gaps = Object.fromEntries(s.docs.map(d => [d.id, d.data()])); render(); }, () => {});
     db.collection('audit').orderBy('at', 'desc').limit(1000).onSnapshot(s => { S.audit = s.docs.map(d => d.data()); render(); }, () => {});
   }
   claude.use('downloads').then(x => { S.dl = x; render(); });
@@ -543,57 +552,6 @@ function saveMatrix(m, c, role, on){
 let toastT; function toast(msg){ const h = $('#toastHost'); h.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`; clearTimeout(toastT); toastT = setTimeout(() => h.innerHTML = '', 3200); }
 const fmtDate = iso => { try { return new Date(iso).toLocaleString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}); } catch { return iso; } };
 const fmtDay = d => d ? d.split('-').reverse().join('.') : '';
-
-/* ---------------- paragraph flags (KCS: fix what you find) ---------------- */
-const FLAG_KIND = {outdated:'Застаріло', unclear:'Незрозуміло', practice:'На практиці інакше', other:'Інше'};
-const FLAG_ST = {open:'відкрита', answered:'є відповідь', closed:'закрита'};
-const FLAG = {open:null};
-function allFlags(){
-  const out = [];
-  Object.entries(S.flags).forEach(([uid, d]) => Object.entries(d?.items || {}).forEach(([id, f]) => out.push({...f, id, uid})));
-  return out.sort((a, b) => String(b.at).localeCompare(String(a.at)));
-}
-const openFlagsFor = (code, pid) => allFlags().filter(f => f.c === code && f.p === pid && f.status !== 'closed');
-function flagItem(f, withDoc){
-  return `<div class="fl ${esc(f.status)}"><div class="small">${withDoc?`<a class="code" href="#doc-${slug(f.c)}--${esc(f.p)}">${esc(f.c)} п. ${esc(String(f.p).replace(/^p-/,'').replace(/-/g,'.'))}</a> · `:''}<b>${esc(FLAG_KIND[f.kind]||f.kind)}</b> · <span data-pid="${esc(f.uid)}">…</span> · ${fmtDate(f.at)} · ${esc(FLAG_ST[f.status]||f.status)}</div>
-  <div>${esc(f.text)}</div>${f.answer?`<div class="ans small">Відповідь (<span data-pid="${esc(f.ansBy||'')}">…</span>, ${fmtDate(f.ansAt)}): ${esc(f.answer)}</div>`:''}
-  ${S.admin && f.status !== 'closed' ? `<div class="row" style="margin-top:6px"><input class="fld" id="ans-${esc(f.uid)}-${esc(f.id)}" placeholder="Відповідь автору" style="flex:1;min-width:180px"><button class="kb sm" data-flans="${esc(f.uid)}|${esc(f.id)}">Відповісти</button><button class="kb sm" data-flclose="${esc(f.uid)}|${esc(f.id)}">Закрити</button></div>` : ''}</div>`;
-}
-function flagBox(code, pid){
-  let h = `<div class="flagbox" id="fb-${pid}">` + openFlagsFor(code, pid).map(f => flagItem(f, false)).join('');
-  if (S.uid && !S.noAccess) h += `<div class="row"><label class="small" for="flKind">Що з пунктом</label><select id="flKind" class="fld">${Object.entries(FLAG_KIND).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select></div>
-    <textarea id="flText" placeholder="Що саме не так і як насправді? Без імен, телефонів і даних клієнтів."></textarea>
-    <div class="row"><button class="kb pri sm" data-flsend="${esc(code)}|${pid}">Надіслати власнику документа</button><button class="kb sm" data-flag="${esc(code)}|${pid}">Скасувати</button></div>`;
-  else h += `<p class="small muted" style="margin:0">Позначати пункти можна, коли вікі відкрито на claude.ai під вашим робочим акаунтом.</p>`;
-  return h + `</div>`;
-}
-let flagChain = Promise.resolve();
-function sendFlag(code, pid){
-  const text = ($('#flText')?.value || '').trim(); if (!text){ toast('Опишіть, що не так з пунктом'); return; }
-  const kind = $('#flKind').value; const id = 'f' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  const item = {c:code, p:pid, kind, text:text.slice(0, 2000), at:new Date().toISOString(), status:'open', v:docVer(code)};
-  const exists = !!S.flags[S.uid]; const ref = S.db.doc('flags/' + S.uid);
-  S.flags[S.uid] = {items: {...(S.flags[S.uid]?.items || {}), [id]: item}}; FLAG.open = null; render();
-  flagChain = flagChain.then(() => exists ? ref.update({items:{[id]:item}}) : ref.set({items:{[id]:item}})).then(() => toast('Позначку надіслано'), () => toast('Не вдалося надіслати: потрібен доступ рівня Contributor.'));
-}
-function answerFlag(uid, id, close){
-  const input = document.getElementById(`ans-${uid}-${id}`); const answer = (input?.value || '').trim();
-  if (!close && !answer){ toast('Напишіть відповідь'); return; }
-  const patch = close ? {status:'closed', closedBy:S.uid, closedAt:new Date().toISOString()} : {status:'answered', answer:answer.slice(0, 2000), ansBy:S.uid, ansAt:new Date().toISOString()};
-  const items = {...(S.flags[uid]?.items || {})}; items[id] = {...items[id], ...patch}; S.flags[uid] = {items}; render();
-  flagChain = flagChain.then(() => S.db.doc('flags/' + uid).update({items:{[id]:patch}})).then(() => toast(close ? 'Позначку закрито' : 'Відповідь збережено'), () => toast('Не вдалося зберегти'));
-}
-// searches that found nothing = knowledge the base is missing
-let gapT;
-function logGap(q){
-  if (!S.db || !S.uid) return; clearTimeout(gapT);
-  gapT = setTimeout(() => {
-    const key = norm(q).replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 80); if (key.length < 3) return;
-    const items = {...(S.ownGaps?.items || {})}; const cur = items[key] || {n:0}; items[key] = {n:cur.n + 1, last:new Date().toISOString()};
-    const keys = Object.keys(items); if (keys.length > 200) keys.sort((a, b) => String(items[a].last).localeCompare(String(items[b].last))).slice(0, keys.length - 200).forEach(k => delete items[k]);
-    S.ownGaps = {items}; S.db.doc('gaps/' + S.uid).set({items}).catch(() => {});
-  }, 1500);
-}
 
 /* ---------------- understanding check (Tier 0) ---------------- */
 const QZ = {};
@@ -671,49 +629,76 @@ function viewArchive(){
   <details class="blk" id="ar-v" open><summary><h2>Попередні версії <span class="muted small">${rows.length}</span></h2></summary>${rows.length ? `<div class="tbl"><table><thead><tr><th>Документ</th><th>Версія</th><th>Статус тоді</th><th>Дата</th><th></th></tr></thead><tbody>${rows.map(r => `<tr><td><a class="code" href="#doc-${slug(r.code)}">${r.code}</a> ${esc(docTitle(r.code))}</td><td class="mono">v${esc(r.v)}</td><td>${statusChip(r.x.status)}</td><td class="small">${esc(r.x.date || '—')}</td><td class="small"><a href="#doc-${slug(r.code)}--ver-${vslug(r.v)}">Текст</a> · <a href="#doc-${slug(r.code)}--diff-${vslug(r.v)}">Що змінилось</a></td></tr>`).join('')}</tbody></table></div>` : `<div class="empty" style="margin-bottom:14px">Попередніх версій поки немає: у вікі зараз перші версії всіх документів. Коли вийде нова версія документа, попередня з'явиться тут.</div>`}</details>
   <details class="blk" id="ar-d" open><summary><h2>Документи зі статусом «Архів» <span class="muted small">${dead.length}</span></h2></summary>${dead.length ? `<div class="rel" style="padding-bottom:12px">${dead.map(c => `<a href="#doc-${slug(c)}">${c}</a>`).join('')}</div>` : '<p class="small muted" style="padding-bottom:12px">Немає.</p>'}</details></div>`;
 }
-function viewFlags(){
-  const all = allFlags(); let cur = 'open'; try { cur = sessionStorage.getItem('flst') || 'open'; } catch {}
-  const list = all.filter(f => cur === 'all' || f.status === cur || (cur === 'mine' && f.uid === S.uid));
-  const cnt = k => all.filter(f => f.status === k).length;
-  let h = `<div class="wrap"><div class="eyebrow">Зворотний зв'язок від команди</div><h1 class="ptitle">Позначки до пунктів</h1>
-  <p class="lead">Будь-хто може позначити пункт документа: застарів, незрозумілий або на практиці працює інакше. Наведіть на пункт і натисніть ⚑. Власник документа відповідає тут, а документ виправляється в наступній версії.</p>
-  <div class="seg">${[['open', 'Відкриті ' + cnt('open')], ['answered', 'З відповіддю ' + cnt('answered')], ['closed', 'Закриті ' + cnt('closed')], ['mine', 'Мої'], ['all', 'Усі ' + all.length]].map(([k, l]) => `<button class="${cur === k ? 'on' : ''}" data-flst="${k}">${l}</button>`).join('')}</div>`;
-  if (S.noAccess) h += `<div class="empty">Позначки видно, коли вікі відкрито на claude.ai.</div>`;
-  else h += list.length ? `<div style="display:flex;flex-direction:column;gap:8px">${list.map(f => flagItem(f, true)).join('')}</div>` : `<div class="empty">Тут поки порожньо.</div>`;
-  if (S.admin){
-    const agg = {}; Object.values(S.gaps).forEach(d => Object.entries(d?.items || {}).forEach(([q, x]) => { const a = agg[q] || (agg[q] = {n:0, people:0, last:''}); a.n += x.n || 1; a.people++; if (String(x.last) > a.last) a.last = x.last; }));
-    const top = Object.entries(agg).sort((a, b) => b[1].people - a[1].people || b[1].n - a[1].n).slice(0, 40);
-    h += `<details class="blk" id="fl-gaps" open style="margin-top:20px"><summary><h2>Пошуки без результатів <span class="muted small">${top.length}</span></h2></summary><p class="small muted">Що люди шукали і не знайшли — кандидати на нові документи або пункти. Видно лише адміністраторам.</p>
-    ${top.length ? `<div class="tbl"><table><thead><tr><th>Запит</th><th class="num">Людей</th><th class="num">Разів</th><th>Останній раз</th></tr></thead><tbody>${top.map(([q, a]) => `<tr><td>${esc(q)}</td><td class="num">${a.people}</td><td class="num">${a.n}</td><td class="small">${fmtDate(a.last)}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small muted" style="padding-bottom:12px">Поки немає.</p>'}</details>`;
-  }
-  return h + `</div>`;
-}
 
 /* ---------------- sidebar ---------------- */
-const ARTIFACT_URL = 'https://claude.ai/artifact/2d71rDBWh1Qb4b3zQ6sAcw';
 const SITUATIONS = __SITUATIONS__;
 const QUIZ = (() => { const q = __QUIZ__; delete q._about; return q; })();
 const sgOpen = store.get('sg') || {};
+const ICONS = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  check:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+  grad:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><path d="M12 17h.01"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14a6 6 0 0 1 3.5 6"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>',
+  shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',
+  shieldok:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18h8"/>',
+  dollar:'<path d="M12 2v20"/><path d="M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  clipboard:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m9 13 2 2 4-4"/>',
+  file:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h6"/>',
+  branch:'<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10M18 10c0 4-6 3-12 7"/>',
+  repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
+  box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+  map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  rocket:'<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M9 15l-3-3c1-4 5-9 12-9 0 7-5 11-9 12z"/><circle cx="14.5" cy="9.5" r="1.5"/>',
+  book:'<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>',
+  db:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+  archive:'<rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  gauge:'<path d="M4 18a8 8 0 1 1 16 0"/><path d="m12 18 4-6"/>',
+  flow:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M6.5 10v4a3 3 0 0 0 3 3H14"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+  scale:'<path d="M12 3v18M7 21h10M5 7h14"/><path d="m5 7-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
+  headset:'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2.5" y="13" width="4" height="6" rx="1.5"/><rect x="17.5" y="13" width="4" height="6" rx="1.5"/><path d="M20 19c0 1.5-2 2.5-5 2.5"/>',
+  brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+  listcheck:'<path d="m3 6 2 2 4-4M3 14l2 2 4-4M13 6h8M13 14h8M13 20h8"/>',
+  pointer:'<path d="m4 4 7 16 2-7 7-2z"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/>',
+};
+const ic = (name, size = 16) => `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.file}</svg>`;
+const TOOL_IC = {1:'calc', 2:'dollar', 4:'clipboard', 5:'chat', 6:'branch', 7:'repeat', 8:'box', 9:'map'};
+const REF_IC = {'11':'info', '12':'users', '13':'target', '14':'box', '15':'star', 'pitch':'rocket'};
+const TYPE_IC = {POL:'shield', STD:'gauge', PRC:'flow', SOP:'listcheck', WI:'pointer', TPL:'file', REG:'db'};
+const TYPE_COL = {POL:'--g-red', STD:'--g-orange', PRC:'--g-cyan', SOP:'--g-green', WI:'--g-slate', TPL:'--g-violet', REG:'--g-slate'};
 function sideHtml(route){
   const own = S.own?.docs || {}; const req = new Set(reqFor(myRole(), myItems()));
-  const item = (href, label, code, extra='') => {
+  const item = (href, label, opts = {}) => {
+    const code = opts.code;
     const on = route === href || (code && route.startsWith('doc-'+slug(code)+'--')) ? 'on' : '';
-    let dot = '';
-    if (code && req.has(code)) { const st = ackState(code, own); dot = `<span class="dot ${st}" title="${st==='ok'?'Ознайомлений(а)':st==='re'?'Нова версія — ознайомтесь знову':'Потрібне ознайомлення'}"></span>`; }
-    else if (extra) dot = `<span class="mt">${extra}</span>`;
-    return `<a class="${on}" href="#${href}">${code?`<span class="c">${code}</span>`:''}<span>${esc(label)}</span>${dot}</a>`;
+    let tail = '';
+    if (code && req.has(code) && !S.offsite) { const st = ackState(code, own); tail = `<span class="dot ${st}" title="${st==='ok'?'Ознайомлений(а)':st==='re'?'Нова версія — ознайомтесь знову':'Потрібне ознайомлення'}"></span>`; }
+    else if (opts.tail) tail = `<span class="mt">${opts.tail}</span>`;
+    const lead = code ? `<span class="c">${code}</span>` : opts.num ? `<span class="c num">${opts.num}</span>` : `<span class="ii">${ic(opts.icon || 'file')}</span>`;
+    return `<a class="${on}" href="#${href}">${lead}<span class="lb">${esc(label)}</span>${tail}</a>`;
   };
-  const group = (id, label, inner, count) => `<details class="sg" data-sg="${id}" ${sgOpen[id] === false ? '' : 'open'}><summary class="sgh">${esc(label)}${count?`<span class="n">${count}</span>`:''}</summary>${inner}</details>`;
-  let h = group('work', 'Робота', item('home','Що робити, коли…') + item('me','Мої ознайомлення') + item('newbie','Шлях новачка') + item('questions','Відкриті питання і блокери') + item('flags','Позначки до пунктів', null, String(allFlags().filter(f => f.status === 'open').length || '')));
-  if (S.admin) h += group('admin', 'Адміністрування', item('team','Команда і призначення') + item('journal','Журнал ознайомлень (REG-13)') + item('roles','Ролі і доступи'));
-  if (LEG_OK) h += group('tools', 'Інструменти', TOOLS.map(t => item('tool-'+t.p, legTitle('tool', t.p))).join(''), TOOLS.length);
+  const group = (id, label, icon, col, inner, count) => `<details class="sg" data-sg="${id}" style="--gc:var(${col})" ${sgOpen[id] === false ? '' : 'open'}><summary class="sgh"><span class="gi">${ic(icon, 15)}</span><span class="gl">${esc(label)}</span>${count?`<span class="n">${count}</span>`:''}</summary><div class="sgb">${inner}</div></details>`;
+  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}));
+  if (S.admin) h += group('admin', 'Адміністрування', 'shieldok', '--g-violet', item('team','Команда і призначення', {icon:'users'}) + item('journal','Журнал ознайомлень', {icon:'list'}) + item('roles','Ролі і доступи', {icon:'shield'}));
+  if (GUIDE.length) h += group('guide', 'Посібник КС', 'headset', '--g-teal', GUIDE.map(g => item('guide-'+g.id, guideTitle(g), g.id === '00' ? {icon:'star'} : {num:g.id})).join(''), GUIDE.length);
+  if (LEG_OK) h += group('tools', 'Інструменти', 'wrench', '--g-amber', TOOLS.map(t => item('tool-'+t.p, legTitle('tool', t.p), {icon:TOOL_IC[t.p]})).join(''), TOOLS.length);
   for (const t of Object.keys(TYPES)){
     const list = ALL_CODES.filter(c => TYPE_OF(c) === t && hasAny(c));
     if (!list.length) continue;
-    h += group('t-'+t, TYPES[t], list.map(c => item('doc-'+slug(c), docTitle(c), c, !hasText(c) ? 'мат.' : '')).join(''), list.length);
+    h += group('t-'+t, TYPES[t], TYPE_IC[t], TYPE_COL[t], list.map(c => item('doc-'+slug(c), docTitle(c), {code:c, tail: !hasText(c) ? 'мат.' : ''})).join(''), list.length);
   }
-  if (LEG_OK) h += group('ref', 'Довідник', REFS.map(r => item('ref-'+r.id, legTitle(r.kind, r.p))).join(''), REFS.length);
-  h += group('kb', 'База знань', item('registry','Реєстр документів') + (S.admin?'':item('roles','Ролі і доступи')) + item('core','Ядро v1') + item('ready','Готовність бази') + item('streams','Потоки') + item('proposals','Пропозиції змін') + item('decisions','Журнал рішень') + item('archive','Архів версій') + item('demand','Знімок попиту') + item('legend','Як влаштована база'));
+  if (LEG_OK) h += group('ref', 'Довідник', 'book', '--g-pink', REFS.map(r => item('ref-'+r.id, legTitle(r.kind, r.p), {icon:REF_IC[r.id]})).join(''), REFS.length);
+  h += group('kb', 'База знань', 'layers', '--g-slate', item('registry','Реєстр документів', {icon:'db'}) + (S.admin?'':item('roles','Ролі і доступи', {icon:'shield'})) + item('core','Ядро v1', {icon:'target'}) + item('ready','Готовність бази', {icon:'gauge'}) + item('streams','Потоки', {icon:'flow'}) + item('proposals','Пропозиції змін', {icon:'bulb'}) + item('decisions','Журнал рішень', {icon:'scale'}) + item('archive','Архів версій', {icon:'archive'}) + item('demand','Знімок попиту', {icon:'chart'}) + item('legend','Як влаштована база', {icon:'info'}));
   return h;
 }
 
@@ -734,14 +719,11 @@ function blocksHtml(blocks, ctx, prefix=''){
     if (b.t === 'h3') h += `<h3>${inline(b.text, ctx)}</h3>`;
     else if (b.t === 'p'){
       const m = b.text.match(/^(\d+(?:\.\d+)+)\.?\s+(.*)$/s);
-      if (m){ const pid = 'p-' + m[1].replace(/\./g,'-');
-        let fb = '';
-        if (ctx && ctx.flags){ const n = openFlagsFor(ctx.code, pid).length; fb = `<button class="flag-btn${n?' has':''}" data-flag="${esc(ctx.code)}|${pid}" title="Позначити пункт: застаріло, незрозуміло, на практиці інакше" aria-label="Позначити пункт ${m[1]}">⚑${n?' '+n:''}</button>`; }
-        h += `<p class="np${b.indent?' ind':''}" id="${prefix}${pid}"><span class="n">${m[1]}</span><span>${inline(m[2], ctx)}</span>${fb}</p>`;
-        if (ctx && ctx.flags && FLAG.open === ctx.code + '|' + pid) h += flagBox(ctx.code, pid); }
+      if (m) h += `<p class="np${b.indent?' ind':''}" id="${prefix}p-${m[1].replace(/\./g,'-')}"><span class="n">${m[1]}</span><span>${inline(m[2], ctx)}</span></p>`;
       else h += `<p id="${prefix}b-${i}" class="${b.indent?'ind':''}${/:$/.test(b.text)?' sub':''}">${inline(b.text, ctx)}</p>`;
     }
-    else if (b.t === 'li'){ const t = b.ord ? 'ol' : 'ul'; if (list !== t){ closeList(); h += `<${t}>`; list = t; } h += `<li>${inline(b.text, ctx)}</li>`; }
+    else if (b.t === 'li'){ const t = b.ord && !b.lvl ? 'ol' : 'ul'; if (list !== t){ closeList(); h += `<${t}>`; list = t; } h += `<li${b.lvl?' class="lvl1"':''}>${inline(b.text, ctx)}</li>`; }
+    else if (b.t === 'pre') h += `<pre class="pre">${esc(b.text)}</pre>`;
     else if (b.t === 'quote') h += `<blockquote>${inline(b.text, ctx)}</blockquote>`;
     else if (b.t === 'table'){
       const [head, ...rest] = b.rows;
@@ -846,7 +828,7 @@ function materialHtml(m, open){
 }
 function ackPanel(code){
   const v = docVer(code);
-  if (!hasAny(code)) return '';
+  if (!hasAny(code) || S.offsite) return '';
   const role = myRole(); const isReq = reqFor(role, myItems()).includes(code); const due = myItems()[code]?.due;
   if (S.noAccess) return `<section class="ack" id="ack"><h3>Ознайомлення</h3><p class="muted">Кнопка ознайомлення працює, коли вікі відкрито на claude.ai під вашим робочим акаунтом.</p></section>`;
   if (!S.ready) return `<section class="ack" id="ack"><h3>Ознайомлення</h3><p class="muted">Завантажую ваші ознайомлення…</p></section>`;
@@ -883,15 +865,16 @@ function viewDoc(code){
   <details class="blk" id="pass" ${d?'':'open'}><summary><h2>Паспорт документа</h2></summary><dl class="passport" style="margin-bottom:14px">${meta.map(([k,v]) => `<div><dt>${esc(k)}</dt><dd>${inline(String(v), ctx)}</dd></div>`).join('')}</dl></details>
   ${r.note?`<div class="note small"><b>Примітка реєстру:</b> ${inline(r.note, ctx)}</div>`:''}
   ${props.length?`<div class="note small"><b>Є пропозиції змін:</b> ${props.map(p => `<a href="#prop-${p.id}">${esc(p.title)}</a>`).join(' · ')}</div>`:''}
+  ${GUIDE_BY_DOC[code]?`<div class="note small"><b>У посібнику КС:</b> ${GUIDE_BY_DOC[code].map(g => `<a href="#guide-${g.id}">${esc(guideTitle(g))}</a>`).join(' · ')}</div>`:''}
   ${tools.length?`<div class="note small"><b>Інструменти до документа:</b> ${tools.map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join(' · ')}</div>`:''}
-  ${d ? `${foldBar}<div class="body">${blocksHtml(d.blocks, {code, flags:true})}</div>` : `<div class="note warn small">Офіційний текст документа ще не перенесено у вікі (джерело: ${esc(r.storage||'Notion / Freitty CS')}).${mats.length?' Нижче — робочі матеріали зі старої вікі, що стосуються цього документа.':''}</div>${mats.length?foldBar:''}`}
+  ${d ? `${foldBar}<div class="body">${blocksHtml(d.blocks, ctx)}</div>` : `<div class="note warn small">Офіційний текст документа ще не перенесено у вікі (джерело: ${esc(r.storage||'Notion / Freitty CS')}).${mats.length?' Нижче — робочі матеріали зі старої вікі, що стосуються цього документа.':''}</div>${mats.length?foldBar:''}`}
   ${mats.length?`<h3 style="margin-top:22px">Робочі матеріали${d?' до документа':''}</h3>${mats.map(m => materialHtml(m, !d)).join('')}`:''}
   ${also.length?`<p class="small muted">Пов'язані матеріали в інших документах: ${also.map(m => `<a href="#doc-${slug(m.to)}--m-${m.p}">${esc(legTitle('old', m.p))} (${m.to})</a>`).join(' · ')}</p>`:''}
   ${ackPanel(code)}
   ${versionsBlock(code)}
   ${related.length?`<h3>Пов'язані документи (з реєстру)</h3><div class="rel">${related.map(c => REG[c]?`<a href="#doc-${slug(c)}" title="${esc(docTitle(c))}">${c}</a>`:`<span>${esc(c)}</span>`).join('')}</div>`:''}
   ${code==='REG-13'?`<div class="note small">Журнал веде вікі автоматично. ${S.admin?'<a href="#journal">Відкрити журнал ознайомлень</a>.':'Журнал бачать керівник CS і редактори вікі.'}</div>`:''}
-  </article>${(toc||matToc)?`<aside class="toc" aria-label="Зміст"><div class="eyebrow" style="margin:0 0 6px 8px">Зміст</div>${toc}${matToc}${hasAny(code)?`<a href="#doc-${slug(code)}--ack">✓ Ознайомлення</a>`:''}</aside>`:''}</div></div>`;
+  </article>${(toc||matToc)?`<aside class="toc" aria-label="Зміст"><div class="eyebrow" style="margin:0 0 6px 8px">Зміст</div>${toc}${matToc}${hasAny(code) && !S.offsite?`<a href="#doc-${slug(code)}--ack">✓ Ознайомлення</a>`:''}</aside>`:''}</div></div>`;
 }
 function viewTool(p){
   const t = TOOLS.find(x => x.p === p) || {p, docs:[]};
@@ -906,6 +889,16 @@ function viewRef(id){
   return `<div class="wrap"><article class="read" style="max-width:900px"><div class="eyebrow">Довідник · знання про продукт і клієнтів</div><h1 class="ptitle">${esc(legTitle(r.kind, r.p))}</h1>
   <p class="lead">Довідковий матеріал зі старої вікі. Це знання, а не правило: обов'язкові вимоги — у політиках і процедурах.</p>${r.kind==='old'?foldBar:''}
   <div class="legacy ${r.kind==='tool'?'tool-wrap':''}"><div class="pi" ${r.kind==='old'?`data-sec="r-${r.id}"`:''}>${legacyRaw(r.kind, r.p) || ''}</div></div></article></div>`;
+}
+function viewGuide(id){
+  const i = GUIDE.findIndex(g => g.id === id); if (i < 0) return viewHome();
+  const g = GUIDE[i]; const prev = GUIDE[i - 1], next = GUIDE[i + 1];
+  const nav = `<div class="row" style="justify-content:space-between;margin-top:24px">${prev?`<a class="kb" href="#guide-${prev.id}">← ${esc(guideTitle(prev))}</a>`:'<span></span>'}${next?`<a class="kb" href="#guide-${next.id}">${esc(guideTitle(next))} →</a>`:''}</div>`;
+  return `<div class="wrap"><article class="read" style="max-width:860px"><div class="eyebrow"><a href="#guide-00">Посібник КС</a> · AI-аналізатор дзвінків і правила розмови · листопад 2026</div>
+  <h1 class="ptitle">${esc(g.title)}</h1>
+  ${(g.related||[]).filter(c => REG[c]).length ? `<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${g.related.filter(c => REG[c]).map(docLink).join('')}</div>` : ''}
+  ${g.id === '00' ? '<p class="lead">Посібник Оксани (CS Lead) для операторів: як ми ведемо дзвінки і як AI-аналізатор (CAE) їх оцінює. Питання по системі — Влад.</p>' : ''}
+  ${foldBar}<div class="body">${blocksHtml(g.blocks, {}, 'g' + g.id + '-')}</div>${nav}</article></div>`;
 }
 function viewProposals(){
   return `<div class="wrap"><div class="eyebrow">proposals/ · не злиті в документи</div><h1 class="ptitle">Пропозиції змін</h1><p class="lead">Зміни до існуючих документів з дизайн-сесії жовтня 2026. Вони не діють, доки власник документа не внесе їх у текст.</p>
@@ -944,7 +937,7 @@ function viewRoles(){
 }
 function viewMe(){
   let h = `<div class="wrap"><div class="eyebrow">REG-13 · мої записи</div><h1 class="ptitle">Мої ознайомлення</h1>`;
-  if (S.noAccess) return h + `<div class="empty">Ознайомлення відмічаються, коли вікі відкрито на claude.ai під вашим робочим акаунтом.</div></div>`;
+  if (S.noAccess) return h + `<div class="empty">Відмітки про ознайомлення в цій версії вікі поки не працюють.</div></div>`;
   if (!S.ready) return h + `<div class="empty">Завантажую ваші ознайомлення…</div></div>`;
   const role = myRole(); const assigned = S.assigned?.role; const items = myItems();
   h += `<p class="lead">Кнопка «Ознайомлений(а)» фіксує, яку версію документа ви прочитали і коли. Нова версія документа потребує нового ознайомлення. Ваші відмітки бачите ви і керівник CS.</p>`;
@@ -976,6 +969,7 @@ function viewNewbie(){
   <div class="steps">${step('До видачі доступів', 'IT видає доступ лише після ознайомлення з POL-01 і POL-02 (POL-04 п. 5.2).', stage1)}
   ${step('Перший тиждень: як ми працюємо', 'Парасолькова політика обслуговування, комунікація, ескалація, робочий час, збої і робоча зміна.', stage2)}
   ${step('До допуску на самостійну роботу', 'Решта обов\'язкових документів ролі. Допуск — за SOP-6.4.', stage3)}
+  ${GUIDE.length?`<div class="step"><div class="num"></div><div class="card"><b>Посібник КС: дзвінки і оцінка</b><p class="small muted" style="margin:4px 0 8px">Порядок читання з посібника: шпаргалка, AI-аналізатор, правила розмови, кваліфікації, hazmat, що не рахується проти тебе.</p><div class="rel">${['02','01','03','04','09','16'].map(id => GUIDE.find(g => g.id === id)).filter(Boolean).map(g => `<a href="#guide-${g.id}">${esc(guideTitle(g))}</a>`).join('')}</div></div></div>`:''}
   <div class="step"><div class="num"></div><div class="card"><b>Довідник і інструменти</b><p class="small muted" style="margin:4px 0 8px">Не обов'язкові, але потрібні в роботі з першого дня.</p><div class="rel">${REFS.map(r => `<a href="#ref-${r.id}">${esc(legTitle(r.kind, r.p))}</a>`).join('')}${TOOLS.slice(0,4).map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join('')}</div></div></div></div></div>`;
 }
 const CONFLICTS = [
@@ -1083,7 +1077,7 @@ function matrixEditor(){
 
 /* ---------------- admin: journal REG-13 ---------------- */
 const JF = {who:'', c:'', t:'', period:'30'};
-const EV_NAME = {flag:'Позначка до пункту', 'flag-answer':'Відповідь на позначку', ack:'Ознайомився(лась)', assign:'Призначено документ', unassign:'Призначення знято', role:'Змінено роль', person:'Додано в команду', matrix:'Змінено перелік для ролі'};
+const EV_NAME = {ack:'Ознайомився(лась)', assign:'Призначено документ', unassign:'Призначення знято', role:'Змінено роль', person:'Додано в команду', matrix:'Змінено перелік для ролі'};
 function journalEvents(){
   const ev = [];
   Object.entries(S.team.acks).forEach(([uid, a]) => {
@@ -1091,14 +1085,11 @@ function journalEvents(){
     log.forEach(e => ev.push({...e, who:uid, by:uid, self:true}));
   });
   S.audit.forEach(e => ev.push(e));
-  allFlags().forEach(f => { ev.push({t:'flag', who:f.uid, by:f.uid, self:true, c:f.c, p:f.p, at:f.at, text:f.text});
-    if (f.ansAt) ev.push({t:'flag-answer', who:f.uid, by:f.ansBy, c:f.c, p:f.p, at:f.ansAt, text:f.answer}); });
   ev.sort((a, b) => String(b.at).localeCompare(String(a.at)));
   return ev;
 }
 function evText(e){
   if (e.t === 'ack') return `${docLinkTxt(e.c)}${e.v?' v'+esc(e.v):''}${e.quiz?` · перевірка ${e.quiz.score}/${e.quiz.total}, спроба ${e.quiz.tries}`:''}`;
-  if (e.t === 'flag' || e.t === 'flag-answer') return `${docLinkTxt(e.c)} п. ${esc(String(e.p||'').replace(/^p-/,'').replace(/-/g,'.'))}: ${esc(String(e.text||'').slice(0, 120))}`;
   if (e.t === 'assign') return `${docLinkTxt(e.c)}${e.due?' · термін '+fmtDay(e.due):''}`;
   if (e.t === 'unassign') return docLinkTxt(e.c);
   if (e.t === 'role' || e.t === 'person') return esc(ROLE_NAME[e.role] || e.role || '—');
@@ -1156,6 +1147,7 @@ function parseRoute(){
   if (h.startsWith('prop-')) return {view:'prop', id:h.slice(5)};
   let m = h.match(/^tool-(\d+)$/); if (m) return {view:'tool', p:+m[1]};
   m = h.match(/^ref-([\w]+)$/); if (m) return {view:'ref', id:m[1]};
+  m = h.match(/^guide-(\d\d)$/); if (m) return {view:'guide', id:m[1]};
   m = h.match(/^old-(\d+)$/); if (m) return {view:'old', p:+m[1]};
   return {view:h};
 }
@@ -1167,7 +1159,7 @@ function render(){
   $('#side').innerHTML = sideHtml(route);
   const prog = myProgress(); const chip = $('#meChip');
   $('#meCnt').textContent = S.uid && prog.req.length ? `${prog.ok}/${prog.req.length}` : '—';
-  chip.classList.toggle('due', prog.overdue.length > 0);
+  chip.classList.toggle('due', prog.overdue.length > 0); chip.hidden = !!S.offsite;
   const keep = routeKey === lastRoute; const y = window.scrollY;
   if (keep && (r.view === 'tool' || (r.view === 'ref' && r.id === 'pitch'))) return; // interactive tools keep their own state
   const openState = {}; if (keep) $('#main').querySelectorAll('details[id]').forEach(d => openState[d.id] = d.open);
@@ -1175,7 +1167,7 @@ function render(){
   switch (r.view){
     case 'doc': html = oldVer ? viewOldVersion(r.code, r.anchor) : viewDoc(r.code); break;
     case 'archive': html = viewArchive(); break;
-    case 'flags': html = viewFlags(); break;
+    case 'guide': html = viewGuide(r.id); break;
     case 'prop': html = viewProposal(r.id); break;
     case 'tool': html = viewTool(r.p); break;
     case 'ref': html = viewRef(r.id); break;
@@ -1196,7 +1188,7 @@ function render(){
     default: html = viewHome();
   }
   const ae = document.activeElement; const focusId = ae && ae.id && $('#main').contains(ae) ? ae.id : null; const selStart = focusId && ae.selectionStart;
-  $('#main').innerHTML = (S.offsite ? `<div class="wrap"><div class="note warn small" style="margin:0 0 16px">Це копія вікі тільки для читання. Відмітити ознайомлення, пройти перевірку розуміння, поставити позначку до пункту і побачити журнал можна у вікі на claude.ai: <a href="${ARTIFACT_URL}" target="_blank" rel="noopener">відкрити робочу версію</a>.</div></div>` : '') + html;
+  $('#main').innerHTML = html;
   sectionize($('#main'));
   if (keep) Object.entries(openState).forEach(([id, o]) => { const d = document.getElementById(id); if (d) d.open = o; });
   if (focusId){ const el = document.getElementById(focusId); if (el){ el.focus(); try { if (selStart != null) el.setSelectionRange(selStart, selStart); } catch {} } }
@@ -1251,11 +1243,6 @@ document.addEventListener('click', e => {
   if (!t) { if (!e.target.closest('.srch')) $('#sres').hidden = true; return; }
   if (t.dataset.sign){ sign(t.dataset.sign); return; }
   if (t.dataset.qcheck){ checkQuiz(t.dataset.qcheck); return; }
-  if (t.dataset.flag){ FLAG.open = FLAG.open === t.dataset.flag ? null : t.dataset.flag; render(); if (FLAG.open) setTimeout(() => $('#flText')?.focus(), 0); return; }
-  if (t.dataset.flsend){ const [c, pid] = t.dataset.flsend.split('|'); sendFlag(c, pid); return; }
-  if (t.dataset.flans){ const [u, id] = t.dataset.flans.split('|'); answerFlag(u, id, false); return; }
-  if (t.dataset.flclose){ const [u, id] = t.dataset.flclose.split('|'); answerFlag(u, id, true); return; }
-  if (t.dataset.flst){ try { sessionStorage.setItem('flst', t.dataset.flst); } catch {} render(); return; }
   if (t.dataset.sitg){ try { sessionStorage.setItem('sitg', t.dataset.sitg); } catch {} render(); return; }
   if (t.dataset.fold){ const open = t.dataset.fold === 'open'; $('#main').querySelectorAll('details.sec, details.mat, details.lsec, details.blk').forEach(d => d.open = open); return; }
   if (t.dataset.addp){ const role = $('#teamRoleNew').value; TEAM.q = ''; setPersonRole(t.dataset.addp, role, true); return; }
@@ -1284,7 +1271,6 @@ si.addEventListener('input', () => {
   const q = si.value.trim(); sel = -1;
   if (q.length < 2){ sres.hidden = true; return; }
   const res = search(q);
-  if (!res.length && q.length >= 3) logGap(q);
   sres.innerHTML = res.length ? `<div class="cnt">Знайдено: ${res.length}${res.length===40?'+':''}</div>` + res.map(it => `<a class="srch-it" href="#${it.route}"><div class="l">${esc(it.label)} · ${esc(it.title)}${it.where?' · '+esc(it.where):''}</div><div class="s">${snippet(it.raw, q)}</div></a>`).join('') : `<div class="cnt">Нічого не знайдено. Спробуйте інше слово або код документа.</div>`;
   sres.hidden = false;
 });

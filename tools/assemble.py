@@ -33,6 +33,13 @@ def md_blocks(text):
             flush(); i += 1; continue
         if s.startswith("# "):
             flush(); i += 1; continue  # page title handled separately
+        if re.fullmatch(r"-{3,}|\*{3,}|_{3,}", s):
+            flush(); i += 1; continue  # horizontal rule: sections already separate content
+        if s.startswith("```"):
+            flush(); i += 1; pre = []
+            while i < len(lines) and not lines[i].strip().startswith("```"):
+                pre.append(lines[i].rstrip()); i += 1
+            blocks.append({"t": "pre", "text": "\n".join(pre)}); i += 1; continue
         m = re.match(r"^(#{2,4})\s+(.*)", s)
         if m:
             flush()
@@ -49,12 +56,13 @@ def md_blocks(text):
                 i += 1
             blocks.append({"t": "table", "rows": rows})
             continue
+        nested = len(ln) - len(ln.lstrip()) >= 2
         m = re.match(r"^(\d+)\.\s+(.*)", s)
         if m:
-            flush(); blocks.append({"t": "li", "ord": int(m.group(1)), "text": m.group(2)}); i += 1; continue
+            flush(); blocks.append({"t": "li", "ord": int(m.group(1)), "text": m.group(2), **({"lvl": 1} if nested else {})}); i += 1; continue
         m = re.match(r"^[-*]\s+(.*)", s)
         if m:
-            flush(); blocks.append({"t": "li", "text": m.group(1)}); i += 1; continue
+            flush(); blocks.append({"t": "li", "text": m.group(1), **({"lvl": 1} if nested else {})}); i += 1; continue
         if s.startswith(">"):
             flush(); blocks.append({"t": "quote", "text": s.lstrip("> ")}); i += 1; continue
         para.append(s); i += 1
@@ -188,6 +196,24 @@ fm, body = front(rd(glob.glob(os.path.join(PKG, "analytics", "*.md"))[0]))
 analytics = {"title": fm.get("title"), "source": fm.get("source"), "date": str(fm.get("date")), "note": fm.get("note"), "blocks": md_blocks(body)}
 legend = md_blocks(rd(os.path.join(PKG, "registry", "legend.md")))
 
+# ---------- CS handbook (Oksana's guide: call analyser + conversation rules) ----------
+# Pages keep their own numbering (00..20); links between pages become wiki routes in the template.
+GUIDE_RELATED = {
+    "02": ["SOP-1.1", "STD-14"], "03": ["SOP-1.1", "TPL-01", "POL-09"], "04": ["SOP-2.1", "STD-07", "SOP-7.1"],
+    "05": ["POL-10", "STD-04", "TPL-07", "SOP-6.5"], "06": ["SOP-7.1", "STD-05", "TPL-07"], "07": ["TPL-07", "TPL-01"],
+    "08": ["TPL-07", "POL-09"], "09": ["STD-14", "SOP-4.6", "POL-16"], "10": ["POL-03", "SOP-2.5", "SOP-2.6"],
+    "11": ["TPL-01", "POL-06"], "12": ["POL-19", "SOP-1.4"], "13": ["SOP-1.5", "SOP-1.7", "SOP-1.4"],
+    "14": ["POL-10", "SOP-7.2"], "15": ["SOP-7.2", "TPL-09"], "16": ["POL-10"], "17": ["POL-10", "SOP-6.5"],
+    "19": ["POL-10", "SOP-6.5"], "01": ["POL-10", "POL-11"],
+}
+guide = []
+for p in sorted(glob.glob(os.path.join(ROOT, "inputs", "guide", "*.md"))):
+    raw = rd(p)
+    gid = os.path.basename(p).split("_", 1)[0]
+    m = re.search(r"^#\s+(.+)$", raw, re.M)
+    blocks = [b for b in md_blocks(raw) if not (b["t"] == "p" and re.fullmatch(r"(\[[^\]]*\]\([^)]*\)\s*·?\s*)+", b["text"]))]
+    guide.append({"id": gid, "file": os.path.basename(p), "title": m.group(1).strip() if m else gid, "related": GUIDE_RELATED.get(gid, []), "blocks": blocks})
+
 # ---------- documents written for the wiki (e.g. POL-21 draft) and their registry rows ----------
 extra = json.load(io.open(os.path.join(ROOT, "site", "extra_docs.json"), encoding="utf-8"))
 for r in extra.get("registry", []):
@@ -230,7 +256,7 @@ for w in warnings:
     print("WARNING", w, file=sys.stderr)
 
 out = {"registry": reg, "core": core, "docs": docs, "proposals": proposals,
-       "decisions": dec_rows, "analytics": analytics, "legend": legend, "versions": versions, "archive": archive}
+       "decisions": dec_rows, "analytics": analytics, "legend": legend, "versions": versions, "archive": archive, "guide": guide}
 io.open(os.path.join(DATA, "wiki_data.json"), "w", encoding="utf-8").write(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 print("docs", sorted(docs), file=sys.stderr)
 print("proposals", len(proposals), "decisions", len(dec_rows), file=sys.stderr)
