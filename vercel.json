@@ -1,14 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "installCommand": "",
+  "installCommand": "npm install",
   "buildCommand": "",
-  "outputDirectory": "dist",
-  "cleanUrls": true,
+  "outputDirectory": "public",
+  "functions": {
+    "api/page.js": { "includeFiles": "private/wiki.html" }
+  },
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/api/page" }
+  ],
   "headers": [
     { "source": "/(.*)", "headers": [
-      { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
-      { "key": "Cache-Control", "value": "no-cache" }
+      { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
     ] }
   ]
 }

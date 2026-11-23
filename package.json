@@ -1,0 +1,12 @@
+{
+  "name": "freitty-cs-wiki",
+  "private": true,
+  "type": "module",
+  "description": "Freitty CS wiki: Microsoft sign-in and acknowledgement database (Vercel functions in api/)",
+  "scripts": {
+    "dev": "node tools/dev_server.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "0.10.4"
+  }
+}

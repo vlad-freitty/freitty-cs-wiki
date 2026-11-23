@@ -127,4 +127,11 @@ skeleton = ('<!doctype html><html lang="uk"><head><meta charset="utf-8">'
             '<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>'
             '</head><body>')
 io.open(os.path.join(ROOT, "dist", "index.html"), "w", encoding="utf-8").write(skeleton + html + "</body></html>")
+# Signed-in version for Vercel: served only by api/page.js after Microsoft sign-in (never public).
+# The runtime comes first so the page finds its database interface when it starts; api/page.js fills in the user.
+runtime = rd(os.path.join(ROOT, "site", "runtime.js"))
+assert runtime.count("/*__WIKI_USER__*/null") == 1 and "</script" not in runtime.lower()
+os.makedirs(os.path.join(ROOT, "private"), exist_ok=True)
+io.open(os.path.join(ROOT, "private", "wiki.html"), "w", encoding="utf-8").write(
+    skeleton + "<script>" + runtime + "</script>" + html + "</body></html>")
 print("built", OUT, round(len(html.encode("utf-8")) / 1024), "KB", file=sys.stderr)

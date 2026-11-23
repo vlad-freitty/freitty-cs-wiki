@@ -284,6 +284,7 @@ details.mat > summary{font-weight:600}
     <div class="srch-res" id="sres" hidden></div>
   </div>
   <a class="me-chip" id="meChip" href="#me">✓ <span>Мої ознайомлення</span> <b id="meCnt">—</b></a>
+  <a class="me-chip" id="userChip" href="/api/auth/logout" title="Вийти з вікі" hidden></a>
 </header>
 <div class="layout">
   <nav class="side" id="side" aria-label="Навігація"></nav>
@@ -510,6 +511,8 @@ function myProgress(){
 }
 
 async function initShared(){
+  const WU = window.__WIKI_USER__;
+  if (WU){ const c = $('#userChip'); c.hidden = false; c.textContent = (WU.name || WU.email || 'Ви') + ' · Вийти'; }
   if (!window.claude?.use) { S.ready = true; S.noAccess = true; S.offsite = true; render(); return; }
   const [user, db] = await Promise.all([claude.use('user'), claude.use('db')]);
   S.user = user; S.db = db;
@@ -961,10 +964,11 @@ function viewRoles(){
   <details class="blk" id="rl-roles" open><summary><h2>Робочі ролі</h2></summary><div class="tbl"><table><thead><tr><th>Роль</th><th>Хто це</th><th>Обов'язкові документи</th>${S.admin?'<th class="num">Людей</th>':''}</tr></thead><tbody>
   ${ROLES.map(r => { const req = roleReq(r.id); return `<tr><td><b>${esc(r.name)}</b><div class="small muted">${inline(r.src)}</div></td><td class="small">${esc(r.about)}</td><td><div class="rel">${req.map(c => `<a href="#doc-${slug(c)}">${c}</a>`).join('') || '<span>—</span>'}</div></td>${S.admin?`<td class="num">${counts[r.id]||0}</td>`:''}</tr>`; }).join('')}
   </tbody></table></div></details>
-  <details class="blk" id="rl-rights" open><summary><h2>Права у вікі</h2></summary><div class="tbl"><table><thead><tr><th>Рівень</th><th>Рівень у Share</th><th>Що може</th></tr></thead><tbody>
-   <tr><td><b>Адміністратор</b></td><td>Owner, Editor</td><td>Бачить журнал ознайомлень, призначає людям ролі і документи з терміном, веде перелік обов'язкових документів для ролей</td></tr>
+  <details class="blk" id="rl-rights" open><summary><h2>Права у вікі</h2></summary><div class="tbl"><table><thead><tr><th>Рівень</th><th>${window.__WIKI_USER__ ? 'Хто' : 'Рівень у Share'}</th><th>Що може</th></tr></thead><tbody>
+   ${window.__WIKI_USER__ ? `<tr><td><b>Адміністратор</b></td><td>Email у списку WIKI_ADMINS (налаштування Vercel)</td><td>Бачить журнал ознайомлень, призначає людям ролі і документи з терміном, веде перелік обов'язкових документів для ролей</td></tr>
+   <tr><td><b>Працівник</b></td><td>Будь-хто з компанії, кому відкрито застосунок Freitty CS Wiki в Microsoft</td><td>Читає вікі, відмічає ознайомлення, бачить свої призначення</td></tr>` : `   <tr><td><b>Адміністратор</b></td><td>Owner, Editor</td><td>Бачить журнал ознайомлень, призначає людям ролі і документи з терміном, веде перелік обов'язкових документів для ролей</td></tr>
    <tr><td><b>Працівник</b></td><td>Contributor</td><td>Читає вікі, відмічає ознайомлення, бачить свої призначення</td></tr>
-   <tr><td><b>Читач</b></td><td>Viewer, Commenter</td><td>Лише читає; відмітити ознайомлення не може</td></tr>
+   <tr><td><b>Читач</b></td><td>Viewer, Commenter</td><td>Лише читає; відмітити ознайомлення не може</td></tr>`}
   </tbody></table></div><p class="small muted" style="padding-bottom:12px">Відмітку про ознайомлення ставить лише сама людина. Ніхто, включно з адміністратором, не може поставити, змінити чи видалити її за іншу людину.</p></details></div>`;
 }
 function viewMe(){
@@ -1068,10 +1072,10 @@ function viewTeam(){
   <details class="blk" id="tm-add" ${people.length?'':'open'}><summary><h2>Додати людину</h2></summary><div style="padding-bottom:14px">
    <div style="display:flex;gap:8px;flex-wrap:wrap"><div class="pick" style="flex:1;min-width:220px"><input id="teamQ" class="fld" style="width:100%" placeholder="Ім'я колеги" value="${esc(TEAM.q)}" autocomplete="off"><div class="opts" id="teamOpts" hidden></div></div>
    <select id="teamRoleNew" class="fld">${ROLES.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('')}</select></div>
-   <p class="small muted" style="margin:8px 0 0">Щоб людина могла відмічати ознайомлення, поділіться вікі з нею з рівнем доступу Contributor.</p></div></details>
+   <p class="small muted" style="margin:8px 0 0">${window.__WIKI_USER__ ? 'У пошуку є ті, хто хоч раз увійшов у вікі робочим акаунтом Microsoft. Новій людині спершу надішліть посилання на вікі.' : 'Щоб людина могла відмічати ознайомлення, поділіться вікі з нею з рівнем доступу Contributor.'}</p></div></details>
   <div class="filters"><select id="teamRoleFilter"><option value="">Усі ролі</option>${ROLES.map(r => `<option value="${r.id}" ${TEAM.roleFilter===r.id?'selected':''}>${esc(r.name)}</option>`).join('')}</select></div>`;
   if (!S.teamLoaded) h += `<div class="empty">Завантажую команду…</div>`;
-  else if (!people.length) h += `<div class="empty">Поки нікого немає. Додайте людей вище або поділіться вікі з командою: людина з'явиться тут, коли обере роль.</div>`;
+  else if (!people.length) h += `<div class="empty">Поки нікого немає. Людина з'являється тут, коли ви додали її вище або коли вона сама обрала роль у «Мої ознайомлення».</div>`;
   else h += `<div class="tbl"><table><thead><tr><th>Людина</th><th>Роль</th><th class="num">Виконано</th><th class="num">Прострочено</th><th></th></tr></thead><tbody>
   ${people.map(p => { const s = personStats(p);
     return `<tr><td><div class="who">${avatar(p.id)}${nameSpan(p.id)}</div></td>
