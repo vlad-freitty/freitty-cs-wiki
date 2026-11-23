@@ -254,6 +254,31 @@ details.mat > summary{font-weight:600}
 .step{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px}
 .step .num{counter-increment:st;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700}
 .step .num::before{content:counter(st)}
+/* user menu */
+.umenu{position:relative;flex-shrink:0}
+.um-btn{display:flex;align-items:center;gap:8px;cursor:pointer;padding:3px 10px 3px 4px}
+.avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0}
+.um-name{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd{position:absolute;right:0;top:calc(100% + 8px);width:min(290px,calc(100vw - 24px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.18);padding:6px;z-index:40}
+.dd .dd-who{display:flex;gap:10px;align-items:center;padding:10px 10px 12px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.dd .dd-who .avatar{width:36px;height:36px;font-size:13px}
+.dd .dd-who b{display:block;font-size:14px}
+.dd .dd-who span{font-size:12.5px;color:var(--muted);word-break:break-all}
+.dd a,.dd button.it{display:flex;gap:10px;align-items:center;width:100%;padding:8px 10px;border-radius:8px;color:var(--fg);background:none;border:0;cursor:pointer;font-size:14px;text-align:left}
+.dd a:hover,.dd button.it:hover{background:var(--surface-2);text-decoration:none}
+.dd a .ic,.dd button.it .ic{color:var(--muted)}
+.dd hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+.dd .dd-lbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px 2px}
+.themes{display:flex;gap:4px;padding:4px 10px 8px}
+.themes button{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 4px;font-size:12.5px;cursor:pointer;color:var(--fg)}
+.themes button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.acc{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600;white-space:nowrap}
+.acc.owner{background:var(--warn-soft);color:var(--warn)} .acc.member{background:var(--idle-soft);color:var(--idle)}
+.perm td.y{color:var(--ok);font-weight:700;text-align:center} .perm td.n{color:var(--line);text-align:center} .perm th.c{text-align:center}
+.setrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.setrow:last-child{border-bottom:0}
+.setrow .lbl b{display:block} .setrow .lbl span{font-size:13px;color:var(--muted)}
+@media (max-width:700px){.um-name{display:none}}
 /* handbook */
 .body li.lvl1{margin-left:22px;list-style:circle}
 .pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;overflow-x:auto;white-space:pre;margin:8px 0 14px}
@@ -284,7 +309,7 @@ details.mat > summary{font-weight:600}
     <div class="srch-res" id="sres" hidden></div>
   </div>
   <a class="me-chip" id="meChip" href="#me">✓ <span>Мої ознайомлення</span> <b id="meCnt">—</b></a>
-  <a class="me-chip" id="userChip" href="/api/auth/logout" title="Вийти з вікі" hidden></a>
+  <div class="umenu" id="umenu" hidden><button class="me-chip um-btn" id="umBtn" aria-haspopup="menu" aria-expanded="false"><span class="avatar" id="umAv"></span><span class="um-name" id="umName"></span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="dd" id="umDd" role="menu" hidden></div></div>
 </header>
 <div class="layout">
   <nav class="side" id="side" aria-label="Навігація"></nav>
@@ -512,7 +537,7 @@ function myProgress(){
 
 async function initShared(){
   const WU = window.__WIKI_USER__;
-  if (WU){ const c = $('#userChip'); c.hidden = false; c.textContent = (WU.name || WU.email || 'Ви') + ' · Вийти'; }
+  if (WU){ $('#umenu').hidden = false; $('#umName').textContent = WU.name || WU.email || 'Ви'; $('#umAv').textContent = initialsOf(WU.name || WU.email); }
   if (!window.claude?.use) { S.ready = true; S.noAccess = true; S.offsite = true; render(); return; }
   const [user, db] = await Promise.all([claude.use('user'), claude.use('db')]);
   S.user = user; S.db = db;
@@ -571,6 +596,29 @@ function saveAssign(id, items){
 function saveMatrix(m, c, role, on){
   S.matrix = m; render();
   adminWrite(async () => { await S.db.doc('config/matrix').set({m, at:new Date().toISOString(), by:S.uid}); await audit({t:'matrix', c, role, on}); }, 'Перелік для ролі збережено');
+}
+const ACCESS_NAME = {owner:'Власник', admin:'Адміністратор', manager:'Керівник', member:'Працівник'};
+const ACCESS_ABOUT = {owner:'Email у списку WIKI_ADMINS у Vercel. Змінюється лише там.', admin:'Призначає Власник у налаштуваннях вікі.', manager:'Призначає Адміністратор або Власник у налаштуваннях вікі.', member:'Кожен, хто увійшов робочим акаунтом Microsoft.'};
+const myAccess = () => window.__WIKI_USER__?.access || (S.admin ? 'admin' : 'member');
+const isAdminLevel = () => ['admin','owner'].includes(myAccess());
+const initialsOf = n => String(n || '?').split(/[\s.@]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
+function applyTheme(t){ const r = document.documentElement; if (t === 'light' || t === 'dark') r.setAttribute('data-theme', t); else r.removeAttribute('data-theme'); }
+const themeNow = () => store.get('theme') || 'system';
+if (window.__WIKI_USER__) applyTheme(themeNow());
+function setTheme(t){ store.set('theme', t); applyTheme(t); }
+function userMenuHtml(){
+  const WU = window.__WIKI_USER__ || {}; const acc = myAccess(); const t = themeNow();
+  const link = (href, icon, label) => `<a href="${href}" role="menuitem">${ic(icon)}<span>${label}</span></a>`;
+  return `<div class="dd-who"><span class="avatar">${esc(initialsOf(WU.name || WU.email))}</span><div style="min-width:0"><b>${esc(WU.name || 'Ви')}</b><span>${esc(WU.email || '')}</span><div style="margin-top:4px"><span class="acc ${acc}">${esc(ACCESS_NAME[acc])}</span></div></div></div>
+  ${link('#me', 'check', 'Мої ознайомлення')}${link('#settings', 'gear', 'Налаштування')}${link('#roles', 'shield', 'Політика ролей')}
+  ${S.admin ? `<hr>${link('#team', 'users', 'Команда і призначення')}${link('#journal', 'list', 'Журнал ознайомлень')}` : ''}
+  <hr><div class="dd-lbl">Тема</div><div class="themes">${[['system','Як у системі'],['light','Світла'],['dark','Темна']].map(([k, l]) => `<button data-theme-set="${k}" class="${t === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+  <hr><a href="/api/auth/logout" role="menuitem">${ic('logout')}<span>Вийти</span></a>`;
+}
+function toggleUserMenu(force){
+  const dd = $('#umDd'); const open = force !== undefined ? force : dd.hidden;
+  if (open) dd.innerHTML = userMenuHtml();
+  dd.hidden = !open; $('#umBtn').setAttribute('aria-expanded', String(open));
 }
 let toastT; function toast(msg){ const h = $('#toastHost'); h.innerHTML = `<div class="toast" role="status">${esc(msg)}</div>`; clearTimeout(toastT); toastT = setTimeout(() => h.innerHTML = '', 3200); }
 const fmtDate = iso => { try { return new Date(iso).toLocaleString('uk-UA', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}); } catch { return iso; } };
@@ -693,6 +741,8 @@ const ICONS = {
   layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
   star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
   chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/>',
 };
 const ic = (name, size = 16) => `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.file}</svg>`;
 const TOOL_IC = {1:'calc', 2:'dollar', 4:'clipboard', 5:'chat', 6:'branch', 7:'repeat', 8:'box', 9:'map'};
@@ -711,8 +761,8 @@ function sideHtml(route){
     return `<a class="${on}" href="#${href}">${lead}<span class="lb">${esc(label)}</span>${tail}</a>`;
   };
   const group = (id, label, icon, col, inner, count) => `<details class="sg" data-sg="${id}" style="--gc:var(${col})" ${sgOpen[id] === false ? '' : 'open'}><summary class="sgh"><span class="gi">${ic(icon, 15)}</span><span class="gl">${esc(label)}</span>${count?`<span class="n">${count}</span>`:''}</summary><div class="sgb">${inner}</div></details>`;
-  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}));
-  if (S.admin) h += group('admin', 'Адміністрування', 'shieldok', '--g-violet', item('team','Команда і призначення', {icon:'users'}) + item('journal','Журнал ознайомлень', {icon:'list'}) + item('roles','Ролі і доступи', {icon:'shield'}));
+  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}) + (window.__WIKI_USER__ ? item('settings','Налаштування', {icon:'gear'}) : ''));
+  if (S.admin) h += group('admin', 'Адміністрування', 'shieldok', '--g-violet', item('team','Команда і призначення', {icon:'users'}) + item('journal','Журнал ознайомлень', {icon:'list'}));
   if (GUIDE.length) h += group('guide', 'Посібник КС', 'headset', '--g-teal', GUIDE.map(g => item('guide-'+g.id, guideTitle(g), g.id === '00' ? {icon:'star'} : {num:g.id})).join(''), GUIDE.length);
   if (CARDS.length) h += group('cards', 'Робочі картки', 'clipboard', '--g-cyan', CARDS.map(c => item('card-'+c.id, c.title, {icon:'clipboard'})).join(''), CARDS.length);
   if (LEG_OK) h += group('tools', 'Інструменти', 'wrench', '--g-amber', TOOLS.map(t => item('tool-'+t.p, legTitle('tool', t.p), {icon:TOOL_IC[t.p]})).join(''), TOOLS.length);
@@ -722,7 +772,7 @@ function sideHtml(route){
     h += group('t-'+t, TYPES[t], TYPE_IC[t], TYPE_COL[t], list.map(c => item('doc-'+slug(c), docTitle(c), {code:c, tail: !hasText(c) ? 'мат.' : ''})).join(''), list.length);
   }
   if (LEG_OK) h += group('ref', 'Довідник', 'book', '--g-pink', REFS.map(r => item('ref-'+r.id, legTitle(r.kind, r.p), {icon:REF_IC[r.id]})).join(''), REFS.length);
-  h += group('kb', 'База знань', 'layers', '--g-slate', item('registry','Реєстр документів', {icon:'db'}) + (S.admin?'':item('roles','Ролі і доступи', {icon:'shield'})) + item('core','Ядро v1', {icon:'target'}) + item('ready','Готовність бази', {icon:'gauge'}) + item('streams','Потоки', {icon:'flow'}) + item('proposals','Пропозиції змін', {icon:'bulb'}) + item('decisions','Журнал рішень', {icon:'scale'}) + item('archive','Архів версій', {icon:'archive'}) + item('demand','Знімок попиту', {icon:'chart'}) + item('legend','Як влаштована база', {icon:'info'}));
+  h += group('kb', 'База знань', 'layers', '--g-slate', item('registry','Реєстр документів', {icon:'db'}) + item('roles','Політика ролей', {icon:'shield'}) + item('core','Ядро v1', {icon:'target'}) + item('ready','Готовність бази', {icon:'gauge'}) + item('streams','Потоки', {icon:'flow'}) + item('proposals','Пропозиції змін', {icon:'bulb'}) + item('decisions','Журнал рішень', {icon:'scale'}) + item('archive','Архів версій', {icon:'archive'}) + item('demand','Знімок попиту', {icon:'chart'}) + item('legend','Як влаштована база', {icon:'info'}));
   return h;
 }
 
@@ -957,19 +1007,65 @@ function viewDemand(){ const a = D.analytics;
 function viewLegend(){
   return `<div class="wrap"><article class="read"><div class="eyebrow">registry/legend.md</div><h1 class="ptitle">Як влаштована база</h1><p class="lead">Коди документів, потоки, пріоритети, статуси і правила ведення реєстру.</p>${foldBar}<div class="body">${blocksHtml(D.legend, {}, 'lg-')}</div></article></div>`;
 }
+const PERMS = [
+  ['Читати вікі: документи, посібник, інструменти', 1, 1, 1, 1],
+  ['Відмічати ознайомлення і проходити перевірку розуміння', 1, 1, 1, 1],
+  ['Бачити свої призначення і свою історію', 1, 1, 1, 1],
+  ['Бачити команду і журнал ознайомлень REG-13', 0, 1, 1, 1],
+  ['Призначати людям посади і документи з терміном', 0, 1, 1, 1],
+  ['Змінювати перелік обов\'язкових документів для посад', 0, 0, 1, 1],
+  ['Надавати і знімати рівень «Керівник»', 0, 0, 1, 1],
+  ['Надавати і знімати рівень «Адміністратор»', 0, 0, 0, 1],
+  ['Ставити, змінювати чи видаляти чужу відмітку про ознайомлення', 0, 0, 0, 0],
+];
+function viewSettings(){
+  const WU = window.__WIKI_USER__; const acc = myAccess(); const t = themeNow(); const role = myRole();
+  let h = `<div class="wrap"><article class="read" style="max-width:900px"><div class="eyebrow">Налаштування</div><h1 class="ptitle">Налаштування</h1>`;
+  h += `<details class="blk" id="st-me" open><summary><h2>Мій профіль</h2></summary><div style="padding-bottom:10px">
+   <div class="setrow"><div class="lbl"><b>${esc(WU?.name || '—')}</b><span>${esc(WU?.email || '')}</span></div><span class="acc ${acc}">${esc(ACCESS_NAME[acc])}</span></div>
+   <div class="setrow"><div class="lbl"><b>Посада</b><span>Визначає обов'язкові документи</span></div><div>${role ? esc(ROLE_NAME[role]) : '—'} · <a href="#me">${role ? 'Мої ознайомлення' : 'Обрати посаду'}</a></div></div>
+   <div class="setrow"><div class="lbl"><b>Сесія</b><span>Вхід діє 12 годин, далі — знову через Microsoft</span></div><a class="kb sm" href="/api/auth/logout">Вийти</a></div></div></details>`;
+  h += `<details class="blk" id="st-look" open><summary><h2>Вигляд</h2></summary><div style="padding-bottom:10px">
+   <div class="setrow"><div class="lbl"><b>Тема</b><span>Зберігається в цьому браузері</span></div><div class="themes" style="padding:0;min-width:260px">${[['system','Як у системі'],['light','Світла'],['dark','Темна']].map(([k, l]) => `<button data-theme-set="${k}" class="${t === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+   <div class="setrow"><div class="lbl"><b>Бокове меню</b><span>Можна також ховати кнопкою зліва вгорі</span></div><label class="row small"><input type="checkbox" id="setSide" ${store.get('noside') === true ? '' : 'checked'}> Показувати</label></div></div></details>`;
+  if (isAdminLevel()){
+    const people = teamPeople();
+    const can = (from, to) => { const R = {member:0, manager:1, admin:2}; const top = Math.max(R[from]||0, R[to]||0); return top >= 2 ? acc === 'owner' : true; };
+    h += `<details class="blk" id="st-access" open><summary><h2>Рівні доступу людей</h2></summary>
+     <p class="small muted">Керівник бачить команду і журнал та призначає документи. Адміністратор ще й змінює обов'язкові документи для посад і призначає Керівників. Адміністратора призначає лише Власник. <a href="#roles">Політика ролей</a></p>
+     ${!S.teamLoaded ? '<div class="empty">Завантажую…</div>' : !people.length ? '<div class="empty">Людей ще немає: вони з\'являються після першого входу і вибору посади або після додавання в «Команда і призначення».</div>' : `<div class="tbl"><table><thead><tr><th>Людина</th><th>Посада</th><th>Рівень доступу</th></tr></thead><tbody>
+     ${people.filter(p => p.id !== WU?.id).map(p => `<tr><td><div class="who">${avatar(p.id)}${nameSpan(p.id)}</div></td><td class="small">${esc(ROLE_NAME[p.role] || '—')}</td>
+       <td><select class="fld" data-setaccess="${esc(p.id)}" aria-label="Рівень доступу">${['member','manager','admin'].map(k => `<option value="${k}" ${p.access === k ? 'selected' : ''} ${can(p.access, k) ? '' : 'disabled'}>${ACCESS_NAME[k]}</option>`).join('')}</select></td></tr>`).join('')}
+     </tbody></table></div>`}
+     <p class="small muted" style="padding-bottom:12px">Власники вікі задаються списком WIKI_ADMINS у налаштуваннях Vercel і тут не показуються як змінні.</p></details>
+     <details class="blk" id="st-matrix"><summary><h2>Обов'язкові документи для посад</h2></summary>${matrixEditor()}</details>`;
+  } else if (S.admin){
+    h += `<details class="blk" id="st-mgr" open><summary><h2>Керування командою</h2></summary><div class="rel" style="padding-bottom:12px"><a href="#team">Команда і призначення</a><a href="#journal">Журнал ознайомлень</a></div></details>`;
+  }
+  return h + `</article></div>`;
+}
+function setAccess(id, level){
+  const cur = S.team.people[id] || {}; const from = cur.access || 'member'; if (from === level) return;
+  S.team.people[id] = {...cur, access: level}; render();
+  adminWrite(async () => {
+    await S.db.doc('people/' + id).set({...cur, access: level, at: new Date().toISOString(), by: S.uid});
+    await audit({t:'access', who:id, access: level, from});
+  }, 'Рівень доступу змінено');
+}
 function viewRoles(){
   const counts = {}; if (S.admin) teamPeople().forEach(p => { if (p.role) counts[p.role] = (counts[p.role]||0)+1; });
-  return `<div class="wrap"><div class="eyebrow">POL-21 · проєкт</div><h1 class="ptitle">Ролі і доступи</h1>
-  <p class="lead">Робоча роль визначає, з якими документами людина ознайомлюється. Права у вікі визначає рівень доступу, який власник дає через Share. Правила описано в <a href="#doc-POL-21">POL-21</a>.</p>
-  <details class="blk" id="rl-roles" open><summary><h2>Робочі ролі</h2></summary><div class="tbl"><table><thead><tr><th>Роль</th><th>Хто це</th><th>Обов'язкові документи</th>${S.admin?'<th class="num">Людей</th>':''}</tr></thead><tbody>
+  const acc = myAccess();
+  return `<div class="wrap"><div class="eyebrow">POL-21 · проєкт на затвердження</div><h1 class="ptitle">Політика ролей</h1>
+  <p class="lead">Дві речі визначають, що людина робить у вікі. <b>Рівень доступу</b> — які дії їй дозволені. <b>Посада</b> — з якими документами вона зобов'язана ознайомитись. Повний текст правил — <a href="#doc-POL-21">POL-21</a>.</p>
+  ${window.__WIKI_USER__ ? `<div class="note small">Ваш рівень доступу: <span class="acc ${acc}">${esc(ACCESS_NAME[acc])}</span>. ${isAdminLevel() ? 'Рівні доступу людям ви призначаєте в <a href="#settings">Налаштуваннях</a>.' : ''}</div>` : ''}
+  <details class="blk" id="rl-access" open><summary><h2>Рівні доступу</h2></summary>
+  <div class="tbl perm"><table><thead><tr><th>Дія</th>${['member','manager','admin','owner'].map(k => `<th class="c">${ACCESS_NAME[k]}</th>`).join('')}</tr></thead><tbody>
+  ${PERMS.map(([t, ...v]) => `<tr><td>${esc(t)}</td>${v.map(x => x ? '<td class="y">✓</td>' : '<td class="n">—</td>').join('')}</tr>`).join('')}
+  <tr><td class="small muted">Хто має цей рівень</td>${['member','manager','admin','owner'].map(k => `<td class="small muted">${esc(ACCESS_ABOUT[k])}</td>`).join('')}</tr>
+  </tbody></table></div><p class="small muted" style="padding-bottom:12px">Ці правила перевіряє сервер вікі, а не лише сторінка: людина без потрібного рівня не може виконати дію навіть напряму. Кожна зміна рівня доступу записується в журнал REG-13.</p></details>
+  <details class="blk" id="rl-roles" open><summary><h2>Посади і обов'язкові документи</h2></summary><div class="tbl"><table><thead><tr><th>Посада</th><th>Хто це</th><th>Обов'язкові документи</th>${S.admin?'<th class="num">Людей</th>':''}</tr></thead><tbody>
   ${ROLES.map(r => { const req = roleReq(r.id); return `<tr><td><b>${esc(r.name)}</b><div class="small muted">${inline(r.src)}</div></td><td class="small">${esc(r.about)}</td><td><div class="rel">${req.map(c => `<a href="#doc-${slug(c)}">${c}</a>`).join('') || '<span>—</span>'}</div></td>${S.admin?`<td class="num">${counts[r.id]||0}</td>`:''}</tr>`; }).join('')}
-  </tbody></table></div></details>
-  <details class="blk" id="rl-rights" open><summary><h2>Права у вікі</h2></summary><div class="tbl"><table><thead><tr><th>Рівень</th><th>${window.__WIKI_USER__ ? 'Хто' : 'Рівень у Share'}</th><th>Що може</th></tr></thead><tbody>
-   ${window.__WIKI_USER__ ? `<tr><td><b>Адміністратор</b></td><td>Email у списку WIKI_ADMINS (налаштування Vercel)</td><td>Бачить журнал ознайомлень, призначає людям ролі і документи з терміном, веде перелік обов'язкових документів для ролей</td></tr>
-   <tr><td><b>Працівник</b></td><td>Будь-хто з компанії, кому відкрито застосунок Freitty CS Wiki в Microsoft</td><td>Читає вікі, відмічає ознайомлення, бачить свої призначення</td></tr>` : `   <tr><td><b>Адміністратор</b></td><td>Owner, Editor</td><td>Бачить журнал ознайомлень, призначає людям ролі і документи з терміном, веде перелік обов'язкових документів для ролей</td></tr>
-   <tr><td><b>Працівник</b></td><td>Contributor</td><td>Читає вікі, відмічає ознайомлення, бачить свої призначення</td></tr>
-   <tr><td><b>Читач</b></td><td>Viewer, Commenter</td><td>Лише читає; відмітити ознайомлення не може</td></tr>`}
-  </tbody></table></div><p class="small muted" style="padding-bottom:12px">Відмітку про ознайомлення ставить лише сама людина. Ніхто, включно з адміністратором, не може поставити, змінити чи видалити її за іншу людину.</p></details></div>`;
+  </tbody></table></div><p class="small muted" style="padding-bottom:12px">Посаду людині призначає Керівник або Адміністратор; поки її не призначено, людина обирає посаду сама в «Мої ознайомлення». Перелік документів для посад змінює Адміністратор.</p></details></div>`;
 }
 function viewMe(){
   let h = `<div class="wrap"><div class="eyebrow">REG-13 · мої записи</div><h1 class="ptitle">Мої ознайомлення</h1>`;
@@ -1047,7 +1143,7 @@ function viewQuestions(){
 const TEAM = {q:'', hits:[], roleFilter:'', assignFor:null};
 function teamPeople(){
   const ids = new Set([...Object.keys(S.team.people), ...Object.keys(S.team.acks), ...Object.keys(S.team.assign)]);
-  return [...ids].map(id => ({id, role: S.team.people[id]?.role || S.team.acks[id]?.role || null, assigned: !!S.team.people[id]?.role, acks: S.team.acks[id]?.docs || {}, items: S.team.assign[id]?.items || {}}));
+  return [...ids].map(id => ({id, access: S.team.people[id]?.access || 'member', role: S.team.people[id]?.role || S.team.acks[id]?.role || null, assigned: !!S.team.people[id]?.role, acks: S.team.acks[id]?.docs || {}, items: S.team.assign[id]?.items || {}}));
 }
 function personStats(p){
   const req = reqFor(p.role, p.items); const ok = req.filter(c => ackState(c, p.acks)==='ok').length;
@@ -1085,7 +1181,7 @@ function viewTeam(){
     ${TEAM.assignFor===p.id ? `<tr><td colspan="5">${assignPanel(p)}</td></tr>` : ''}`; }).join('')}
   </tbody></table></div>`;
   h += `<details class="blk" id="tm-mx"><summary><h2>Матриця: люди × документи</h2></summary>${matrixGrid(people)}</details>`;
-  h += `<details class="blk" id="tm-roles"><summary><h2>Обов'язкові документи для ролей</h2></summary>${matrixEditor()}</details>`;
+  h += isAdminLevel() ? `<details class="blk" id="tm-roles"><summary><h2>Обов'язкові документи для посад</h2></summary>${matrixEditor()}</details>` : `<p class="small muted">Обов'язкові документи для посад змінює Адміністратор (<a href="#roles">політика ролей</a>).</p>`;
   return h + `</div>`;
 }
 function assignPanel(p){
@@ -1115,7 +1211,7 @@ function matrixEditor(){
 
 /* ---------------- admin: journal REG-13 ---------------- */
 const JF = {who:'', c:'', t:'', period:'30'};
-const EV_NAME = {ack:'Ознайомився(лась)', assign:'Призначено документ', unassign:'Призначення знято', role:'Змінено роль', person:'Додано в команду', matrix:'Змінено перелік для ролі'};
+const EV_NAME = {access:'Змінено рівень доступу', ack:'Ознайомився(лась)', assign:'Призначено документ', unassign:'Призначення знято', role:'Змінено роль', person:'Додано в команду', matrix:'Змінено перелік для ролі'};
 function journalEvents(){
   const ev = [];
   Object.entries(S.team.acks).forEach(([uid, a]) => {
@@ -1131,6 +1227,7 @@ function evText(e){
   if (e.t === 'assign') return `${docLinkTxt(e.c)}${e.due?' · термін '+fmtDay(e.due):''}`;
   if (e.t === 'unassign') return docLinkTxt(e.c);
   if (e.t === 'role' || e.t === 'person') return esc(ROLE_NAME[e.role] || e.role || '—');
+  if (e.t === 'access') return `${esc(ACCESS_NAME[e.from] || 'Працівник')} → <b>${esc(ACCESS_NAME[e.access] || 'Працівник')}</b>`;
   if (e.t === 'matrix') return `${docLinkTxt(e.c)} → ${esc(ROLE_NAME[e.role]||e.role)}: ${e.on?'обов\'язковий':'не обов\'язковий'}`;
   return '';
 }
@@ -1223,6 +1320,7 @@ function render(){
     case 'team': html = viewTeam(); break;
     case 'journal': html = viewJournal(); break;
     case 'roles': html = viewRoles(); break;
+    case 'settings': html = viewSettings(); break;
     case 'newbie': html = viewNewbie(); break;
     case 'questions': html = viewQuestions(); break;
     default: html = viewHome();
@@ -1259,7 +1357,7 @@ function legacyInit(p){
     if (p === 9){ if (typeof netLeafletMap !== 'undefined' && netLeafletMap){ try { netLeafletMap.remove(); } catch {} } netLeafletMap = null; netLeafletInited = false; netActiveServices = new Set(); netActiveTypes = new Set(); netCurrentTab = 'cards'; }
   } catch (e) { console.warn('tool init', e); } }, 30);
 }
-window.addEventListener('hashchange', () => { lastRoute = null; render(); });
+window.addEventListener('hashchange', () => { lastRoute = null; const dd = $('#umDd'); if (dd && !dd.hidden) toggleUserMenu(false); render(); });
 
 /* ---------------- events ---------------- */
 document.addEventListener('toggle', e => { const d = e.target; if (d.matches && d.matches('details.sg')){ sgOpen[d.dataset.sg] = d.open; store.set('sg', sgOpen); } }, true);
@@ -1269,6 +1367,8 @@ document.addEventListener('change', e => {
   if (t.dataset.qz){ const [c, qi, oi] = t.dataset.qz.split('|'); const st = QZ[c] || (QZ[c] = {ans:{}, res:null, tries:0}); st.ans[+qi] = +oi; }
   if (t.dataset.jf !== undefined){ JF[t.dataset.jf] = t.value; render(); }
   if (t.id === 'myRole' && t.value) setMyRole(t.value);
+  if (t.dataset.setaccess) setAccess(t.dataset.setaccess, t.value);
+  if (t.id === 'setSide'){ const hide = !t.checked; store.set('noside', hide); document.body.classList.toggle('noside', hide); }
   if (t.id === 'nbRole'){ try { sessionStorage.setItem('nbrole', t.value); } catch {} render(); }
   if (t.id === 'teamRoleFilter'){ TEAM.roleFilter = t.value; render(); }
   if (t.dataset.setrole && t.value) setPersonRole(t.dataset.setrole, t.value, false);
@@ -1284,7 +1384,11 @@ document.addEventListener('input', e => {
 document.addEventListener('focusin', e => { if (e.target.id === 'teamQ' && S.user) e.target.dispatchEvent(new Event('input', {bubbles:true})); });
 document.addEventListener('click', e => {
   const t = e.target.closest('button, a');
+  if (!e.target.closest('#umenu')) { const dd = $('#umDd'); if (dd && !dd.hidden) toggleUserMenu(false); }
   if (!t) { if (!e.target.closest('.srch')) $('#sres').hidden = true; return; }
+  if (t.id === 'umBtn'){ toggleUserMenu(); return; }
+  if (t.dataset.themeSet){ setTheme(t.dataset.themeSet); if (!$('#umDd').hidden) $('#umDd').innerHTML = userMenuHtml(); render(); return; }
+  if (t.closest('#umDd') && t.tagName === 'A') toggleUserMenu(false);
   if (t.dataset.sign){ sign(t.dataset.sign); return; }
   if (t.dataset.qcheck){ checkQuiz(t.dataset.qcheck); return; }
   if (t.dataset.sitg){ try { sessionStorage.setItem('sitg', t.dataset.sitg); } catch {} render(); return; }
@@ -1324,7 +1428,7 @@ si.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); sel = Math.max(0, Math.min(items.length-1, sel + (e.key==='ArrowDown'?1:-1))); items.forEach((x,i) => x.classList.toggle('on', i===sel)); items[sel]?.scrollIntoView({block:'nearest'}); }
   if (e.key === 'Enter'){ const it = items[Math.max(sel,0)]; if (it){ location.hash = it.getAttribute('href'); sres.hidden = true; si.value = ''; si.blur(); } }
 });
-document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); si.focus(); si.select(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#umDd') && !$('#umDd').hidden) toggleUserMenu(false); if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); si.focus(); si.select(); } });
 
 render();
 initShared().catch(() => { S.ready = true; S.noAccess = true; render(); });

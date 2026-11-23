@@ -53,7 +53,30 @@ export const SESSION_HOURS = 12;
 export function currentUser(req) {
   const s = unseal(cookies(req)[SESSION]);
   if (!s || !s.id) return null;
-  return { id: s.id, name: s.name || '', email: s.email || '', admin: cfg.admins().includes(String(s.email || '').toLowerCase()) };
+  const owner = cfg.admins().includes(String(s.email || '').toLowerCase());
+  return { id: s.id, name: s.name || '', email: s.email || '', owner, access: owner ? 'owner' : 'member', rank: owner ? 3 : 0, admin: owner, manager: owner };
+}
+
+/* ---------------- access levels (role policy, POL-21) ----------------
+   member  — Працівник: reads the wiki, acknowledges documents, sees own assignments
+   manager — Керівник: + sees the team and the journal, assigns documents and job roles to people
+   admin   — Адміністратор: + changes the required-documents matrix, grants and revokes «Керівник»
+   owner   — Власник: email in WIKI_ADMINS (Vercel); + grants and revokes «Адміністратор». Cannot be changed in the wiki. */
+export const RANK = { member: 0, manager: 1, admin: 2, owner: 3 };
+export const ACCESS_LEVELS = ['member', 'manager', 'admin'];
+export async function withAccess(u) {
+  if (!u || u.owner) return u;
+  let p = null;
+  try { p = await store.get('people/' + u.id); } catch {}
+  const access = ACCESS_LEVELS.includes(p?.access) ? p.access : 'member';
+  return { ...u, access, rank: RANK[access], admin: RANK[access] >= 2, manager: RANK[access] >= 1 };
+}
+// Who may set someone's access level from `from` to `to`
+export function canChangeAccess(u, from, to) {
+  const top = Math.max(RANK[from || 'member'] ?? 0, RANK[to || 'member'] ?? 0);
+  if (top >= RANK.admin) return u.owner;   // only owners grant or revoke «Адміністратор»
+  if (top >= RANK.manager) return u.admin; // admins and owners grant or revoke «Керівник»
+  return true;
 }
 export function origin(req) {
   if (env('APP_URL')) return env('APP_URL').replace(/\/$/, '');
@@ -76,19 +99,20 @@ export function parseDocPath(p) {
 const COLS = ['acks', 'people', 'assign', 'audit', 'config'];
 export function canRead(u, { col, id }) {
   if (col === 'config') return true;
-  if (col === 'audit') return u.admin;
-  if (COLS.includes(col)) return u.admin || id === u.id;
+  if (col === 'audit') return u.manager;
+  if (COLS.includes(col)) return u.manager || id === u.id;
   return false;
 }
 export function listScope(u, col) {
   if (col === 'config') return 'all';
-  if (col === 'audit') return u.admin ? 'all' : 'none';
-  if (COLS.includes(col)) return u.admin ? 'all' : 'own';
+  if (col === 'audit') return u.manager ? 'all' : 'none';
+  if (COLS.includes(col)) return u.manager ? 'all' : 'own';
   return 'none';
 }
 export function canWrite(u, { col, id }) {
   if (col === 'acks') return id === u.id; // nobody, admins included, writes someone else's acknowledgement
-  if (['people', 'assign', 'audit', 'config'].includes(col)) return u.admin;
+  if (['people', 'assign', 'audit'].includes(col)) return u.manager;
+  if (col === 'config') return u.admin;
   return false;
 }
 

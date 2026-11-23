@@ -3,13 +3,14 @@
 // GET  /api/db?col=audit&order=at&dir=desc&limit=n  a collection (what the rules let this person see)
 // POST /api/db {op: set|update|delete|add, path, data}
 import crypto from 'node:crypto';
-import { currentUser, parseDocPath, canRead, canWrite, listScope, store, deepMerge, json, readBody, sameOrigin } from './_lib.js';
+import { currentUser, withAccess, canChangeAccess, ACCESS_LEVELS, parseDocPath, canRead, canWrite, listScope, store, deepMerge, json, readBody, sameOrigin } from './_lib.js';
 
 const MAX = 256 * 1024;
 export default async function handler(req, res) {
-  const u = currentUser(req);
+  let u = currentUser(req);
   if (!u) return json(res, 401, { code: 'unauthenticated', error: 'Увійдіть знову' });
   try {
+    u = await withAccess(u);
     if (req.method === 'GET') {
       const q = new URL(req.url, 'http://x').searchParams;
       if (q.get('doc')) {
@@ -32,7 +33,7 @@ export default async function handler(req, res) {
     const { op, path: rawPath, data } = await readBody(req);
     if (op === 'add') {
       // Only the journal is append-only from the page; the server stamps who and when.
-      if (rawPath !== 'audit' || !u.admin) return json(res, 403, { code: 'invalid_argument', error: 'not allowed' });
+      if (rawPath !== 'audit' || !u.manager) return json(res, 403, { code: 'invalid_argument', error: 'not allowed' });
       const id = new Date().toISOString().replace(/\D/g, '').slice(0, 17) + crypto.randomBytes(3).toString('hex');
       const doc = { ...(data || {}), by: u.id, at: new Date().toISOString() };
       if (JSON.stringify(doc).length > MAX) return json(res, 413, { code: 'invalid_argument', error: 'too large' });
@@ -41,7 +42,13 @@ export default async function handler(req, res) {
     }
     const p = parseDocPath(rawPath);
     if (!p || !canWrite(u, p)) return json(res, 403, { code: 'invalid_argument', error: 'not allowed' });
-    if (op === 'delete') { await store.del(rawPath); return json(res, 200, { ok: true }); }
+    // Access level of a person (people/<id>.access) follows the role policy: who may grant what is checked here.
+    const accessOf = (d) => (d && ACCESS_LEVELS.includes(d.access) ? d.access : 'member');
+    const before = p.col === 'people' ? await store.get(rawPath) : null;
+    if (op === 'delete') {
+      if (p.col === 'people' && !canChangeAccess(u, accessOf(before), 'member')) return json(res, 403, { code: 'invalid_argument', error: 'not allowed' });
+      await store.del(rawPath); return json(res, 200, { ok: true });
+    }
     if (!data || typeof data !== 'object' || Array.isArray(data)) return json(res, 400, { code: 'invalid_argument', error: 'body must be an object' });
     let next = data;
     if (op === 'update') {
@@ -49,6 +56,11 @@ export default async function handler(req, res) {
       if (!cur) return json(res, 404, { code: 'invalid_argument', error: 'document does not exist' });
       next = deepMerge(cur, data);
     } else if (op !== 'set') return json(res, 400, { code: 'invalid_argument', error: 'op' });
+    if (p.col === 'people') {
+      if (next.access !== undefined && next.access !== null && !ACCESS_LEVELS.includes(next.access)) return json(res, 400, { code: 'invalid_argument', error: 'unknown access level' });
+      if (accessOf(before) !== 'member' && next.access === undefined) next = { ...next, access: before.access }; // a job-role change keeps the access level
+      if (accessOf(next) !== accessOf(before) && !canChangeAccess(u, accessOf(before), accessOf(next))) return json(res, 403, { code: 'invalid_argument', error: 'not allowed' });
+    }
     if (JSON.stringify(next).length > MAX) return json(res, 413, { code: 'invalid_argument', error: 'too large' });
     await store.set(rawPath, next);
     return json(res, 200, { ok: true });

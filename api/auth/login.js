@@ -1,6 +1,7 @@
 // Start Microsoft sign-in (OAuth 2.0 authorization code flow with PKCE, single tenant).
 import crypto from 'node:crypto';
 import { cfg, seal, setCookie, origin, store, SESSION, SESSION_HOURS } from '../_lib.js';
+import { landing } from '../_landing.js';
 
 export default async function handler(req, res) {
   const url = new URL(req.url, 'http://x');
@@ -14,8 +15,7 @@ export default async function handler(req, res) {
     res.statusCode = 302; res.setHeader('Location', ret); return res.end();
   }
   if (!cfg.tenant() || !cfg.clientId() || !cfg.clientSecret()) {
-    res.statusCode = 500; res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.end('Вхід ще не налаштовано: у Vercel немає AZURE_TENANT_ID, AZURE_CLIENT_ID або AZURE_CLIENT_SECRET.');
+    return landing(res, { status: 500, title: 'Вхід ще не налаштовано', note: 'У налаштуваннях Vercel немає AZURE_TENANT_ID, AZURE_CLIENT_ID або AZURE_CLIENT_SECRET.' });
   }
   const state = crypto.randomBytes(16).toString('base64url');
   const verifier = crypto.randomBytes(32).toString('base64url');

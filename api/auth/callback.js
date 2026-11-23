@@ -1,11 +1,9 @@
 // Microsoft returns here after sign-in: exchange the code, read who signed in, open a session.
 import { cfg, seal, unseal, cookies, setCookie, origin, store, SESSION, SESSION_HOURS } from '../_lib.js';
+import { landing } from '../_landing.js';
 
 function page(res, status, text) {
-  res.statusCode = status;
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.end(`<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Freitty CS Wiki</title>
-<body style="font-family:system-ui,sans-serif;max-width:520px;margin:15vh auto;padding:0 16px;line-height:1.5"><h1 style="font-size:20px">Не вдалося увійти</h1><p>${text}</p><p><a href="/api/auth/login">Спробувати ще раз</a></p></body>`);
+  landing(res, { status, title: 'Не вдалося увійти', note: text });
 }
 
 export default async function handler(req, res) {

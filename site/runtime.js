@@ -44,9 +44,10 @@
   const prof = (id, u) => ({ id, name: (u && (u.name || u.email)) || '', avatarUrl: avatar(u && (u.name || u.email)), color: '#5b6b82', email: (u && u.email) || null, isMe: id === U.id, guest: false });
   const cache = new Map([[U.id, { id: U.id, name: U.name, email: U.email }]]);
   const user = {
-    id: async () => U.id, canEdit: async () => !!U.admin, isOwner: async () => !!U.admin,
-    can: async (n) => (n === 'data.write' ? !!U.admin : null),
-    me: async () => ({ ...prof(U.id, U), isOwner: !!U.admin, canEdit: !!U.admin }),
+    // canEdit = may manage the team and journal (Керівник and above); admin-only parts check __WIKI_USER__.access
+    id: async () => U.id, canEdit: async () => !!U.manager, isOwner: async () => U.access === 'owner',
+    can: async (n) => (n === 'data.write' ? !!U.manager : null),
+    me: async () => ({ ...prof(U.id, U), isOwner: U.access === 'owner', canEdit: !!U.manager }),
     async profiles(ids) {
       const list = [...new Set([].concat(ids))].filter(Boolean);
       const missing = list.filter((i) => !cache.has(i));
