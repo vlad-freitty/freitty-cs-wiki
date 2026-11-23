@@ -1,0 +1,450 @@
+{
+  "version": "4.0",
+  "calibrated_on": "restacks.xlsx: 506 cases with price+level (269 older, 129 Feb-Jun 2026, 108 Jul-Nov 2026). Base prices = Jul-Nov 2026 level; effects of level/height/codes/hub fitted on all cases (robust regression). Checked on 10 CS feedback orders.",
+  "currency": "USD",
+  "unit": "per pallet, price to client",
+  "formula": "point = group.base + level.add + hub.add + height.add + codes.add; low = point - range.minus; high = point + (level.range_plus or range.plus); recommended = point; all rounded to nearest $5",
+  "range": {
+    "minus": 15,
+    "plus": 20,
+    "round_to": 5,
+    "note": "Level L4 uses range_plus from its level entry: only 6 Difficult+ cases in the base, prices spread $100-$250, the supervisor confirms the final number."
+  },
+  "hubs": {
+    "core": [
+      "Columbus",
+      "Denver",
+      "Greenville",
+      "Markham",
+      "Stockton",
+      "San Bernardino"
+    ],
+    "core_add": 0,
+    "other_add": 5,
+    "note": "Core hubs are the reference. Other hubs (Reno, Fontana, Fremont, Portland, Flowery Branch, East Brunswick, Wood Dale, Detroit, Greensboro, O'Hare ...) price about +$7 higher in the model fit."
+  },
+  "levels": [
+    {
+      "id": "L1",
+      "name": "Easy",
+      "add": 0,
+      "time_lo": 15,
+      "time_hi": 30,
+      "visual": "Load is still on its pallet. Light shift or lean, wrap loose or torn. Nothing (or a few cases) on the floor. Fix = push back / re-wrap / re-band."
+    },
+    {
+      "id": "L2",
+      "name": "Medium",
+      "add": 25,
+      "time_lo": 30,
+      "time_hi": 45,
+      "visual": "Stack clearly leaning or partly collapsed; part of the cases fell, but packaging is mostly intact and product stays in its boxes/bags. Fix = rebuild part of the pallet by hand."
+    },
+    {
+      "id": "L3",
+      "name": "Difficult",
+      "add": 50,
+      "time_lo": 45,
+      "time_hi": 90,
+      "visual": "Pallet collapsed; many cases on the floor, boxes crushed or open, layers mixed. Full manual rebuild of the pallet, some sorting, new pallet or corner boards likely."
+    },
+    {
+      "id": "L4",
+      "name": "Difficult+",
+      "add": 65,
+      "time_lo": 120,
+      "time_hi": 180,
+      "visual": "Loose units out of their packaging (cans, bottles, produce, insulation), spillage or smashed product, re-boxing/re-packing needed, heavy units needing special handling. Supervisor informed.",
+      "range_plus": 60
+    }
+  ],
+  "height": [
+    {
+      "id": "h1",
+      "label": "≤55\"",
+      "max": 55,
+      "add": 0
+    },
+    {
+      "id": "h2",
+      "label": "56–95\"",
+      "max": 95,
+      "add": 5
+    },
+    {
+      "id": "h3",
+      "label": "96\"+",
+      "max": 999,
+      "add": 20
+    }
+  ],
+  "codes": {
+    "count_excludes": [
+      "D01"
+    ],
+    "tiers": [
+      {
+        "min": 0,
+        "max": 6,
+        "add": 0
+      },
+      {
+        "min": 7,
+        "max": 99,
+        "add": 15
+      }
+    ],
+    "time_per_code": 2,
+    "list": [
+      {
+        "code": "D01",
+        "name": "Displacement",
+        "desc": "Load shifted partially or fully off pallet",
+        "crit": false
+      },
+      {
+        "code": "D02",
+        "name": "Tilt / Lean",
+        "desc": "Load leaning significantly to one side",
+        "crit": false
+      },
+      {
+        "code": "D03",
+        "name": "Collapse",
+        "desc": "Load collapsed down, crushing lower levels",
+        "crit": true
+      },
+      {
+        "code": "D04",
+        "name": "Fall",
+        "desc": "Items fell onto the trailer floor",
+        "crit": false
+      },
+      {
+        "code": "D05",
+        "name": "Wrap Failure",
+        "desc": "Stretch wrap / strapping broken or loose",
+        "crit": false
+      },
+      {
+        "code": "D06",
+        "name": "Packaging Damage",
+        "desc": "Boxes/totes torn, broken, punctured",
+        "crit": false
+      },
+      {
+        "code": "D07",
+        "name": "Spillage",
+        "desc": "Contents leaked or spilled on the floor",
+        "crit": true
+      },
+      {
+        "code": "D08",
+        "name": "Mix-up",
+        "desc": "Mixed SKUs lost their grouping",
+        "crit": false
+      },
+      {
+        "code": "D09",
+        "name": "Crushing",
+        "desc": "Product visibly deformed or squashed",
+        "crit": true
+      },
+      {
+        "code": "D10",
+        "name": "Moisture",
+        "desc": "Wet, soggy or moldy packaging",
+        "crit": false
+      },
+      {
+        "code": "D11",
+        "name": "Missing Pallet",
+        "desc": "Pallet missing or broken, needs replacing",
+        "crit": true
+      }
+    ]
+  },
+  "weight": {
+    "options": [
+      {
+        "id": "w1",
+        "label": "≤1200 lbs",
+        "add": 0
+      },
+      {
+        "id": "w2",
+        "label": "1200–2000",
+        "add": 0
+      },
+      {
+        "id": "w3",
+        "label": "2000+",
+        "add": 0
+      }
+    ],
+    "note": "No price effect found in the data (residual ≈ $0 per bucket, 156 cases with weight). Kept as info for the hub (equipment). Set 'add' if management wants a weight surcharge as policy."
+  },
+  "escalation": {
+    "total_job_over": 2000,
+    "supervisor_levels": [
+      "L4"
+    ],
+    "message_total": "Total exceeds $2,000 — escalate to supervisor",
+    "message_supervisor": "Supervisor approval required before confirming the job"
+  },
+  "groups": [
+    {
+      "id": "boxes",
+      "icon": "📦",
+      "name": "Boxes & Dry Goods",
+      "base": 95,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "bx1",
+          "icon": "📦",
+          "name": "Standard Boxes",
+          "desc": "Corrugated boxes: snacks, dry food, retail, general cargo"
+        },
+        {
+          "id": "bx2",
+          "icon": "📚",
+          "name": "Flat Corrugated / Sheets",
+          "desc": "Knocked-down boxes, cardboard sheets, paper bundles"
+        },
+        {
+          "id": "bx3",
+          "icon": "🧻",
+          "name": "Paper Rolls / Light Bulky",
+          "desc": "Paper rolls, wipes, light high-volume goods"
+        },
+        {
+          "id": "bx4",
+          "icon": "🐾",
+          "name": "Pet & Animal Food (boxed)",
+          "desc": "Boxed pet food, supplements, packaged food"
+        }
+      ]
+    },
+    {
+      "id": "bags",
+      "icon": "🛍️",
+      "name": "Bags",
+      "base": 105,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "bg1",
+          "icon": "🛍️",
+          "name": "Big Bags (FIBC)",
+          "desc": "Woven bulk bags, forklift handling"
+        },
+        {
+          "id": "bg2",
+          "icon": "🎒",
+          "name": "Paper / Poly Bags",
+          "desc": "Sugar, flour, feed, salt, ice melter, cement"
+        }
+      ]
+    },
+    {
+      "id": "beverages",
+      "icon": "🥤",
+      "name": "Bottled Beverages",
+      "base": 100,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "bv1",
+          "icon": "🍶",
+          "name": "Plastic Bottles",
+          "desc": "Water, soda, juice, sports drinks in cases/packs"
+        },
+        {
+          "id": "bv2",
+          "icon": "🍾",
+          "name": "Glass Bottles / Jars",
+          "desc": "Beer, wine, sauces in glass — breakage risk",
+          "fragile": true
+        }
+      ]
+    },
+    {
+      "id": "cans",
+      "icon": "🥫",
+      "name": "Cans",
+      "base": 115,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "cn1",
+          "icon": "🥫",
+          "name": "Canned Beverages",
+          "desc": "Soda, energy, sparkling in can packs/trays"
+        },
+        {
+          "id": "cn2",
+          "icon": "🥫",
+          "name": "Canned Food",
+          "desc": "Vegetables, sauces, soups in cans"
+        }
+      ]
+    },
+    {
+      "id": "liquids",
+      "icon": "🪣",
+      "name": "Buckets, Drums & Tubs",
+      "base": 95,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "lq1",
+          "icon": "🪣",
+          "name": "Buckets / Pails",
+          "desc": "Paint, chemicals, food-grade buckets"
+        },
+        {
+          "id": "lq2",
+          "icon": "🫙",
+          "name": "Plastic Tubs / Containers",
+          "desc": "Wrapped tubs and jars on pallets"
+        },
+        {
+          "id": "lq3",
+          "icon": "🛢️",
+          "name": "Drums / Canisters",
+          "desc": "Metal or plastic drums, liquid canisters, totes"
+        }
+      ]
+    },
+    {
+      "id": "produce",
+      "icon": "🥦",
+      "name": "Fresh Produce",
+      "base": 120,
+      "time_add": 5,
+      "subtypes": [
+        {
+          "id": "pr1",
+          "icon": "🥬",
+          "name": "Vegetables / Veg with Ice",
+          "desc": "Lettuce, broccoli, asparagus, peppers"
+        },
+        {
+          "id": "pr2",
+          "icon": "🧅",
+          "name": "Onions / Potatoes / Shallots",
+          "desc": "Bagged or boxed root vegetables"
+        },
+        {
+          "id": "pr3",
+          "icon": "🍌",
+          "name": "Bananas / Citrus / Tropical",
+          "desc": "Bananas, oranges, mandarins, avocados, mangos"
+        },
+        {
+          "id": "pr4",
+          "icon": "🍉",
+          "name": "Melons / Watermelons",
+          "desc": "Cantaloupes, watermelons — heavy, smash easily",
+          "fragile": true
+        },
+        {
+          "id": "pr5",
+          "icon": "🍓",
+          "name": "Berries / Grapes / Stone Fruit",
+          "desc": "Clamshells, grapes, plums, cherries",
+          "fragile": true
+        },
+        {
+          "id": "pr6",
+          "icon": "🥚",
+          "name": "Eggs",
+          "desc": "Extremely fragile — supervisor informed",
+          "fragile": true,
+          "supervisor": true
+        }
+      ]
+    },
+    {
+      "id": "frozen_dairy",
+      "icon": "🧊",
+      "name": "Frozen, Dairy & Meat",
+      "base": 110,
+      "time_add": 5,
+      "subtypes": [
+        {
+          "id": "fz1",
+          "icon": "🥐",
+          "name": "Frozen Goods",
+          "desc": "Frozen baked goods, frozen meals"
+        },
+        {
+          "id": "fz2",
+          "icon": "🥛",
+          "name": "Dairy / Yogurt",
+          "desc": "Yogurt cups, milk, cheese"
+        },
+        {
+          "id": "fz3",
+          "icon": "🍗",
+          "name": "Meat / Deli",
+          "desc": "Chicken, beef, ham, turkey"
+        }
+      ]
+    },
+    {
+      "id": "industrial",
+      "icon": "🔧",
+      "name": "Industrial & Building",
+      "base": 110,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "in1",
+          "icon": "🔩",
+          "name": "Hardware / Parts",
+          "desc": "Hardware trays, auto parts, metal goods"
+        },
+        {
+          "id": "in2",
+          "icon": "🪵",
+          "name": "Sheet Materials",
+          "desc": "Plywood, drywall, panels",
+          "supervisor": true
+        },
+        {
+          "id": "in3",
+          "icon": "🧱",
+          "name": "Insulation / Bulky",
+          "desc": "Insulation, foam, light bulky construction goods"
+        },
+        {
+          "id": "in4",
+          "icon": "🔋",
+          "name": "Batteries / Appliances",
+          "desc": "Batteries, appliances, heavy units"
+        }
+      ]
+    },
+    {
+      "id": "other",
+      "icon": "❓",
+      "name": "Mixed / Other",
+      "base": 95,
+      "time_add": 0,
+      "subtypes": [
+        {
+          "id": "ot1",
+          "icon": "📥",
+          "name": "Mixed / Unknown Cargo",
+          "desc": "Mixed SKUs or cargo type not clear from photos"
+        }
+      ]
+    }
+  ],
+  "time": {
+    "formula": "per_pallet = level.time + codes_counted * codes.time_per_code + group.time_add; total = per_pallet * pallets",
+    "source": "Labor effort column, 184 cases: Easy median 20 min, Medium 40, Difficult 60, Difficult+ 150 (only 5 cases)"
+  }
+}

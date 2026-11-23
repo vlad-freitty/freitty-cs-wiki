@@ -103,7 +103,17 @@ def recolor(s):
 legacy_css = recolor(scope_css(legacy_css, ".legacy"))
 legacy_js = recolor(legacy_js)
 
+# ---------- Restack Estimator v4 (vendored from C:\FREITTY\restack by its build_html.py) ----------
+RSK = os.path.join(ROOT, "site", "restack")
+rsk_css = rd(os.path.join(RSK, "widget.css"))
+rsk_js = rd(os.path.join(RSK, "widget.js"))
+rsk_rules = json.dumps(json.loads(rd(os.path.join(RSK, "rules.json"))), ensure_ascii=False)
+assert "</script" not in rsk_js.lower()
+
 html = (tpl.replace("__LEGACY_CSS__", legacy_css)
+           .replace("__RESTACK_CSS__", rsk_css)
+           .replace("__RESTACK_JS__", rsk_js)
+           .replace("__RESTACK_RULES__", rsk_rules.replace("</", "<\\/"))
            .replace("__LEGACY_JS__", legacy_js)
            .replace("__SITUATIONS__", sits)
            .replace("__EXTRA__", '{"registry":[],"docs":{}}')

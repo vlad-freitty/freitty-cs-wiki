@@ -8,6 +8,8 @@
 <style>
 /* Old wiki components (tools, working materials, reference pages), scoped under .legacy and recoloured to the tokens below */
 __LEGACY_CSS__
+/* Restack Estimator v4 (site/restack/widget.css, built in C:\FREITTY\restack) */
+__RESTACK_CSS__
 </style>
 <style>
 /* Layout: sticky top bar + collapsible left index (document codes like a dock ledger) + reading column; Tier-0 documents carry a hazard stripe. */
@@ -294,6 +296,11 @@ details.mat > summary{font-weight:600}
 /* ===== Old wiki: data, tools and page builders (logic moved as-is, colours remapped) ===== */
 __LEGACY_JS__
 </script>
+<script id="restack-rules" type="application/json">__RESTACK_RULES__</script>
+<script>
+/* ===== Restack Estimator v4: replaces the old restack calculator (tool 8) ===== */
+__RESTACK_JS__
+</script>
 <script>
 (function(){
 "use strict";
@@ -345,6 +352,8 @@ const TOOLS = [
 // Knowledge that is not a rule: reference section without codes.
 const REFS = [{id:'11', kind:'old', p:11}, {id:'12', kind:'old', p:12}, {id:'13', kind:'old', p:13}, {id:'14', kind:'old', p:14}, {id:'15', kind:'old', p:15}, {id:'pitch', kind:'tool', p:11}];
 const LEG_OK = typeof PAGES !== 'undefined';
+const RESTACK_TOOL = 8;   // tool 8 = restack calculator; v4 widget replaces the old one
+const RESTACK_OK = typeof RestackWidget !== 'undefined';
 const GUIDE = D.guide || [];
 const GUIDE_BY_DOC = {}; GUIDE.forEach(g => (g.related || []).forEach(c => (GUIDE_BY_DOC[c] = GUIDE_BY_DOC[c] || []).push(g)));
 const guideTitle = g => g.id === '00' ? 'Зміст і з чого почати' : g.title.replace(/\s*\(.*?\)\s*$/, '');
@@ -882,7 +891,8 @@ function viewTool(p){
   ${t.docs.length?`<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${t.docs.map(docLink).join('')}</div>`:''}
   ${t.warn?`<div class="note warn small">Довідково. Джерело ціни — прайс Freitty Hub по локації (POL-03 п. 4.1). Якщо цифри тут і в Hub розходяться, правильна ціна — у Hub.</div>`:''}
   ${p===9?`<div class="note small">Вкладка «Карта мережі» показує точки без підкладки карти: зображення карти з OpenStreetMap у вікі не завантажуються. Картки і матриця покриття працюють повністю.</div>`:''}
-  <div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`;
+  ${p===RESTACK_TOOL && RESTACK_OK?`<div class="note small">Калькулятор v4: ціни відкалібровані на базі рестаків (рівень липня–листопада 2026) і перевірені на відгуках КС. Головне — правильно обрати рівень хаосу за фото. Difficult+ підтверджує супервізор. Результат онлайн-аналізатора фото можна вставити кнопкою «Paste analyzer result».</div>
+  <div class="tool-wrap"><div data-rsk></div></div></div>`:`<div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`}`;
 }
 function viewRef(id){
   const r = REFS.find(x => x.id === id); if (!r) return viewHome();
@@ -1211,7 +1221,11 @@ function legacyInit(p){
   setTimeout(() => { try {
     if (p === 1) addLine();
     if (p === 4) updProg();
-    if (p === 8) rstkInit();
+    if (p === RESTACK_TOOL){
+      const el = document.querySelector('[data-rsk]');
+      if (el && RESTACK_OK) RestackWidget.mount(el, JSON.parse(document.getElementById('restack-rules').textContent), {useHash:false});
+      else rstkInit();
+    }
     if (p === 9){ if (typeof netLeafletMap !== 'undefined' && netLeafletMap){ try { netLeafletMap.remove(); } catch {} } netLeafletMap = null; netLeafletInited = false; netActiveServices = new Set(); netActiveTypes = new Set(); netCurrentTab = 'cards'; }
   } catch (e) { console.warn('tool init', e); } }, 30);
 }

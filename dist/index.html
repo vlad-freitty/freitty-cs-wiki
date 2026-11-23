@@ -546,6 +546,147 @@
 .legacy .pi{padding:18px 16px}
 .legacy .fr,.legacy .fr3,.legacy .hcards,.legacy .branch-grid,.legacy .pgrid,.legacy .th-sigs{grid-template-columns:1fr}
 .legacy .line-item{grid-template-columns:1fr 1fr}}
+/* Restack Estimator v4 (site/restack/widget.css, built in C:\FREITTY\restack) */
+/* Restack Estimator v4 widget. Everything is scoped under .rsk and uses the host's design tokens:
+   --bg --surface --surface-2 --fg --muted --line --accent --accent-soft --ok --ok-soft --warn --warn-soft
+   --crit --crit-soft --font --mono --r   (the CS Wiki defines them; the standalone page defines its own). */
+.rsk{font-family:var(--font);color:var(--fg);font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
+.rsk *,.rsk *::before,.rsk *::after{box-sizing:border-box}
+.rsk button{font:inherit;color:inherit;margin:0;text-align:left}
+.rsk-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.rsk-left{display:flex;flex-direction:column;gap:12px;min-width:0}
+
+.rsk-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.rsk-hd{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rsk-step{width:24px;height:24px;border-radius:50%;background:var(--fg);color:var(--surface);font-family:var(--mono);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rsk-step.done{background:var(--ok)}
+.rsk-title{font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.rsk-note{margin-left:auto;font-size:12.5px;color:var(--muted)}
+.rsk-bd{padding:16px}
+.rsk-lbl{font-size:11.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+
+.rsk-opt{background:var(--surface-2);border:1.5px solid var(--line);border-radius:8px;cursor:pointer;transition:border-color .15s,background .15s}
+.rsk-opt:hover{border-color:color-mix(in srgb,var(--fg) 30%,var(--line))}
+.rsk-opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rsk-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+
+.rsk-hub{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.rsk-hub select{font:inherit;font-size:14px;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--fg);min-width:230px;cursor:pointer}
+.rsk-muted{font-size:12.5px;color:var(--muted)}
+
+.rsk-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.rsk-grp{padding:12px;display:flex;flex-direction:column;gap:3px}
+.rsk-grp .i{font-size:22px;line-height:1}
+.rsk-grp .n{font-size:13px;font-weight:700;line-height:1.25}
+.rsk-grp .p{font-size:12px;color:var(--muted)}
+.rsk-subs{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.rsk-sublist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:7px}
+.rsk-sub{padding:10px 12px;display:flex;align-items:center;gap:11px}
+.rsk-sub .i{font-size:21px;width:28px;text-align:center;flex-shrink:0}
+.rsk-sub .n{font-size:13.5px;font-weight:600;line-height:1.3}
+.rsk-sub .d{font-size:12px;color:var(--muted)}
+.rsk-pill{display:inline-block;font-size:10.5px;font-weight:600;border-radius:4px;padding:0 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.rsk-pill.sup{color:var(--warn);background:var(--warn-soft)}
+.rsk-pill.frag{color:var(--accent);background:var(--accent-soft)}
+
+.rsk-levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@container rsk (min-width: 1080px){.rsk-levels{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.rsk-lvl{padding:12px;display:flex;flex-direction:column;gap:5px}
+.rsk-lvl .t{display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap}
+.rsk-lvl .n{font-size:14.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.rsk-lvl .a{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.rsk-lvl .v{font-size:12.5px;color:var(--muted);line-height:1.45}
+.rsk-lvl.sel .v{color:var(--fg)}
+.rsk-lvl.sel.L1{border-color:var(--ok);background:var(--ok-soft)} .rsk-lvl.sel.L1 .n{color:var(--ok)}
+.rsk-lvl.sel.L2{border-color:var(--accent);background:var(--accent-soft)} .rsk-lvl.sel.L2 .n{color:var(--accent)}
+.rsk-lvl.sel.L3{border-color:var(--warn);background:var(--warn-soft)} .rsk-lvl.sel.L3 .n{color:var(--warn)}
+.rsk-lvl.sel.L4{border-color:var(--crit);background:var(--crit-soft)} .rsk-lvl.sel.L4 .n{color:var(--crit)}
+
+.rsk-codes{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:7px}
+.rsk-code{padding:8px 10px;display:flex;gap:9px;align-items:center;user-select:none}
+.rsk-code .c{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--muted);min-width:30px}
+.rsk-code .n{font-size:13px;line-height:1.3}
+.rsk-code .d{font-size:11.5px;color:var(--muted)}
+.rsk-code.crit{border-left:3px solid var(--warn)}
+.rsk-code.sel .c{color:var(--accent)}
+.rsk-code.crit.sel{border-color:var(--warn);background:var(--warn-soft)} .rsk-code.crit.sel .c{color:var(--warn)}
+.rsk-badge{display:none;min-width:20px;height:20px;border-radius:10px;background:var(--accent);color:var(--surface);font-size:11px;font-weight:700;padding:0 6px;align-items:center;justify-content:center}
+.rsk-badge.show{display:inline-flex}
+
+.rsk-mods{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rsk-seg{display:flex;gap:5px;flex-wrap:wrap}
+.rsk-segb{flex:1;min-width:0;padding:7px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center}
+.rsk-segb .v{font-family:var(--mono);font-size:13px;font-weight:600;white-space:nowrap}
+.rsk-segb .s{font-size:11px;color:var(--muted)}
+.rsk-segb.sel .v{color:var(--accent)}
+.rsk-hint{font-size:11.5px;color:var(--muted);margin-top:6px}
+.rsk-pal{display:flex;align-items:center;gap:10px}
+.rsk-palb{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;text-align:center}
+.rsk-pal input{width:70px;font-family:var(--mono);font-size:22px;font-weight:600;text-align:center;border:1.5px solid var(--line);border-radius:8px;padding:2px 4px;background:var(--surface);color:var(--fg)}
+
+.rsk-right{position:sticky;top:16px;display:flex;flex-direction:column;gap:10px}
+.rsk-res{overflow:hidden}
+.rsk-empty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.7}
+.rsk-empty .i{font-size:30px;opacity:.45;margin-bottom:8px}
+.rsk-top{padding:20px 18px 16px;text-align:center;border-bottom:1px solid var(--line)}
+.rsk-eye{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.rsk-big{font-size:34px;font-weight:800;line-height:1.05;color:var(--accent);letter-spacing:-.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rsk-big .dash{font-size:22px;opacity:.55}
+.rsk-rec{font-size:13.5px;color:var(--muted);margin-top:8px}
+.rsk-rec b{font-size:18px;color:var(--fg)}
+.rsk-chip{display:inline-block;border-radius:20px;font-size:11.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:3px 12px;margin-top:10px}
+.rsk-chip.L1{background:var(--ok-soft);color:var(--ok)} .rsk-chip.L2{background:var(--accent-soft);color:var(--accent)}
+.rsk-chip.L3{background:var(--warn-soft);color:var(--warn)} .rsk-chip.L4{background:var(--crit-soft);color:var(--crit)}
+.rsk-row{display:flex;justify-content:space-between;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);font-size:13px}
+.rsk-row span{color:var(--muted)} .rsk-row b{font-variant-numeric:tabular-nums}
+.rsk-bdn{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.rsk-bdn div{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--muted)}
+.rsk-bdn b{color:var(--fg);font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rsk-bdn .tot{border-top:1px dashed var(--line);padding-top:5px;margin-top:2px}
+.rsk-total{margin:12px 16px 0;background:var(--surface-2);border-radius:8px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rsk-total .l{font-size:12.5px;color:var(--muted)}
+.rsk-total .v{font-size:17px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rsk-msg{margin:10px 16px 0;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12.5px}
+.rsk-msg.warn{background:var(--warn-soft);border-left:3px solid var(--warn);color:var(--warn)}
+.rsk-msg.crit{background:var(--crit-soft);border-left:3px solid var(--crit);color:var(--crit)}
+.rsk-time{display:flex;align-items:center;padding:12px 18px;margin-top:12px;border-top:1px solid var(--line)}
+.rsk-time > div{flex:1;text-align:center}
+.rsk-time .l{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.rsk-time .v{font-size:15px;font-weight:700}
+.rsk-time .sep{flex:0 0 1px;height:34px;background:var(--line)}
+.rsk-acts{display:flex;gap:8px;padding:12px 16px 14px}
+.rsk-btn{flex:1;border:1.5px solid var(--line);background:transparent;border-radius:8px;padding:8px 12px;cursor:pointer;font-size:13px;text-align:center!important}
+.rsk-btn:hover{background:var(--surface-2)}
+.rsk-btn.pri{background:var(--fg);border-color:var(--fg);color:var(--surface)}
+.rsk-btn.pri:hover{opacity:.88;background:var(--fg)}
+.rsk-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rsk-src{font-size:11.5px;color:var(--muted);line-height:1.5;padding:0 2px}
+
+.rsk-dlg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:16px;z-index:1000}
+.rsk-dlg.open{display:flex}
+.rsk-dlg > div{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:12px;width:min(560px,100%);padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.rsk-dlg h3{font-size:15px;margin:0 0 6px}
+.rsk-dlg p{font-size:12.5px;color:var(--muted);margin:0 0 10px}
+.rsk-dlg textarea{width:100%;height:170px;font-family:var(--mono);font-size:12px;border:1.5px solid var(--line);border-radius:8px;padding:10px;resize:vertical;background:var(--surface-2);color:var(--fg)}
+.rsk-dlg .err{color:var(--crit);font-size:12.5px;min-height:18px;margin-top:6px}
+.rsk-dlg .row{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+.rsk-dlg .row .rsk-btn{flex:0 0 auto}
+.rsk-toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--surface);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:1001}
+.rsk-toast.show{opacity:1}
+
+.rsk{container:rsk/inline-size}
+@container rsk (max-width: 820px){
+  .rsk-grid{grid-template-columns:1fr}
+  .rsk-right{position:static}
+  .rsk-mods{grid-template-columns:1fr}
+}
+@container rsk (max-width: 440px){
+  .rsk-levels{grid-template-columns:1fr}
+  .rsk-groups{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rsk-sublist{grid-template-columns:1fr}
+  .rsk-hub select{min-width:0;width:100%}
+}
+
 </style>
 <style>
 /* Layout: sticky top bar + collapsible left index (document codes like a dock ledger) + reading column; Tier-0 documents carry a hazard stripe. */
@@ -5941,6 +6082,238 @@ Thank you!</div>
 function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 </script>
+<script id="restack-rules" type="application/json">{"version": "4.0", "calibrated_on": "restacks.xlsx: 506 cases with price+level (269 older, 129 Feb-Jun 2026, 108 Jul-Nov 2026). Base prices = Jul-Nov 2026 level; effects of level/height/codes/hub fitted on all cases (robust regression). Checked on 10 CS feedback orders.", "currency": "USD", "unit": "per pallet, price to client", "formula": "point = group.base + level.add + hub.add + height.add + codes.add; low = point - range.minus; high = point + (level.range_plus or range.plus); recommended = point; all rounded to nearest $5", "range": {"minus": 15, "plus": 20, "round_to": 5, "note": "Level L4 uses range_plus from its level entry: only 6 Difficult+ cases in the base, prices spread $100-$250, the supervisor confirms the final number."}, "hubs": {"core": ["Columbus", "Denver", "Greenville", "Markham", "Stockton", "San Bernardino"], "core_add": 0, "other_add": 5, "note": "Core hubs are the reference. Other hubs (Reno, Fontana, Fremont, Portland, Flowery Branch, East Brunswick, Wood Dale, Detroit, Greensboro, O'Hare ...) price about +$7 higher in the model fit."}, "levels": [{"id": "L1", "name": "Easy", "add": 0, "time_lo": 15, "time_hi": 30, "visual": "Load is still on its pallet. Light shift or lean, wrap loose or torn. Nothing (or a few cases) on the floor. Fix = push back / re-wrap / re-band."}, {"id": "L2", "name": "Medium", "add": 25, "time_lo": 30, "time_hi": 45, "visual": "Stack clearly leaning or partly collapsed; part of the cases fell, but packaging is mostly intact and product stays in its boxes/bags. Fix = rebuild part of the pallet by hand."}, {"id": "L3", "name": "Difficult", "add": 50, "time_lo": 45, "time_hi": 90, "visual": "Pallet collapsed; many cases on the floor, boxes crushed or open, layers mixed. Full manual rebuild of the pallet, some sorting, new pallet or corner boards likely."}, {"id": "L4", "name": "Difficult+", "add": 65, "time_lo": 120, "time_hi": 180, "visual": "Loose units out of their packaging (cans, bottles, produce, insulation), spillage or smashed product, re-boxing/re-packing needed, heavy units needing special handling. Supervisor informed.", "range_plus": 60}], "height": [{"id": "h1", "label": "≤55\"", "max": 55, "add": 0}, {"id": "h2", "label": "56–95\"", "max": 95, "add": 5}, {"id": "h3", "label": "96\"+", "max": 999, "add": 20}], "codes": {"count_excludes": ["D01"], "tiers": [{"min": 0, "max": 6, "add": 0}, {"min": 7, "max": 99, "add": 15}], "time_per_code": 2, "list": [{"code": "D01", "name": "Displacement", "desc": "Load shifted partially or fully off pallet", "crit": false}, {"code": "D02", "name": "Tilt / Lean", "desc": "Load leaning significantly to one side", "crit": false}, {"code": "D03", "name": "Collapse", "desc": "Load collapsed down, crushing lower levels", "crit": true}, {"code": "D04", "name": "Fall", "desc": "Items fell onto the trailer floor", "crit": false}, {"code": "D05", "name": "Wrap Failure", "desc": "Stretch wrap / strapping broken or loose", "crit": false}, {"code": "D06", "name": "Packaging Damage", "desc": "Boxes/totes torn, broken, punctured", "crit": false}, {"code": "D07", "name": "Spillage", "desc": "Contents leaked or spilled on the floor", "crit": true}, {"code": "D08", "name": "Mix-up", "desc": "Mixed SKUs lost their grouping", "crit": false}, {"code": "D09", "name": "Crushing", "desc": "Product visibly deformed or squashed", "crit": true}, {"code": "D10", "name": "Moisture", "desc": "Wet, soggy or moldy packaging", "crit": false}, {"code": "D11", "name": "Missing Pallet", "desc": "Pallet missing or broken, needs replacing", "crit": true}]}, "weight": {"options": [{"id": "w1", "label": "≤1200 lbs", "add": 0}, {"id": "w2", "label": "1200–2000", "add": 0}, {"id": "w3", "label": "2000+", "add": 0}], "note": "No price effect found in the data (residual ≈ $0 per bucket, 156 cases with weight). Kept as info for the hub (equipment). Set 'add' if management wants a weight surcharge as policy."}, "escalation": {"total_job_over": 2000, "supervisor_levels": ["L4"], "message_total": "Total exceeds $2,000 — escalate to supervisor", "message_supervisor": "Supervisor approval required before confirming the job"}, "groups": [{"id": "boxes", "icon": "📦", "name": "Boxes & Dry Goods", "base": 95, "time_add": 0, "subtypes": [{"id": "bx1", "icon": "📦", "name": "Standard Boxes", "desc": "Corrugated boxes: snacks, dry food, retail, general cargo"}, {"id": "bx2", "icon": "📚", "name": "Flat Corrugated / Sheets", "desc": "Knocked-down boxes, cardboard sheets, paper bundles"}, {"id": "bx3", "icon": "🧻", "name": "Paper Rolls / Light Bulky", "desc": "Paper rolls, wipes, light high-volume goods"}, {"id": "bx4", "icon": "🐾", "name": "Pet & Animal Food (boxed)", "desc": "Boxed pet food, supplements, packaged food"}]}, {"id": "bags", "icon": "🛍️", "name": "Bags", "base": 105, "time_add": 0, "subtypes": [{"id": "bg1", "icon": "🛍️", "name": "Big Bags (FIBC)", "desc": "Woven bulk bags, forklift handling"}, {"id": "bg2", "icon": "🎒", "name": "Paper / Poly Bags", "desc": "Sugar, flour, feed, salt, ice melter, cement"}]}, {"id": "beverages", "icon": "🥤", "name": "Bottled Beverages", "base": 100, "time_add": 0, "subtypes": [{"id": "bv1", "icon": "🍶", "name": "Plastic Bottles", "desc": "Water, soda, juice, sports drinks in cases/packs"}, {"id": "bv2", "icon": "🍾", "name": "Glass Bottles / Jars", "desc": "Beer, wine, sauces in glass — breakage risk", "fragile": true}]}, {"id": "cans", "icon": "🥫", "name": "Cans", "base": 115, "time_add": 0, "subtypes": [{"id": "cn1", "icon": "🥫", "name": "Canned Beverages", "desc": "Soda, energy, sparkling in can packs/trays"}, {"id": "cn2", "icon": "🥫", "name": "Canned Food", "desc": "Vegetables, sauces, soups in cans"}]}, {"id": "liquids", "icon": "🪣", "name": "Buckets, Drums & Tubs", "base": 95, "time_add": 0, "subtypes": [{"id": "lq1", "icon": "🪣", "name": "Buckets / Pails", "desc": "Paint, chemicals, food-grade buckets"}, {"id": "lq2", "icon": "🫙", "name": "Plastic Tubs / Containers", "desc": "Wrapped tubs and jars on pallets"}, {"id": "lq3", "icon": "🛢️", "name": "Drums / Canisters", "desc": "Metal or plastic drums, liquid canisters, totes"}]}, {"id": "produce", "icon": "🥦", "name": "Fresh Produce", "base": 120, "time_add": 5, "subtypes": [{"id": "pr1", "icon": "🥬", "name": "Vegetables / Veg with Ice", "desc": "Lettuce, broccoli, asparagus, peppers"}, {"id": "pr2", "icon": "🧅", "name": "Onions / Potatoes / Shallots", "desc": "Bagged or boxed root vegetables"}, {"id": "pr3", "icon": "🍌", "name": "Bananas / Citrus / Tropical", "desc": "Bananas, oranges, mandarins, avocados, mangos"}, {"id": "pr4", "icon": "🍉", "name": "Melons / Watermelons", "desc": "Cantaloupes, watermelons — heavy, smash easily", "fragile": true}, {"id": "pr5", "icon": "🍓", "name": "Berries / Grapes / Stone Fruit", "desc": "Clamshells, grapes, plums, cherries", "fragile": true}, {"id": "pr6", "icon": "🥚", "name": "Eggs", "desc": "Extremely fragile — supervisor informed", "fragile": true, "supervisor": true}]}, {"id": "frozen_dairy", "icon": "🧊", "name": "Frozen, Dairy & Meat", "base": 110, "time_add": 5, "subtypes": [{"id": "fz1", "icon": "🥐", "name": "Frozen Goods", "desc": "Frozen baked goods, frozen meals"}, {"id": "fz2", "icon": "🥛", "name": "Dairy / Yogurt", "desc": "Yogurt cups, milk, cheese"}, {"id": "fz3", "icon": "🍗", "name": "Meat / Deli", "desc": "Chicken, beef, ham, turkey"}]}, {"id": "industrial", "icon": "🔧", "name": "Industrial & Building", "base": 110, "time_add": 0, "subtypes": [{"id": "in1", "icon": "🔩", "name": "Hardware / Parts", "desc": "Hardware trays, auto parts, metal goods"}, {"id": "in2", "icon": "🪵", "name": "Sheet Materials", "desc": "Plywood, drywall, panels", "supervisor": true}, {"id": "in3", "icon": "🧱", "name": "Insulation / Bulky", "desc": "Insulation, foam, light bulky construction goods"}, {"id": "in4", "icon": "🔋", "name": "Batteries / Appliances", "desc": "Batteries, appliances, heavy units"}]}, {"id": "other", "icon": "❓", "name": "Mixed / Other", "base": 95, "time_add": 0, "subtypes": [{"id": "ot1", "icon": "📥", "name": "Mixed / Unknown Cargo", "desc": "Mixed SKUs or cargo type not clear from photos"}]}], "time": {"formula": "per_pallet = level.time + codes_counted * codes.time_per_code + group.time_add; total = per_pallet * pallets", "source": "Labor effort column, 184 cases: Easy median 20 min, Medium 40, Difficult 60, Difficult+ 150 (only 5 cases)"}}</script>
+<script>
+/* ===== Restack Estimator v4: replaces the old restack calculator (tool 8) ===== */
+/* Restack Estimator v4 widget.
+   RestackWidget.mount(rootEl, RULES, {useHash:true|false})
+   - useHash: keep the form state in location.hash (standalone page). Off inside the CS Wiki, which routes by hash.
+   All DOM lookups are scoped to rootEl; no global ids or inline handlers, so it can live inside another page. */
+(function () {
+  'use strict';
+  const r5 = n => Math.round(n / 5) * 5;
+  const money = n => '$' + n.toLocaleString('en-US');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmtT = m => (m = r5(m)) < 60 ? `${m} min` : `${Math.floor(m / 60)}h${m % 60 ? ' ' + (m % 60) + 'min' : ''}`;
+  const fmtTR = (a, b) => r5(a) === r5(b) ? fmtT(a) : `${fmtT(a)} – ${fmtT(b)}`;
+  const EXTRA_HUBS = ['Reno', 'Fontana', 'Fremont', 'Portland', 'Flowery Branch', 'East Brunswick', 'Wood Dale', 'Detroit',
+    'Greensboro', "Chicago (O'Hare)", 'Huntley', 'Arlington', 'Long Island', 'Baltimore', 'Dallas', 'Riverside', 'Other hub'];
+
+  function mount(root, R, opts) {
+    opts = opts || {};
+    const HUBS = [...R.hubs.core, ...EXTRA_HUBS];
+    const isCore = h => R.hubs.core.some(c => (h || '').toLowerCase().startsWith(c.toLowerCase()));
+    const grp = id => R.groups.find(g => g.id === id);
+    const lvl = id => R.levels.find(l => l.id === id);
+    const fresh = () => ({ hub: null, grp: null, sub: null, lvl: null, codes: new Set(), h: R.height[0].id, w: R.weight.options[0].id, pal: 1 });
+    let S = fresh();
+    const q = sel => root.querySelector(sel);
+
+    root.classList.add('rsk');
+    root.innerHTML = `
+<div class="rsk-grid">
+ <div class="rsk-left">
+  <section class="rsk-card"><div class="rsk-hd"><span class="rsk-step" data-st="hub">1</span><span class="rsk-title">Hub</span><span class="rsk-note">core hubs are the price reference</span></div>
+   <div class="rsk-bd"><div class="rsk-hub"><select data-r="hub" aria-label="Hub"><option value="">Select hub…</option>${HUBS.map(h => `<option value="${esc(h)}">${esc(h)}${isCore(h) ? '' : '  (+$' + R.hubs.other_add + ')'}</option>`).join('')}</select><span class="rsk-muted" data-r="hubTag"></span></div></div></section>
+  <section class="rsk-card"><div class="rsk-hd"><span class="rsk-step" data-st="sub">2</span><span class="rsk-title">Commodity</span><span class="rsk-note">group → subtype</span></div>
+   <div class="rsk-bd"><div class="rsk-groups">${R.groups.map(g => `<button type="button" class="rsk-opt rsk-grp" data-a="grp" data-v="${g.id}"><span class="i">${g.icon}</span><span class="n">${esc(g.name)}</span><span class="p">from ${money(r5(g.base - R.range.minus))}</span></button>`).join('')}</div>
+   <div class="rsk-subs" data-r="subs" hidden><div class="rsk-lbl" data-r="subLbl"></div><div class="rsk-sublist" data-r="subList"></div></div></div></section>
+  <section class="rsk-card"><div class="rsk-hd"><span class="rsk-step" data-st="lvl">3</span><span class="rsk-title">Chaos level</span><span class="rsk-note">what the photo shows — the main price driver</span></div>
+   <div class="rsk-bd"><div class="rsk-levels">${R.levels.map(l => `<button type="button" class="rsk-opt rsk-lvl ${l.id}" data-a="lvl" data-v="${l.id}"><span class="t"><span class="n">${esc(l.name)}</span><span class="a">+${money(l.add)}</span></span><span class="v">${esc(l.visual)}</span></button>`).join('')}</div></div></section>
+  <section class="rsk-card"><div class="rsk-hd"><span class="rsk-step" data-st="codes">4</span><span class="rsk-title">Damage codes</span><span class="rsk-badge" data-r="badge">0</span><span class="rsk-note">price: ${R.codes.tiers.filter(t => t.add > 0).map(t => `${t.min}+ codes +${money(t.add)}`).join(', ')} · D01 not counted</span></div>
+   <div class="rsk-bd"><div class="rsk-codes">${R.codes.list.map(d => `<button type="button" class="rsk-opt rsk-code${d.crit ? ' crit' : ''}" data-a="code" data-v="${d.code}" aria-pressed="false"><span class="c">${d.code}</span><span><span class="n">${esc(d.name)}</span><br><span class="d">${esc(d.desc)}</span></span></button>`).join('')}</div></div></section>
+  <section class="rsk-card"><div class="rsk-hd"><span class="rsk-step">5</span><span class="rsk-title">Pallet</span></div>
+   <div class="rsk-bd"><div class="rsk-mods">
+    <div><div class="rsk-lbl">Pallet height</div><div class="rsk-seg">${R.height.map(b => `<button type="button" class="rsk-opt rsk-segb" data-a="h" data-v="${b.id}"><span class="v">${esc(b.label)}</span><span class="s">+${money(b.add)}</span></button>`).join('')}</div></div>
+    <div><div class="rsk-lbl">Pallet weight</div><div class="rsk-seg">${R.weight.options.map(b => `<button type="button" class="rsk-opt rsk-segb" data-a="w" data-v="${b.id}"><span class="v">${esc(b.label)}</span><span class="s">+${money(b.add)}</span></button>`).join('')}</div>
+     ${R.weight.options.every(o => !o.add) ? '<div class="rsk-hint">Info for the hub (equipment) — no price effect.</div>' : ''}</div>
+    <div style="grid-column:1/-1"><div class="rsk-lbl">Number of pallets</div><div class="rsk-pal">
+     <button type="button" class="rsk-opt rsk-palb" data-a="pal" data-v="-1" aria-label="Fewer pallets">−</button>
+     <input type="number" min="1" max="99" value="1" data-r="pal" aria-label="Number of pallets">
+     <button type="button" class="rsk-opt rsk-palb" data-a="pal" data-v="1" aria-label="More pallets">+</button><span class="rsk-muted">pallets</span></div></div>
+   </div></div></section>
+ </div>
+ <div class="rsk-right">
+  <div class="rsk-card rsk-res" data-r="res" aria-live="polite"></div>
+  <div style="display:flex;gap:8px"><button type="button" class="rsk-btn" data-a="import">Paste analyzer result</button><button type="button" class="rsk-btn" data-a="reset">↺ Reset</button></div>
+  <div class="rsk-src">Rules v${esc(R.version)} · ${esc(R.calibrated_on)}</div>
+ </div>
+</div>
+<div class="rsk-dlg" data-r="dlg"><div role="dialog" aria-modal="true" aria-label="Paste analyzer result">
+ <h3>Paste analyzer result</h3><p>Paste the JSON the photo analyzer returned. The form fills in; check every field against the photo before quoting.</p>
+ <textarea data-r="dlgText" spellcheck="false" placeholder='{"hub":"Denver","group":"produce","subtype":"pr4","level":"L3","codes":["D01","D03"],"height":"h2","weight":"w3","pallets":4}'></textarea>
+ <div class="err" data-r="dlgErr"></div>
+ <div class="row"><button type="button" class="rsk-btn" data-a="dlgClose">Cancel</button><button type="button" class="rsk-btn pri" data-a="dlgApply">Fill the form</button></div>
+</div></div>
+<div class="rsk-toast" data-r="toast"></div>`;
+
+    // ── estimate ─────────────────────────────────────────────────
+    function estimate() {
+      const g = grp(S.grp), sub = g && g.subtypes.find(s => s.id === S.sub), l = lvl(S.lvl);
+      if (!g || !sub || !l) return null;
+      const hubAdd = S.hub ? (isCore(S.hub) ? R.hubs.core_add : R.hubs.other_add) : 0;
+      const hb = R.height.find(b => b.id === S.h), wb = R.weight.options.find(b => b.id === S.w);
+      const n = [...S.codes].filter(c => !R.codes.count_excludes.includes(c)).length;
+      const tier = R.codes.tiers.find(t => n >= t.min && n <= t.max);
+      const point = g.base + (sub.add || 0) + l.add + hubAdd + hb.add + wb.add + tier.add;
+      const plus = l.range_plus != null ? l.range_plus : R.range.plus;
+      const lo = r5(point - R.range.minus), rec = r5(point), hi = r5(point + plus);
+      const tExtra = n * R.codes.time_per_code + (g.time_add || 0);
+      return { g, sub, l, hubAdd, hb, wb, n, tier, lo, rec, hi, tLo: l.time_lo + tExtra, tHi: l.time_hi + tExtra,
+        sup: R.escalation.supervisor_levels.includes(l.id) || !!sub.supervisor,
+        totLo: lo * S.pal, totRec: rec * S.pal, totHi: hi * S.pal };
+    }
+
+    // ── render ───────────────────────────────────────────────────
+    const empty = (i, t) => `<div class="rsk-empty"><div class="i">${i}</div>${t}</div>`;
+    function render() {
+      q('[data-r=hub]').value = S.hub && HUBS.includes(S.hub) ? S.hub : (S.hub ? '__custom' : '');
+      q('[data-r=hubTag]').textContent = !S.hub ? 'Not selected — priced as a core hub' :
+        isCore(S.hub) ? 'Core hub · reference price' : `Other hub · +${money(R.hubs.other_add)} per pallet`;
+      root.querySelectorAll('[data-a=grp]').forEach(b => b.classList.toggle('sel', b.dataset.v === S.grp));
+      const g = grp(S.grp);
+      q('[data-r=subs]').hidden = !g;
+      if (g) {
+        q('[data-r=subLbl]').textContent = g.name + ' — select subtype';
+        q('[data-r=subList]').innerHTML = g.subtypes.map(s => `<button type="button" class="rsk-opt rsk-sub${s.id === S.sub ? ' sel' : ''}" data-a="sub" data-v="${s.id}"><span class="i">${s.icon}</span><span><span class="n">${esc(s.name)}${s.supervisor ? '<span class="rsk-pill sup">SUPERVISOR</span>' : ''}${s.fragile ? '<span class="rsk-pill frag">FRAGILE</span>' : ''}</span><br><span class="d">${esc(s.desc)}</span></span></button>`).join('');
+      }
+      root.querySelectorAll('[data-a=lvl]').forEach(b => b.classList.toggle('sel', b.dataset.v === S.lvl));
+      root.querySelectorAll('[data-a=code]').forEach(b => { const on = S.codes.has(b.dataset.v); b.classList.toggle('sel', on); b.setAttribute('aria-pressed', on); });
+      const badge = q('[data-r=badge]'); badge.textContent = S.codes.size; badge.classList.toggle('show', S.codes.size > 0);
+      root.querySelectorAll('[data-a=h]').forEach(b => b.classList.toggle('sel', b.dataset.v === S.h));
+      root.querySelectorAll('[data-a=w]').forEach(b => b.classList.toggle('sel', b.dataset.v === S.w));
+      const pal = q('[data-r=pal]'); if (document.activeElement !== pal) pal.value = S.pal;
+      const st = { hub: !!S.hub, sub: !!S.sub, lvl: !!S.lvl, codes: S.codes.size > 0 };
+      root.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('done', !!st[e.dataset.st]));
+
+      const res = q('[data-r=res]');
+      if (opts.useHash) syncHash();
+      if (!S.grp) { res.innerHTML = empty('📋', 'Select the commodity<br>to start the estimate'); return; }
+      if (!S.sub) { res.innerHTML = empty('👆', 'Choose a subtype<br>from the list'); return; }
+      if (!S.lvl) { res.innerHTML = empty('🔍', 'Pick the chaos level<br>that matches the photo'); return; }
+      const e = estimate();
+      const rows = [[`${e.g.name} base`, money(e.g.base)], [`${e.l.name} level`, '+' + money(e.l.add)]];
+      if (e.hubAdd) rows.push(['Other hub', '+' + money(e.hubAdd)]);
+      if (e.hb.add) rows.push([`Height ${e.hb.label}`, '+' + money(e.hb.add)]);
+      if (e.wb.add) rows.push([`Weight ${e.wb.label}`, '+' + money(e.wb.add)]);
+      if (e.tier.add) rows.push([`${e.n} damage codes`, '+' + money(e.tier.add)]);
+      const msgs = [];
+      if (e.sup) msgs.push(`<div class="rsk-msg warn">⚠ ${esc(R.escalation.message_supervisor)}${e.l.id === 'L4' ? ' — Difficult+ prices vary widely, so the upper bound is wider.' : '.'}</div>`);
+      if (e.sub.fragile) msgs.push('<div class="rsk-msg warn">Fragile cargo: confirm with the hub how much product is salvageable before quoting.</div>');
+      if (e.totHi >= R.escalation.total_job_over) msgs.push(`<div class="rsk-msg crit">⚠ ${esc(R.escalation.message_total)}</div>`);
+      if (!S.hub) msgs.push(`<div class="rsk-msg warn">Hub not selected — the price assumes a core hub. Other hubs add ${money(R.hubs.other_add)}.</div>`);
+      res.innerHTML = `
+        <div class="rsk-top"><div class="rsk-eye">Quote to client — per pallet</div>
+          <div class="rsk-big">${money(e.lo)}<span class="dash"> – </span>${money(e.hi)}</div>
+          <div class="rsk-rec">recommended <b>${money(e.rec)}</b></div><span class="rsk-chip ${e.l.id}">${esc(e.l.name)}</span></div>
+        <div class="rsk-row"><span>Do not quote below</span><b>${money(e.lo)}</b></div>
+        <div class="rsk-bdn">${rows.map(r => `<div><span>${esc(r[0])}</span><b>${r[1]}</b></div>`).join('')}<div class="tot"><span>Recommended per pallet</span><b>${money(e.rec)}</b></div></div>
+        ${S.pal > 1 ? `<div class="rsk-total"><div><div class="l">Total · ${S.pal} pallets</div><div class="l">recommended ${money(e.totRec)}</div></div><div class="v">${money(e.totLo)} – ${money(e.totHi)}</div></div>` : ''}
+        ${msgs.join('')}
+        <div class="rsk-time"><div><div class="l">⏱ Per pallet</div><div class="v">${fmtTR(e.tLo, e.tHi)}</div></div>
+          ${S.pal > 1 ? `<span class="sep"></span><div><div class="l">${S.pal} pallets</div><div class="v">${fmtTR(e.tLo * S.pal, e.tHi * S.pal)}</div></div>` : ''}</div>
+        <div class="rsk-acts"><button type="button" class="rsk-btn pri" data-a="copyQuote">Copy quote</button>${opts.useHash ? '<button type="button" class="rsk-btn" data-a="copyLink">Copy link</button>' : ''}</div>`;
+    }
+
+    // ── state in / out ───────────────────────────────────────────
+    function stateObj() { return { hub: S.hub, group: S.grp, subtype: S.sub, level: S.lvl, codes: [...S.codes].sort(), height: S.h, weight: S.w, pallets: S.pal }; }
+    function syncHash() {
+      const p = new URLSearchParams();
+      Object.entries(stateObj()).forEach(([k, v]) => { if (v != null && v !== '' && !(Array.isArray(v) && !v.length)) p.set(k, Array.isArray(v) ? v.join(',') : v); });
+      const h = p.toString(); history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
+    }
+    function applyState(o) {
+      const errs = [];
+      const g = o.group ? grp(o.group) : null;
+      if (o.group && !g) errs.push(`unknown group "${o.group}"`);
+      const sub = g && o.subtype ? g.subtypes.find(s => s.id === o.subtype) : null;
+      if (g && o.subtype && !sub) errs.push(`unknown subtype "${o.subtype}" for ${g.id}`);
+      if (o.level && !lvl(o.level)) errs.push(`unknown level "${o.level}"`);
+      const codes = (Array.isArray(o.codes) ? o.codes : String(o.codes || '').split(',')).map(c => String(c).trim().toUpperCase()).filter(Boolean);
+      const bad = codes.filter(c => !R.codes.list.some(d => d.code === c));
+      if (bad.length) errs.push('unknown codes ' + bad.join(', '));
+      if (o.height && !R.height.some(b => b.id === o.height)) errs.push(`unknown height "${o.height}"`);
+      if (o.weight && !R.weight.options.some(b => b.id === o.weight)) errs.push(`unknown weight "${o.weight}"`);
+      if (errs.length) return errs;
+      S = fresh();
+      Object.assign(S, { hub: o.hub || null, grp: g ? g.id : null, sub: sub ? sub.id : null, lvl: o.level || null, codes: new Set(codes),
+        h: o.height || R.height[0].id, w: o.weight || R.weight.options[0].id, pal: Math.max(1, Math.min(99, parseInt(o.pallets, 10) || 1)) });
+      if (S.hub && !HUBS.includes(S.hub)) {
+        const sel = q('[data-r=hub]'); let opt = sel.querySelector('option[value="__custom"]');
+        if (!opt) { opt = document.createElement('option'); opt.value = '__custom'; sel.appendChild(opt); }
+        opt.textContent = S.hub + (isCore(S.hub) ? '' : '  (+$' + R.hubs.other_add + ')');
+      }
+      render(); return [];
+    }
+    function loadHash() {
+      if (location.hash.length < 2) return render();
+      const o = {}; new URLSearchParams(location.hash.slice(1)).forEach((v, k) => o[k] = v);
+      if (applyState(o).length) render();
+    }
+
+    // ── copy ─────────────────────────────────────────────────────
+    function toast(m) { const t = q('[data-r=toast]'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 1700); }
+    function copy(text, msg) {
+      const fallback = () => {
+        const t = document.createElement('textarea'); t.value = text; t.style.position = 'fixed'; t.style.opacity = '0'; root.appendChild(t); t.select();
+        try { document.execCommand('copy') ? toast(msg) : toast('Copy blocked — select the text manually'); } catch (e) { toast('Copy blocked — select the text manually'); }
+        t.remove();
+      };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(() => toast(msg), fallback); else fallback();
+    }
+    function quoteText() {
+      const e = estimate(); if (!e) return '';
+      return [`Restack estimate (rules v${R.version})`, `Hub: ${S.hub || 'not set (core hub price)'}`, `Commodity: ${e.g.name} / ${e.sub.name}`,
+        `Chaos level: ${e.l.name}`, `Damage codes: ${[...S.codes].sort().join(', ') || 'none'}`, `Height: ${e.hb.label} · Weight: ${e.wb.label} · Pallets: ${S.pal}`,
+        `Price per pallet: ${money(e.lo)} – ${money(e.hi)} (recommended ${money(e.rec)})`,
+        S.pal > 1 ? `Total: ${money(e.totLo)} – ${money(e.totHi)} (recommended ${money(e.totRec)})` : null,
+        `Time per pallet: ${fmtTR(e.tLo, e.tHi)}${S.pal > 1 ? ` · total ${fmtTR(e.tLo * S.pal, e.tHi * S.pal)}` : ''}`,
+        e.sup ? 'Supervisor approval required.' : null].filter(Boolean).join('\n');
+    }
+
+    // ── events ───────────────────────────────────────────────────
+    const dlg = q('[data-r=dlg]');
+    const closeDlg = () => dlg.classList.remove('open');
+    root.addEventListener('click', ev => {
+      const b = ev.target.closest('[data-a]'); if (!b || !root.contains(b)) return;
+      const v = b.dataset.v;
+      switch (b.dataset.a) {
+        case 'grp': if (S.grp !== v) S.sub = null; S.grp = v; break;
+        case 'sub': S.sub = v; break;
+        case 'lvl': S.lvl = v; break;
+        case 'code': S.codes.has(v) ? S.codes.delete(v) : S.codes.add(v); break;
+        case 'h': S.h = v; break;
+        case 'w': S.w = v; break;
+        case 'pal': S.pal = Math.max(1, Math.min(99, S.pal + parseInt(v, 10))); break;
+        case 'reset': S = fresh(); q('[data-r=hub]').value = ''; break;
+        case 'import': q('[data-r=dlgErr]').textContent = ''; dlg.classList.add('open'); q('[data-r=dlgText]').focus(); return;
+        case 'dlgClose': closeDlg(); return;
+        case 'dlgApply': {
+          const raw = q('[data-r=dlgText]').value.trim(), m = raw.match(/\{[\s\S]*\}/); let o;
+          try { o = JSON.parse(m ? m[0] : raw); } catch (e) { q('[data-r=dlgErr]').textContent = 'Not valid JSON: ' + e.message; return; }
+          const errs = applyState(o);
+          if (errs.length) { q('[data-r=dlgErr]').textContent = 'Could not fill: ' + errs.join('; '); return; }
+          closeDlg(); toast('Form filled from analyzer — check it against the photo'); return;
+        }
+        case 'copyQuote': copy(quoteText(), 'Quote copied'); return;
+        case 'copyLink': copy(location.href, 'Link copied'); return;
+        default: return;
+      }
+      render();
+    });
+    dlg.addEventListener('click', ev => { if (ev.target === dlg) closeDlg(); });
+    root.addEventListener('keydown', ev => { if (ev.key === 'Escape') closeDlg(); });
+    q('[data-r=hub]').addEventListener('change', ev => { if (ev.target.value !== '__custom') S.hub = ev.target.value || null; render(); });
+    q('[data-r=pal]').addEventListener('input', ev => { const n = parseInt(ev.target.value, 10); if (Number.isFinite(n)) { S.pal = Math.max(1, Math.min(99, n)); render(); } });
+    q('[data-r=pal]').addEventListener('blur', () => render());
+
+    if (opts.useHash) { loadHash(); window.addEventListener('hashchange', loadHash); } else render();
+    return { applyState, estimate, state: () => stateObj() };
+  }
+  window.RestackWidget = { mount };
+})();
+
+</script>
 <script>
 (function(){
 "use strict";
@@ -5992,6 +6365,8 @@ const TOOLS = [
 // Knowledge that is not a rule: reference section without codes.
 const REFS = [{id:'11', kind:'old', p:11}, {id:'12', kind:'old', p:12}, {id:'13', kind:'old', p:13}, {id:'14', kind:'old', p:14}, {id:'15', kind:'old', p:15}, {id:'pitch', kind:'tool', p:11}];
 const LEG_OK = typeof PAGES !== 'undefined';
+const RESTACK_TOOL = 8;   // tool 8 = restack calculator; v4 widget replaces the old one
+const RESTACK_OK = typeof RestackWidget !== 'undefined';
 const GUIDE = D.guide || [];
 const GUIDE_BY_DOC = {}; GUIDE.forEach(g => (g.related || []).forEach(c => (GUIDE_BY_DOC[c] = GUIDE_BY_DOC[c] || []).push(g)));
 const guideTitle = g => g.id === '00' ? 'Зміст і з чого почати' : g.title.replace(/\s*\(.*?\)\s*$/, '');
@@ -6618,7 +6993,8 @@ function viewTool(p){
   ${t.docs.length?`<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${t.docs.map(docLink).join('')}</div>`:''}
   ${t.warn?`<div class="note warn small">Довідково. Джерело ціни — прайс Freitty Hub по локації (POL-03 п. 4.1). Якщо цифри тут і в Hub розходяться, правильна ціна — у Hub.</div>`:''}
   ${p===9?`<div class="note small">Вкладка «Карта мережі» показує точки без підкладки карти: зображення карти з OpenStreetMap у вікі не завантажуються. Картки і матриця покриття працюють повністю.</div>`:''}
-  <div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`;
+  ${p===RESTACK_TOOL && RESTACK_OK?`<div class="note small">Калькулятор v4: ціни відкалібровані на базі рестаків (рівень липня–листопада 2026) і перевірені на відгуках КС. Головне — правильно обрати рівень хаосу за фото. Difficult+ підтверджує супервізор. Результат онлайн-аналізатора фото можна вставити кнопкою «Paste analyzer result».</div>
+  <div class="tool-wrap"><div data-rsk></div></div></div>`:`<div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`}`;
 }
 function viewRef(id){
   const r = REFS.find(x => x.id === id); if (!r) return viewHome();
@@ -6947,7 +7323,11 @@ function legacyInit(p){
   setTimeout(() => { try {
     if (p === 1) addLine();
     if (p === 4) updProg();
-    if (p === 8) rstkInit();
+    if (p === RESTACK_TOOL){
+      const el = document.querySelector('[data-rsk]');
+      if (el && RESTACK_OK) RestackWidget.mount(el, JSON.parse(document.getElementById('restack-rules').textContent), {useHash:false});
+      else rstkInit();
+    }
     if (p === 9){ if (typeof netLeafletMap !== 'undefined' && netLeafletMap){ try { netLeafletMap.remove(); } catch {} } netLeafletMap = null; netLeafletInited = false; netActiveServices = new Set(); netActiveTypes = new Set(); netCurrentTab = 'cards'; }
   } catch (e) { console.warn('tool init', e); } }, 30);
 }
