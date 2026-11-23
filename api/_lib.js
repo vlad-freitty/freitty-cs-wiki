@@ -104,7 +104,11 @@ async function sql(text, params = []) {
   return sqlFn(text, params);
 }
 async function ensure() {
-  if (!cfg.dbUrl()) { mem = mem || { docs: new Map(), users: new Map() }; return; }
+  if (!cfg.dbUrl()) {
+    // Memory is for local tests only; on Vercel a missing database must fail loudly, not lose acknowledgements.
+    if (process.env.VERCEL) throw new Error('DATABASE_URL is not set: connect the Neon database to this project');
+    mem = mem || { docs: new Map(), users: new Map() }; return;
+  }
   if (!ready) ready = (async () => {
     await sql(`CREATE TABLE IF NOT EXISTS wiki_docs (path text PRIMARY KEY, data jsonb NOT NULL, updated_at timestamptz NOT NULL DEFAULT now())`);
     await sql(`CREATE TABLE IF NOT EXISTS wiki_users (id text PRIMARY KEY, name text, email text, last_login timestamptz NOT NULL DEFAULT now())`);
