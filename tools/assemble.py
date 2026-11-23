@@ -107,7 +107,10 @@ for code, d in pdf.items():
     merged = []
     for b in blocks:
         prev = merged[-1] if merged else None
-        if prev and prev["t"] == "p" and b["t"] == "p" and re.search(r"(\bп|\bпп|розділ)\.?$|[A-Z]-$", prev["text"]):
+        # ...and a wrapped line of a numbered step ("1. Бути доступним ... коли готовий" / "узяти дзвінок") became its own paragraph
+        cont = (prev and prev["t"] == "p" and b["t"] == "p" and prev.get("indent") == b.get("indent")
+                and re.match(r"^[a-zа-яіїєґ(«\"]", b["text"]) and not re.search(r"[.!?:;]$", prev["text"]))
+        if cont or (prev and prev["t"] == "p" and b["t"] == "p" and re.search(r"(\bп|\bпп|розділ)\.?$|[A-Z]-$", prev["text"])):
             prev["text"] += ("" if prev["text"].endswith("-") else " ") + b["text"]
             continue
         merged.append(b)
@@ -115,6 +118,21 @@ for code, d in pdf.items():
     # leading "Nov 16, 2026 · @name" line
     if blocks and blocks[0]["t"] == "p" and re.match(r"^[A-Z][a-z]{2} \d{1,2}, 20\d\d", blocks[0]["text"]):
         date = blocks[0]["text"].split("·")[0].strip()
+        blocks = blocks[1:]
+    # subtitle line of the newer format: "L2 Процес · Потік 1.0 · Tier 0 · Версія 0.1 (чернетка) · Власник: Oksana"
+    if blocks and blocks[0]["t"] == "p" and re.match(r"^L\d\s", blocks[0]["text"]) and "·" in blocks[0]["text"]:
+        for part in [x.strip() for x in blocks[0]["text"].split("·")]:
+            if part.startswith("Версія"):
+                meta.setdefault("Версія", part[len("Версія"):].strip())
+            elif ":" in part:
+                k, v = part.split(":", 1)
+                meta.setdefault(k.strip(), v.strip())
+            elif part.startswith("Tier"):
+                meta.setdefault("Tier", part[4:].strip())
+            elif part.startswith("Потік"):
+                meta.setdefault("Потік", part[5:].strip())
+            elif re.match(r"^L\d", part):
+                meta.setdefault("Рівень", part)
         blocks = blocks[1:]
     # passport written as paragraphs ("1.1 Код: SOP-1.9. Рівень: L3 Процедура. ...")
     if not meta:
@@ -130,11 +148,16 @@ for code, d in pdf.items():
                 if ":" in part:
                     k, v = part.split(":", 1)
                     meta[k.strip()] = v.strip().rstrip(".")
-        if "Версія" in meta and "Статус" not in meta:
-            mv = re.match(r"([\d.]+)\s*\(([^)]+)\)", meta["Версія"])
-            if mv:
-                meta["Статус"] = f"{mv.group(2).capitalize()}, v{mv.group(1)}"
-                del meta["Версія"]
+    if "Версія" in meta and "Статус" not in meta:
+        mv = re.match(r"([\d.]+)\s*(?:\(([^)]+)\))?", meta["Версія"])
+        if mv:
+            meta["Статус"] = f"{(mv.group(2) or 'Чернетка').capitalize()}, v{mv.group(1)}"
+            del meta["Версія"]
+    elif "Версія" in meta and "Статус" in meta and not re.search(r"v\s?\d", meta["Статус"]):
+        mv = re.match(r"([\d.]+)", meta["Версія"])
+        if mv:
+            meta["Статус"] = f"{meta['Статус']}, v{mv.group(1)}"
+            del meta["Версія"]
     title = d["title"]
     tcode = title.split(" ", 1)
     status_raw = meta.get("Статус", "")
@@ -144,7 +167,9 @@ for code, d in pdf.items():
         "title": tcode[1] if len(tcode) > 1 else title,
         "source": "pdf",
         "meta": meta,
-        "status": status_raw.split(",")[0].strip() or None,
+        # "Чернетка оновлення; чинна 1.0 — ..." → "Чернетка" for the badge; the full wording stays in the passport
+        "status": (lambda st: (re.match(r"(Чинний|Чернетка|Потребує оновлення|Не створено|Архів)", st, re.I).group(1).capitalize()
+                               if re.match(r"(Чинний|Чернетка|Потребує оновлення|Не створено|Архів)", st, re.I) else st or None))(status_raw.split(",")[0].strip()),
         "version": mver.group(1) if mver else None,
         "date": date,
         "blocks": blocks,
@@ -154,6 +179,13 @@ for code, d in pdf.items():
 for p in sorted(glob.glob(os.path.join(PKG, "docs", "*", "*.md"))):
     fm, body = front(rd(p))
     code = fm["code"]
+    if code in docs:
+        pv = [int(x) for x in re.findall(r"\d+", str(docs[code].get("version") or "0"))]
+        mv = [int(x) for x in re.findall(r"\d+", str(fm.get("version") or "0"))]
+        if pv >= mv:
+            # a newer PDF supersedes the design-session markdown; the markdown version stays in data/versions as archive
+            print(f"{code}: PDF v{docs[code].get('version')} supersedes markdown v{fm.get('version')}", file=sys.stderr)
+            continue
     docs[code] = {
         "code": code,
         "title": fm.get("title"),
@@ -214,6 +246,29 @@ for p in sorted(glob.glob(os.path.join(ROOT, "inputs", "guide", "*.md"))):
     blocks = [b for b in md_blocks(raw) if not (b["t"] == "p" and re.fullmatch(r"(\[[^\]]*\]\([^)]*\)\s*·?\s*)+", b["text"]))]
     guide.append({"id": gid, "file": os.path.basename(p), "title": m.group(1).strip() if m else gid, "related": GUIDE_RELATED.get(gid, []), "blocks": blocks})
 
+# ---------- work cards: practical one-pagers that sit next to a procedure (not registry documents) ----------
+CARDS = {
+    "handover-protocol": {"title": "Протокол передачі зміни", "related": ["SOP-1.6", "TPL-06", "SOP-1.9", "POL-13", "STD-06", "STD-18"]},
+    "cs-duties": {"title": "Обов'язки CS за каналами і системами", "related": ["SOP-1.9", "SOP-1.1", "SOP-1.2", "SOP-1.3", "SOP-1.6", "SOP-1.7", "SOP-7.1", "SOP-3.1", "SOP-3.6", "POL-09"]},
+}
+cards = []
+cpath = os.path.join(DATA, "cards_pdf.json")
+if os.path.exists(cpath):
+    for key, c in json.load(io.open(cpath, encoding="utf-8")).items():
+        meta = CARDS.get(key, {})
+        blocks = [b for b in c["blocks"] if b["t"] != "date"]
+        # a legend set in large type before the first numbered section is text, not headings
+        lead = []
+        while blocks and blocks[0]["t"] == "h" and not re.match(r"^\d", blocks[0]["text"]):
+            lead.append(blocks.pop(0)["text"])
+        if lead:
+            blocks.insert(0, {"t": "p", "text": " ".join(lead)})
+        date = next((b["text"].split("·")[0].strip() for b in c["blocks"] if b["t"] == "date"), None)
+        if blocks and blocks[0]["t"] == "p" and re.match(r"^[A-Z][a-z]{2} \d{1,2}, 20\d\d", blocks[0]["text"]):
+            date = blocks[0]["text"].split("·")[0].strip(); blocks = blocks[1:]
+        cards.append({"id": key, "title": meta.get("title") or c["title"] or key, "pdfTitle": c["title"], "date": date,
+                      "related": meta.get("related", []), "blocks": blocks})
+
 # ---------- documents written for the wiki (e.g. POL-21 draft) and their registry rows ----------
 extra = json.load(io.open(os.path.join(ROOT, "site", "extra_docs.json"), encoding="utf-8"))
 for r in extra.get("registry", []):
@@ -256,7 +311,7 @@ for w in warnings:
     print("WARNING", w, file=sys.stderr)
 
 out = {"registry": reg, "core": core, "docs": docs, "proposals": proposals,
-       "decisions": dec_rows, "analytics": analytics, "legend": legend, "versions": versions, "archive": archive, "guide": guide}
+       "decisions": dec_rows, "analytics": analytics, "legend": legend, "versions": versions, "archive": archive, "guide": guide, "cards": cards}
 io.open(os.path.join(DATA, "wiki_data.json"), "w", encoding="utf-8").write(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 print("docs", sorted(docs), file=sys.stderr)
 print("proposals", len(proposals), "decisions", len(dec_rows), file=sys.stderr)

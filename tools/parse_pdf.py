@@ -45,6 +45,16 @@ def page_items(page):
     for t, tb in zip(tabs, tboxes):
         rows = []
         hs = [y for y in hlines if tb.y0 - 12 <= y <= tb.y1 + 12]
+        # A detected box sometimes starts with full-width "rows" that are really body text above the table
+        # (a section heading and its paragraphs). The table starts at the first row with the most columns.
+        ncols = [sum(c is not None for c in r.cells) for r in t.rows]
+        if ncols and max(ncols) > 1 and ncols[0] < max(ncols):
+            k = ncols.index(max(ncols))
+            tb = fitz.Rect(tb.x0, t.rows[k].bbox[1], tb.x1, tb.y1)
+            ref_cells = t.rows[k].cells
+            hs = [y for y in hlines if tb.y0 - 2 <= y <= tb.y1 + 12]
+        else:
+            ref_cells = t.rows[0].cells
         # table text is set smaller than body text; a header row just above the detected box belongs to the table
         above = [ln["bbox"].y0 for ln in lines if abs(ln["size"] - 11.3) < 0.4 and tb.x0 - 4 <= ln["bbox"].x0 <= tb.x1 and tb.y0 - 30 <= ln["bbox"].y0 < tb.y0 - 1]
         if above and hs:
@@ -57,7 +67,7 @@ def page_items(page):
                 bounds.insert(0, tb.y0)
             if bounds[-1] < tb.y1 - 6:
                 bounds.append(tb.y1)
-            xs = [c[0] for c in t.rows[0].cells if c is not None] + [tb.x1]
+            xs = [c[0] for c in ref_cells if c is not None] + [tb.x1]
             for y0, y1 in zip(bounds, bounds[1:]):
                 row = []
                 for x0, x1 in zip(xs, xs[1:]):
@@ -180,10 +190,14 @@ def parse(path):
     return {"title": " ".join(title_parts), "blocks": blocks}
 
 
-out = {}
+# Incremental: entries already in the output file are kept; the PDFs passed now are (re)parsed.
+# The key is the document code from the title, or the file name when the title has no code.
+out = json.load(io.open(sys.argv[1], encoding="utf-8")) if os.path.exists(sys.argv[1]) else {}
 for p in sys.argv[2:]:
     r = parse(p)
-    code = re.match(r"^(\S+)", r["title"]).group(1) if r["title"] else p
+    m = re.match(r"^((?:POL|STD|PRC|SOP|WI|TPL|REG)-[\w.]+)", r["title"])
+    code = m.group(1) if m else os.path.splitext(os.path.basename(p))[0]
+    r["file"] = os.path.basename(p)
     out[code] = r
     print(code, len(r["blocks"]), file=sys.stderr)
-io.open(sys.argv[1], "w", encoding="utf-8").write(json.dumps(out, ensure_ascii=False, indent=1))
+    io.open(sys.argv[1], "w", encoding="utf-8").write(json.dumps(out, ensure_ascii=False, indent=1))

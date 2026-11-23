@@ -330,6 +330,9 @@ const DEFAULT_MATRIX = {
   'POL-11':[...LINE,'it'], 'POL-12':[...LINE,'it'], 'POL-13':LINE, 'POL-14':['ssr','sup','kcr','head'],
   'SOP-1.9':['ssr','sup','head'], 'SOP-1.7':['ssr','sup','head'], 'SOP-2.6':['ssr','sup','head'],
 };
+['1.1','1.2','1.3','1.4','1.5','1.6','1.8','2.1','2.2','2.3','2.4','2.5','3.1','3.2','3.3','3.4','3.5','3.6','3.7','4.1','4.2','4.3','4.4','4.6','4.7']
+  .forEach(n => { if (!DEFAULT_MATRIX['SOP-' + n]) DEFAULT_MATRIX['SOP-' + n] = ['ssr','sup','head']; });
+DEFAULT_MATRIX['SOP-4.5'] = ['ssr','sup','kcr','head'];
 
 /* ---------------- old wiki → new structure ---------------- */
 // Static pages of the old wiki become "working materials" inside the document they belong to.
@@ -355,6 +358,8 @@ const LEG_OK = typeof PAGES !== 'undefined';
 const RESTACK_TOOL = 8;   // tool 8 = restack calculator; v4 widget replaces the old one
 const RESTACK_OK = typeof RestackWidget !== 'undefined';
 const GUIDE = D.guide || [];
+const CARDS = D.cards || [];
+const CARDS_BY_DOC = {}; CARDS.forEach(c => (c.related || []).forEach(code => (CARDS_BY_DOC[code] = CARDS_BY_DOC[code] || []).push(c)));
 const GUIDE_BY_DOC = {}; GUIDE.forEach(g => (g.related || []).forEach(c => (GUIDE_BY_DOC[c] = GUIDE_BY_DOC[c] || []).push(g)));
 const guideTitle = g => g.id === '00' ? 'Зміст і з чого почати' : g.title.replace(/\s*\(.*?\)\s*$/, '');
 const legTitle = (kind, p) => { if (!LEG_OK) return ''; const pg = PAGES.find(x => x.p === p && (kind === 'tool' ? x.tabs.includes('tools') : !x.tabs.includes('tools'))); return pg ? pg.t.replace(/^[^\p{L}\p{N}★]+/u, '').replace(/^★\s*/, '').trim() : 'Сторінка'; };
@@ -459,6 +464,12 @@ function buildIndex(){
     g.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
       const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : (b.text || '');
       IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:sec, text:norm(txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')), raw:txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, ''), boost:1}); }); });
+  CARDS.forEach(c => { let sec = '';
+    IDX.push({route:'card-'+c.id, label:'Робоча картка', title:c.title, where:'', text:norm(c.title), raw:c.title, boost:3});
+    c.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
+      const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : (b.text || '');
+      const pm = b.t === 'p' && b.text.match(/^(\d+(?:\.\d+)+)\.?\s/);
+      IDX.push({route:'card-'+c.id, label:'Робоча картка', title:c.title, where:sec, text:norm(txt), raw:txt, boost:1}); }); });
   D.proposals.forEach(p => IDX.push({route:'prop-'+p.id, label:'Пропозиція', title:p.title, where:(p.for||[]).join(', '), text:norm(p.title+' '+p.blocks.map(b=>b.text||(b.rows||[]).map(r=>r.join(' ')).join(' ')).join(' ')), raw:p.title, boost:1}));
   D.decisions.forEach(r => IDX.push({route:'decisions', label:'Рішення '+r.n, title:r.topic, where:r.status, text:norm(r.topic+' '+r.text), raw:r.text, boost:0}));
 }
@@ -700,6 +711,7 @@ function sideHtml(route){
   let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}));
   if (S.admin) h += group('admin', 'Адміністрування', 'shieldok', '--g-violet', item('team','Команда і призначення', {icon:'users'}) + item('journal','Журнал ознайомлень', {icon:'list'}) + item('roles','Ролі і доступи', {icon:'shield'}));
   if (GUIDE.length) h += group('guide', 'Посібник КС', 'headset', '--g-teal', GUIDE.map(g => item('guide-'+g.id, guideTitle(g), g.id === '00' ? {icon:'star'} : {num:g.id})).join(''), GUIDE.length);
+  if (CARDS.length) h += group('cards', 'Робочі картки', 'clipboard', '--g-cyan', CARDS.map(c => item('card-'+c.id, c.title, {icon:'clipboard'})).join(''), CARDS.length);
   if (LEG_OK) h += group('tools', 'Інструменти', 'wrench', '--g-amber', TOOLS.map(t => item('tool-'+t.p, legTitle('tool', t.p), {icon:TOOL_IC[t.p]})).join(''), TOOLS.length);
   for (const t of Object.keys(TYPES)){
     const list = ALL_CODES.filter(c => TYPE_OF(c) === t && hasAny(c));
@@ -762,6 +774,7 @@ function openTo(el){ let d = el.closest('details'); while (d){ d.open = true; d 
 function refChip(ref){
   const [code, p] = ref.split('#');
   if (!REG[code]) return `<span class="chip">${esc(code)}</span>`;
+  if (p && p[0] === 's') return `<a class="chip acc mono" href="#doc-${slug(code)}--s-${esc(p.slice(1))}">${esc(code)} розд. ${esc(p.slice(1))}</a>`;
   return `<a class="chip acc mono" href="#doc-${slug(code)}${p?'--p-'+p.replace(/\./g,'-'):''}">${esc(code)}${p?' п. '+esc(p):''}</a>`;
 }
 function docLink(c){ return REG[c] ? `<a class="chip acc mono" href="#doc-${slug(c)}" title="${esc(docTitle(c))}">${c}</a>` : `<span class="chip">${esc(c)}</span>`; }
@@ -874,6 +887,7 @@ function viewDoc(code){
   <details class="blk" id="pass" ${d?'':'open'}><summary><h2>Паспорт документа</h2></summary><dl class="passport" style="margin-bottom:14px">${meta.map(([k,v]) => `<div><dt>${esc(k)}</dt><dd>${inline(String(v), ctx)}</dd></div>`).join('')}</dl></details>
   ${r.note?`<div class="note small"><b>Примітка реєстру:</b> ${inline(r.note, ctx)}</div>`:''}
   ${props.length?`<div class="note small"><b>Є пропозиції змін:</b> ${props.map(p => `<a href="#prop-${p.id}">${esc(p.title)}</a>`).join(' · ')}</div>`:''}
+  ${CARDS_BY_DOC[code]?`<div class="note small"><b>Робоча картка:</b> ${CARDS_BY_DOC[code].map(c => `<a href="#card-${c.id}">${esc(c.title)}</a>`).join(' · ')}</div>`:''}
   ${GUIDE_BY_DOC[code]?`<div class="note small"><b>У посібнику КС:</b> ${GUIDE_BY_DOC[code].map(g => `<a href="#guide-${g.id}">${esc(guideTitle(g))}</a>`).join(' · ')}</div>`:''}
   ${tools.length?`<div class="note small"><b>Інструменти до документа:</b> ${tools.map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join(' · ')}</div>`:''}
   ${d ? `${foldBar}<div class="body">${blocksHtml(d.blocks, ctx)}</div>` : `<div class="note warn small">Офіційний текст документа ще не перенесено у вікі (джерело: ${esc(r.storage||'Notion / Freitty CS')}).${mats.length?' Нижче — робочі матеріали зі старої вікі, що стосуються цього документа.':''}</div>${mats.length?foldBar:''}`}
@@ -909,6 +923,14 @@ function viewGuide(id){
   ${(g.related||[]).filter(c => REG[c]).length ? `<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${g.related.filter(c => REG[c]).map(docLink).join('')}</div>` : ''}
   ${g.id === '00' ? '<p class="lead">Посібник Оксани (CS Lead) для операторів: як ми ведемо дзвінки і як AI-аналізатор (CAE) їх оцінює. Питання по системі — Влад.</p>' : ''}
   ${foldBar}<div class="body">${blocksHtml(g.blocks, {}, 'g' + g.id + '-')}</div>${nav}</article></div>`;
+}
+function viewCard(id){
+  const c = CARDS.find(x => x.id === id); if (!c) return viewHome();
+  return `<div class="wrap"><article class="read" style="max-width:860px"><div class="eyebrow">Робоча картка${c.date ? ' · ' + esc(c.date) : ''}</div>
+  <h1 class="ptitle">${esc(c.title)}</h1>
+  ${(c.related||[]).filter(x => REG[x]).length ? `<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${c.related.filter(x => REG[x]).map(docLink).join('')}</div>` : ''}
+  <p class="lead">Робоча картка — практичний опис «як робити» поруч із процедурою. Правила і зобов'язання — у документах, на які вона посилається.</p>
+  ${foldBar}<div class="body">${blocksHtml(c.blocks, {}, 'c-' + c.id + '-')}</div></article></div>`;
 }
 function viewProposals(){
   return `<div class="wrap"><div class="eyebrow">proposals/ · не злиті в документи</div><h1 class="ptitle">Пропозиції змін</h1><p class="lead">Зміни до існуючих документів з дизайн-сесії жовтня 2026. Вони не діють, доки власник документа не внесе їх у текст.</p>
@@ -989,6 +1011,8 @@ const CONFLICTS = [
   {t:'Order chat — єдине джерело правди за POL-09, POL-08, POL-13, але SOP-1.9 його не згадує (логування в HubSpot і передача в каналі команди).', refs:['POL-09#4.1','SOP-1.9#6.4']},
   {t:'POL-13 описує три зміни, SOP-1.9 — лише денну і нічну. Тривалість перерв: SOP-1.9 відсилає до POL-13, POL-13 — до STD-06.', refs:['POL-13#4.1','SOP-1.9#7.5']},
   {t:'Назви ролей розходяться: «старший зміни» (SOP-1.9) і «CS супервайзер» (POL-05, POL-08, POL-13); «Key Clients» і «Key Account Representative».', refs:['SOP-1.9','POL-13']},
+  {t:'Публічний відгук: SOP-4.4 — публічна відповідь на негатив протягом 4 год за шаблоном; POL-07 п. 6.6 — заборонено відповідати без погодження власника політики.', refs:['SOP-4.4#s3','POL-07#6.6']},
+  {t:'SOP-1.7 у PDF має ту саму версію 0.1, що й SOP-1.7 з дизайн-сесії, але інший текст (хто передзвонює: агент, що першим взяв пропущений, проти призначеного власника черги). Версію треба підняти.', refs:['SOP-1.7#3.2']},
   {t:'Числа (строки, пороги) записані прямо в політиках, хоча за правилом №5 реєстру вони мають жити лише в STD.', refs:['POL-05#4.1','POL-10#7.1']},
 ];
 function openQuestions(code){
@@ -1158,6 +1182,7 @@ function parseRoute(){
   let m = h.match(/^tool-(\d+)$/); if (m) return {view:'tool', p:+m[1]};
   m = h.match(/^ref-([\w]+)$/); if (m) return {view:'ref', id:m[1]};
   m = h.match(/^guide-(\d\d)$/); if (m) return {view:'guide', id:m[1]};
+  m = h.match(/^card-([\w-]+)$/); if (m) return {view:'card', id:m[1]};
   m = h.match(/^old-(\d+)$/); if (m) return {view:'old', p:+m[1]};
   return {view:h};
 }
@@ -1178,6 +1203,7 @@ function render(){
     case 'doc': html = oldVer ? viewOldVersion(r.code, r.anchor) : viewDoc(r.code); break;
     case 'archive': html = viewArchive(); break;
     case 'guide': html = viewGuide(r.id); break;
+    case 'card': html = viewCard(r.id); break;
     case 'prop': html = viewProposal(r.id); break;
     case 'tool': html = viewTool(r.p); break;
     case 'ref': html = viewRef(r.id); break;

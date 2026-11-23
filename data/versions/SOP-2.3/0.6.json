@@ -1,0 +1,189 @@
+{
+ "code": "SOP-2.3",
+ "version": "0.6",
+ "title": "Робота із запереченнями",
+ "status": "Чернетка",
+ "date": "Nov 21, 2026",
+ "blocks": [
+  {
+   "t": "h",
+   "text": "1. Паспорт"
+  },
+  {
+   "t": "table",
+   "rows": [
+    [
+     "Поле",
+     "Значення"
+    ],
+    [
+     "Код",
+     "SOP-2.3"
+    ],
+    [
+     "Назва",
+     "Робота із запереченнями"
+    ],
+    [
+     "Рівень",
+     "L3 Процедура"
+    ],
+    [
+     "Потік",
+     "2.0 Продажі"
+    ],
+    [
+     "Tier",
+     "1"
+    ],
+    [
+     "Версія",
+     "0.6 (чернетка)"
+    ],
+    [
+     "Власник",
+     "Oksana"
+    ],
+    [
+     "Наступний перегляд",
+     "21.05.2027"
+    ]
+   ],
+   "passport": true
+  },
+  {
+   "t": "h",
+   "text": "2. Призначення і порядок"
+  },
+  {
+   "t": "p",
+   "text": "Призначення. Заперечення — це не «ні», а питання, на яке клієнт ще не отримав відповіді. Мета — зрозуміти, що за ним стоїть, і дати чесну відповідь, а не переконати будь-якою ціною.",
+   "indent": false
+  },
+  {
+   "t": "p",
+   "text": "Чотири кроки на кожне заперечення:",
+   "indent": false
+  },
+  {
+   "t": "p",
+   "text": "1. Визнати — назвати те, що клієнт відчуває: It sounds like price is the main",
+   "indent": false
+  },
+  {
+   "t": "p",
+   "text": "concern.",
+   "indent": true
+  },
+  {
+   "t": "p",
+   "text": "2. Уточнити — одне відкрите питання: What would make this work for you? 3. Відповісти фактом — локація, години, сервіс, ціна з бази, альтернатива.",
+   "indent": false
+  },
+  {
+   "t": "p",
+   "text": "Без обіцянок, яких не перевірили.",
+   "indent": true
+  },
+  {
+   "t": "p",
+   "text": "4. Домовитися про наступний крок — замовлення, лист з ціною, дзвінок у",
+   "indent": false
+  },
+  {
+   "t": "p",
+   "text": "певний час або відмова з причиною (SOP-2.7).",
+   "indent": true
+  },
+  {
+   "t": "h",
+   "text": "3. Типові заперечення"
+  },
+  {
+   "t": "table",
+   "rows": [
+    [
+     "Заперечення",
+     "Що часто стоїть за ним",
+     "Відповідь (зразок)",
+     "Наступний крок"
+    ],
+    [
+     "«Too expensive»",
+     "Порівнює з іншим складом; не бачить, що входить у ціну",
+     "What are you comparing it to? Our price includes [handling, photos, ePOD].",
+     "Ціна з бази; знижка — лише в межах STD-09"
+    ],
+    [
+     "«I need to think / compare»",
+     "Немає відповіді на якесь питання",
+     "Of course. What would you need to know to decide?",
+     "Email з ціною і кабінетом; дзвінок наступного робочого дня (General Inquiry)"
+    ],
+    [
+     "«I already have a warehouse»",
+     "Задоволений поточним або не знає, що є запасний варіант",
+     "Great. Many clients keep us as a backup for overflow or other locations.",
+     "Email з локаціями; згода на контакт"
+    ],
+    [
+     "«Too far / wrong location»",
+     "Немає хабу поруч",
+     "The closest option we have is [hub], [distance]. Would that work?",
+     "Альтернатива або Not Our Location з State і ZIP"
+    ],
+    [
+     "«Why prepayment?»",
+     "Новий для нас клієнт, не довіряє",
+     "Prepayment secures your slot at the hub. You pay by Stripe or EFS — you get the invoice by SMS and email.",
+     "Інвойс; лише Stripe і EFS"
+    ],
+    [
+     "«Can you do it tonight / this weekend?»",
+     "Поза годинами локації",
+     "The hub is closed then. We can arrange after-hours work for [surcharge], or schedule [next open time].",
+     "Доплата з передоплатою або години локації (STD-03, п. 6.6)"
+    ],
+    [
+     "«Can you take hazmat?»",
+     "Небезпечний вантаж",
+     "Обовʼязково запитати клас: What hazmat class is it? Запитати, чи це straight reload: Is it a straight reload? Storage для hazmat практично неможливий, але можемо запитати партнера: Storage is limited for hazmat, but let me check with the hub.",
+     "Клас і сервіс у HubSpot; запит партнеру в Order chat; далі — STD-14, POL-16"
+    ],
+    [
+     "«Do you have temperature control?»",
+     "Reefer-вантаж",
+     "We don't have temperature-controlled storage. We can do a straight reload. Якщо потрібен restack — запитати, чи можна зробити його всередині трейлера: Can the restack be done inside the trailer?",
+     "Straight reload; restack — лише всередині трейлера; інакше Service is Not Supported, попит — Андрію Чернявському"
+    ],
+    [
+     "«I'll just book online»",
+     "Хоче самостійно",
+     "Perfect — here's your link to My Freitty, and a welcome bonus on your first order.",
+     "Посилання на кабінет; запис у HubSpot"
+    ],
+    [
+     "4. Чого не робимо ціною» без підстави.",
+     "Не сперечаємося з клієнтом і не доводимо, що він помиляється.",
+     "Не даємо знижку поза лімітами STD-09 і не обіцяємо «перезвонити з кращою Не обіцяємо послугу, локацію чи час, яких не перевірили (POL-06, STD-14).",
+     ""
+    ]
+   ]
+  },
+  {
+   "t": "p",
+   "text": "Не відповідаємо на те саме заперечення втретє — фіксуємо відмову з причиною і залишаємо шлях повернутися. Не критикуємо конкурентів. Не аналізуємо причину рестаку.",
+   "indent": true
+  },
+  {
+   "t": "h",
+   "text": "5. Повʼязані документи"
+  },
+  {
+   "t": "p",
+   "text": "PRC-2.0 · SOP-2.1 · SOP-2.2 · SOP-2.6 · SOP-2.7 · STD-03 (п. 6.6) · STD-09 · STD-14 · STD-16 · POL-03 · POL-06 · скрипти сервісів · Never Split the Difference (бібліотека проєкту).",
+   "indent": false
+  }
+ ],
+ "savedAt": "2026-11-24"
+}
