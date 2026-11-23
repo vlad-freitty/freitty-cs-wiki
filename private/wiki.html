@@ -71,6 +71,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 /* Old wiki components (tools, working materials, reference pages), scoped under .legacy and recoloured to the tokens below */
@@ -845,6 +846,7 @@ body.noside .side{display:none}
 .dot.ok{background:var(--ok)} .dot.re{background:var(--warn)} .dot.no{background:var(--crit)}
 .main{min-width:0;padding-block:24px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:1080px;margin:0 auto}
+.main.wide{padding-block:16px 24px}
 .read{max-width:800px}
 @media (max-width:900px){
   .layout{grid-template-columns:minmax(0,1fr)}
@@ -998,6 +1000,42 @@ details.mat > summary{font-weight:600}
 .step{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px}
 .step .num{counter-increment:st;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700}
 .step .num::before{content:counter(st)}
+/* warehouse map */
+.mapwrap .ptitle{margin-bottom:4px}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.maptools input,.maptools select{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:7px 10px;font-size:14px;min-width:0}
+.maptools .grow{flex:1 1 220px}
+.svcchips{display:flex;flex-wrap:wrap;gap:6px}
+.svcchips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 10px;font-size:12.5px;cursor:pointer;color:var(--fg)}
+.svcchips button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.mapgrid{display:grid;grid-template-columns:minmax(280px,390px) minmax(0,1fr);gap:12px;height:calc(100vh - 230px);min-height:480px}
+.maplist{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);min-width:0}
+#lmap{height:100%;min-height:360px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface-2);z-index:0}
+.lc{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:10px 12px;cursor:pointer;color:var(--fg)}
+.lc:hover{background:var(--surface-2)} .lc.on{background:var(--accent-soft)}
+.lc .t{display:flex;gap:8px;align-items:baseline;justify-content:space-between}
+.lc .t b{font-size:14.5px} .lc .d{font-family:var(--mono);font-size:12px;color:var(--accent);white-space:nowrap}
+.lc .a{font-size:12.5px;color:var(--muted);margin:2px 0 6px}
+.lc .row{gap:4px}
+.tag{font-size:11px;padding:2px 7px;border-radius:999px;background:var(--idle-soft);color:var(--idle);white-space:nowrap}
+.tag.own{background:var(--accent-soft);color:var(--accent)} .tag.svc{background:var(--surface-2);color:var(--fg)}
+.tag.no{background:var(--crit-soft);color:var(--crit);text-decoration:line-through}
+.ld{padding:14px 14px 20px;display:flex;flex-direction:column;gap:12px}
+.ld h2{margin:0;font-size:19px}
+.ld .kv{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 10px;font-size:13.5px}
+.ld .kv dt{color:var(--muted)} .ld .kv dd{margin:0;overflow-wrap:anywhere}
+.ld .actions{display:flex;flex-wrap:wrap;gap:6px}
+.ld table{font-size:13px}
+.leaflet-interactive.mk{fill:var(--ok);stroke:#fff;fill-opacity:.95;stroke-width:2}
+.leaflet-interactive.mk.mk-own{fill:var(--accent)}
+.leaflet-interactive.mk.mk-sel{stroke:var(--fg);stroke-width:3.5}
+.leaflet-interactive.mk.mk-dim{fill-opacity:.25;stroke-opacity:.4}
+.leaflet-interactive.mk-origin{fill:var(--crit);stroke:#fff;stroke-width:2;fill-opacity:1}
+.leaflet-container{font-family:var(--font)}
+#lmap.dark-tiles .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9)}
+.legend{display:flex;gap:12px;font-size:12.5px;color:var(--muted);align-items:center;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+@media (max-width:900px){.mapgrid{grid-template-columns:minmax(0,1fr);height:auto}#lmap{height:340px;order:-1}.maplist{max-height:none}}
 /* user menu */
 .umenu{position:relative;flex-shrink:0}
 .um-btn{display:flex;align-items:center;gap:8px;cursor:pointer;padding:3px 10px 3px 4px}
@@ -6570,6 +6608,8 @@ function buildIndex(){
     g.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
       const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : (b.text || '');
       IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:sec, text:norm(txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')), raw:txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, ''), boost:1}); }); });
+  LOCS.forEach(l => IDX.push({route:'map-' + l.id, label:'Склад', title:l.name, where:[l.state, l.market?.label].filter(Boolean).join(' · '),
+    text:norm([l.name, l.state, l.addr, l.zip, l.legal, l.interstate, (l.services || []).join(' ')].join(' ')), raw:[l.addr, l.hours].filter(Boolean).join(' · '), boost:3}));
   CARDS.forEach(c => { let sec = '';
     IDX.push({route:'card-'+c.id, label:'Робоча картка', title:c.title, where:'', text:norm(c.title), raw:c.title, boost:3});
     c.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
@@ -7508,7 +7548,7 @@ function sideHtml(route){
     return `<a class="${on}" href="#${href}">${lead}<span class="lb">${esc(label)}</span>${tail}</a>`;
   };
   const group = (id, label, icon, col, inner, count) => `<details class="sg" data-sg="${id}" style="--gc:var(${col})" ${sgOpen[id] === false ? '' : 'open'}><summary class="sgh"><span class="gi">${ic(icon, 15)}</span><span class="gl">${esc(label)}</span>${count?`<span class="n">${count}</span>`:''}</summary><div class="sgb">${inner}</div></details>`;
-  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}) + (window.__WIKI_USER__ ? item('settings','Налаштування', {icon:'gear'}) : ''));
+  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + item('map','Карта складів', {icon:'map'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}) + (window.__WIKI_USER__ ? item('settings','Налаштування', {icon:'gear'}) : ''));
   if (S.admin) h += group('admin', 'Адміністрування', 'shieldok', '--g-violet', item('team','Команда і призначення', {icon:'users'}) + item('journal','Журнал ознайомлень', {icon:'list'}));
   if (GUIDE.length) h += group('guide', 'Посібник КС', 'headset', '--g-teal', GUIDE.map(g => item('guide-'+g.id, guideTitle(g), g.id === '00' ? {icon:'star'} : {num:g.id})).join(''), GUIDE.length);
   if (CARDS.length) h += group('cards', 'Робочі картки', 'clipboard', '--g-cyan', CARDS.map(c => item('card-'+c.id, c.title, {icon:'clipboard'})).join(''), CARDS.length);
@@ -7704,7 +7744,7 @@ function viewTool(p){
   return `<div class="wrap"><div class="eyebrow">Інструмент</div><h1 class="ptitle">${esc(legTitle('tool', p))}</h1>
   ${t.docs.length?`<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${t.docs.map(docLink).join('')}</div>`:''}
   ${t.warn?`<div class="note warn small">Довідково. Джерело ціни — прайс Freitty Hub по локації (POL-03 п. 4.1). Якщо цифри тут і в Hub розходяться, правильна ціна — у Hub.</div>`:''}
-  ${p===9?`<div class="note small">Вкладка «Карта мережі» показує точки без підкладки карти: зображення карти з OpenStreetMap у вікі не завантажуються. Картки і матриця покриття працюють повністю.</div>`:''}
+  ${p===9?`<div class="note small">Зручніша карта з пошуком найближчого складу — <a href="#map">Карта складів</a>.</div>`:''}
   ${p===RESTACK_TOOL && RESTACK_OK?`<div class="note small">Калькулятор v4: ціни відкалібровані на базі рестаків (рівень липня–листопада 2026) і перевірені на відгуках КС. Головне — правильно обрати рівень хаосу за фото. Difficult+ підтверджує супервізор. Результат онлайн-аналізатора фото можна вставити кнопкою «Paste analyzer result».</div>
   <div class="tool-wrap"><div data-rsk></div></div></div>`:`<div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`}`;
 }
@@ -7765,6 +7805,102 @@ const PERMS = [
   ['Надавати і знімати рівень «Адміністратор»', 0, 0, 0, 1],
   ['Ставити, змінювати чи видаляти чужу відмітку про ознайомлення', 0, 0, 0, 0],
 ];
+/* ---------------- warehouse map ---------------- */
+const LOCS = (typeof NETWORK_LOCATIONS !== 'undefined' ? NETWORK_LOCATIONS : []).filter(l => isFinite(l.lat) && isFinite(l.lng));
+const SVC_NAME = {'cross-dock':'Cross-dock', rework:'Rework', storage:'Storage', overweight:'Overweight', reefer:'Reefer', hazmat:'Hazmat'};
+const MAPST = {q:'', kind:'', svc:new Set(), sel:null, origin:null, originLabel:'', map:null, marks:{}, originMark:null};
+const isOwnHub = l => l.type === 'own' || l.market?.cls === 'own';
+function milesBetween(a, b){ const R = 3958.8, rad = x => x * Math.PI / 180; const dLa = rad(b.lat - a.lat), dLo = rad(b.lng - a.lng);
+  const h = Math.sin(dLa/2)**2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLo/2)**2; return 2 * R * Math.asin(Math.sqrt(h)); }
+function mapFiltered(){
+  const q = norm(MAPST.q);
+  let list = LOCS.filter(l => (!q || norm([l.name, l.state, l.addr, l.zip, l.legal, l.market?.label, l.interstate].join(' ')).includes(q))
+    && (!MAPST.kind || (MAPST.kind === 'own') === isOwnHub(l))
+    && [...MAPST.svc].every(sv => (l.services || []).includes(sv)));
+  if (MAPST.origin) list = list.map(l => ({l, d: milesBetween(MAPST.origin, l)})).sort((a, b) => a.d - b.d).map(x => (x.l._d = x.d, x.l));
+  else list = list.map(l => (delete l._d, l)).sort((a, b) => (isOwnHub(b) - isOwnHub(a)) || a.name.localeCompare(b.name));
+  return list;
+}
+function keyPrices(l){
+  const p = l.price || {}; const out = [];
+  for (const [k, v] of Object.entries(p)) { if (/^X-Dock Std|^Minimal|^Storage short \(|^Handwork/i.test(k)) out.push([k.replace(/\s*\(.*?\)/, ''), v]); if (out.length >= 3) break; }
+  return out;
+}
+function locCard(l){
+  return `<button class="lc ${MAPST.sel === l.id ? 'on' : ''}" data-loc="${esc(l.id)}"><div class="t"><b>${esc(l.name)}</b>${l._d != null ? `<span class="d">≈ ${Math.round(l._d)} mi</span>` : `<span class="d">${esc(l.state || '')}</span>`}</div>
+   <div class="a">${esc(l.addr || '')}</div>
+   <div class="row">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${(l.services || []).map(sv => `<span class="tag svc">${esc(SVC_NAME[sv] || sv)}</span>`).join('')}</div></button>`;
+}
+function locDetail(l){
+  const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}`;
+  const find = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.addr || (l.lat + ',' + l.lng))}`;
+  const all = Object.keys(SVC_NAME);
+  const f = l.facility || {};
+  const kv = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
+  return `<div class="ld"><button class="kb sm" data-locback style="align-self:flex-start">← До списку</button>
+   <div><div class="row" style="margin-bottom:6px">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${l.market?.label ? `<span class="tag">${esc(l.market.label)}</span>` : ''}${l.isNew ? '<span class="tag own">Нова</span>' : ''}</div>
+   <h2>${esc(l.name)}</h2>${l.legal ? `<div class="small muted">${esc(l.legal)}</div>` : ''}${l._d != null ? `<div class="small" style="margin-top:4px">≈ ${Math.round(l._d)} миль по прямій від: ${esc(MAPST.originLabel)}</div>` : ''}</div>
+   <div class="actions"><a class="kb sm pri" href="${dir}" target="_blank" rel="noopener">Маршрут у Google Maps</a><a class="kb sm" href="${find}" target="_blank" rel="noopener">Відкрити на карті</a><button class="kb sm" data-copy="${esc(l.addr || '')}">Копіювати адресу</button></div>
+   <dl class="kv">${kv('Адреса', l.addr)}${kv('Траса', l.interstate)}${kv('Години', l.hours)}${kv('Ворота', l.gate)}${kv('Телефон', l.phone)}${kv('After-hours', l.ah)}${kv('Транспорт', l.vehicles)}</dl>
+   <div><div class="eyebrow" style="margin-bottom:6px">Сервіси</div><div class="row">${all.map(sv => (l.services || []).includes(sv) ? `<span class="tag svc">${SVC_NAME[sv]}</span>` : `<span class="tag no">${SVC_NAME[sv]}</span>`).join('')}</div></div>
+   ${l.note?.text ? `<div class="note small">${esc(l.note.text)}</div>` : ''}
+   ${Object.keys(l.price || {}).length ? `<details class="blk" open><summary><h2>Ціни</h2></summary><p class="small muted" style="margin:0 0 6px">Довідково. Джерело ціни — прайс Freitty Hub по локації (POL-03); якщо цифри розходяться, правильна — у Hub.</p><div class="tbl"><table><tbody>${Object.entries(l.price).map(([k, v]) => `<tr><td>${esc(k)}</td><td style="white-space:nowrap">${esc(v)}</td></tr>`).join('')}</tbody></table></div></details>` : ''}
+   ${(l.contacts || []).length ? `<details class="blk"><summary><h2>Контакти</h2></summary><div class="tbl"><table><tbody>${l.contacts.map(c => `<tr><td class="small muted">${esc(c.role || '')}</td><td>${esc(c.name || '')}</td><td class="small">${esc(c.phone || '')}${c.phone && c.email ? '<br>' : ''}${esc(c.email || '')}</td></tr>`).join('')}</tbody></table></div></details>` : ''}
+   ${Object.values(f).some(Boolean) ? `<details class="blk"><summary><h2>Склад і обладнання</h2></summary><dl class="kv" style="padding-bottom:12px">${kv('Тип', f.type)}${kv('Доки', f.docks)}${kv('Навантажувачі', f.forklifts)}${kv('Підлога', f.floor)}${kv('Висота', f.height)}${kv('Паркінг', f.parking)}${kv('Зберігання', f.capacity)}${kv('Сертифікати', f.certifications)}</dl></details>` : ''}
+  </div>`;
+}
+function viewMap(){
+  const list = mapFiltered(); const sel = LOCS.find(l => l.id === MAPST.sel);
+  return `<div class="mapwrap"><div class="eyebrow">Мережа складів</div><h1 class="ptitle">Карта складів</h1>
+  <div class="legend"><span><i style="background:var(--accent)"></i>Хаб Freitty</span><span><i style="background:var(--ok)"></i>Партнер</span><span><i style="background:var(--crit)"></i>Точка клієнта</span><span>Клік по карті — найближчі склади до цієї точки</span></div>
+  <div class="maptools">
+   <input class="grow" id="mq" type="search" placeholder="Назва, місто, штат, ZIP" value="${esc(MAPST.q)}" aria-label="Пошук складу">
+   <select id="mkind" aria-label="Тип"><option value="">Усі склади</option><option value="own" ${MAPST.kind === 'own' ? 'selected' : ''}>Хаби Freitty</option><option value="partner" ${MAPST.kind === 'partner' ? 'selected' : ''}>Партнери</option></select>
+   <input id="morig" type="search" placeholder="Найближчий до: місто або ZIP" value="${esc(MAPST.originLabel)}" aria-label="Найближчий склад до" style="flex:1 1 200px">
+   <button class="kb sm pri" id="morigGo">Знайти найближчі</button>${MAPST.origin ? '<button class="kb sm" id="morigClear">Скинути</button>' : ''}
+  </div>
+  <div class="svcchips" style="margin-bottom:10px">${Object.entries(SVC_NAME).map(([k, v]) => `<button data-msvc="${k}" class="${MAPST.svc.has(k) ? 'on' : ''}">${v}</button>`).join('')}<span class="small muted" id="mcount" style="align-self:center">${list.length} з ${LOCS.length}</span></div>
+  <div class="mapgrid"><div class="maplist" id="mlist">${sel ? locDetail(sel) : (list.length ? list.map(locCard).join('') : '<div class="empty" style="margin:12px">Нічого не знайдено. Змініть пошук або фільтри.</div>')}</div><div id="lmap"></div></div></div>`;
+}
+function refreshMapList(){
+  const list = mapFiltered(); const sel = LOCS.find(l => l.id === MAPST.sel); const el = $('#mlist'); if (!el) return;
+  el.innerHTML = sel ? locDetail(sel) : (list.length ? list.map(locCard).join('') : '<div class="empty" style="margin:12px">Нічого не знайдено. Змініть пошук або фільтри.</div>');
+  const c = $('#mcount'); if (c) c.textContent = `${list.length} з ${LOCS.length}`;
+  const vis = new Set(list.map(l => l.id));
+  Object.entries(MAPST.marks).forEach(([id, m]) => { const e = m.getElement && m.getElement(); if (e){ e.classList.toggle('mk-dim', !vis.has(id)); e.classList.toggle('mk-sel', id === MAPST.sel); } });
+  if (!sel) el.scrollTop = 0;
+}
+function selectLoc(id, pan){
+  MAPST.sel = id; refreshMapList();
+  const l = LOCS.find(x => x.id === id); if (l && MAPST.map && pan) MAPST.map.setView([l.lat, l.lng], Math.max(MAPST.map.getZoom(), 9));
+}
+function setOrigin(lat, lng, label){
+  MAPST.origin = {lat, lng}; MAPST.originLabel = label;
+  if (MAPST.map){ if (MAPST.originMark) MAPST.originMark.remove(); MAPST.originMark = L.circleMarker([lat, lng], {radius:7, className:'mk-origin'}).addTo(MAPST.map).bindTooltip(label);
+    const near = mapFiltered().slice(0, 3); const pts = [[lat, lng], ...near.map(l => [l.lat, l.lng])]; MAPST.map.fitBounds(pts, {padding:[40, 40], maxZoom:9}); }
+  MAPST.sel = null; refreshMapList(); const o = $('#morig'); if (o) o.value = label;
+}
+async function geocodePlace(q){
+  const u = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us,ca&q=' + encodeURIComponent(q);
+  const r = await fetch(u, {headers:{'Accept-Language':'en'}}); if (!r.ok) throw new Error('geocode');
+  const j = await r.json(); return j[0] ? {lat:+j[0].lat, lng:+j[0].lon, label: j[0].display_name.split(',').slice(0, 3).join(',')} : null;
+}
+function initMap(){
+  const el = document.getElementById('lmap'); if (!el) return;
+  if (typeof L === 'undefined'){ el.innerHTML = '<div class="empty" style="margin:12px">Карта не завантажилась. Список складів ліворуч працює.</div>'; return; }
+  if (MAPST.map){ try { MAPST.map.remove(); } catch {} MAPST.map = null; MAPST.marks = {}; MAPST.originMark = null; }
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+  const map = L.map(el, {zoomControl:true, worldCopyJump:true}).setView([39.5, -97.5], 4);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
+  el.classList.toggle('dark-tiles', dark);
+  LOCS.forEach(l => {
+    const m = L.circleMarker([l.lat, l.lng], {radius: isOwnHub(l) ? 9 : 7, className: 'mk' + (isOwnHub(l) ? ' mk-own' : '')}).addTo(map);
+    m.bindTooltip(`${l.name} · ${l.state || ''}`); m.on('click', () => selectLoc(l.id, false)); MAPST.marks[l.id] = m;
+  });
+  map.on('click', e => setOrigin(e.latlng.lat, e.latlng.lng, `точка на карті (${e.latlng.lat.toFixed(3)}, ${e.latlng.lng.toFixed(3)})`));
+  MAPST.map = map;
+  setTimeout(() => { map.invalidateSize(); if (MAPST.origin) setOrigin(MAPST.origin.lat, MAPST.origin.lng, MAPST.originLabel); else if (MAPST.sel) selectLoc(MAPST.sel, true); else refreshMapList(); }, 60);
+}
 function viewSettings(){
   const WU = window.__WIKI_USER__; const acc = myAccess(); const t = themeNow(); const role = myRole();
   let h = `<div class="wrap"><article class="read" style="max-width:900px"><div class="eyebrow">Налаштування</div><h1 class="ptitle">Налаштування</h1>`;
@@ -8031,6 +8167,7 @@ function parseRoute(){
   m = h.match(/^ref-([\w]+)$/); if (m) return {view:'ref', id:m[1]};
   m = h.match(/^guide-(\d\d)$/); if (m) return {view:'guide', id:m[1]};
   m = h.match(/^card-([\w-]+)$/); if (m) return {view:'card', id:m[1]};
+  m = h.match(/^map(?:-([\w-]+))?$/); if (m) return {view:'map', id:m[1] || null};
   m = h.match(/^old-(\d+)$/); if (m) return {view:'old', p:+m[1]};
   return {view:h};
 }
@@ -8044,7 +8181,7 @@ function render(){
   $('#meCnt').textContent = S.uid && prog.req.length ? `${prog.ok}/${prog.req.length}` : '—';
   chip.classList.toggle('due', prog.overdue.length > 0); chip.hidden = !!S.offsite;
   const keep = routeKey === lastRoute; const y = window.scrollY;
-  if (keep && (r.view === 'tool' || (r.view === 'ref' && r.id === 'pitch'))) return; // interactive tools keep their own state
+  if (keep && (r.view === 'tool' || r.view === 'map' || (r.view === 'ref' && r.id === 'pitch'))) return; // interactive tools keep their own state
   const openState = {}; if (keep) $('#main').querySelectorAll('details[id]').forEach(d => openState[d.id] = d.open);
   let html;
   switch (r.view){
@@ -8068,12 +8205,13 @@ function render(){
     case 'journal': html = viewJournal(); break;
     case 'roles': html = viewRoles(); break;
     case 'settings': html = viewSettings(); break;
+    case 'map': html = viewMap(); break;
     case 'newbie': html = viewNewbie(); break;
     case 'questions': html = viewQuestions(); break;
     default: html = viewHome();
   }
   const ae = document.activeElement; const focusId = ae && ae.id && $('#main').contains(ae) ? ae.id : null; const selStart = focusId && ae.selectionStart;
-  $('#main').innerHTML = html;
+  $('#main').innerHTML = html; $('#main').classList.toggle('wide', r.view === 'map');
   sectionize($('#main'));
   if (keep) Object.entries(openState).forEach(([id, o]) => { const d = document.getElementById(id); if (d) d.open = o; });
   if (focusId){ const el = document.getElementById(focusId); if (el){ el.focus(); try { if (selStart != null) el.setSelectionRange(selStart, selStart); } catch {} } }
@@ -8088,6 +8226,7 @@ function render(){
     document.title = (r.view==='doc' ? r.code + ' · ' : '') + 'Freitty CS Wiki';
     if (r.view === 'tool' || (r.view === 'ref' && r.id === 'pitch')) legacyInit(r.view === 'tool' ? r.p : 11);
     if (r.view === 'ref' && r.id === '12') setTimeout(() => { try { showP('oo'); } catch {} }, 30);
+    if (r.view === 'map'){ if (r.id) MAPST.sel = r.id; setTimeout(initMap, 0); }
   }
   fillNames();
   closeDrawer();
@@ -8118,12 +8257,14 @@ document.addEventListener('change', e => {
   if (t.id === 'setSide'){ const hide = !t.checked; store.set('noside', hide); document.body.classList.toggle('noside', hide); }
   if (t.id === 'nbRole'){ try { sessionStorage.setItem('nbrole', t.value); } catch {} render(); }
   if (t.id === 'teamRoleFilter'){ TEAM.roleFilter = t.value; render(); }
+  if (t.id === 'mkind'){ MAPST.kind = t.value; MAPST.sel = null; refreshMapList(); }
   if (t.dataset.setrole && t.value) setPersonRole(t.dataset.setrole, t.value, false);
   if (t.dataset.mx){ const [c, role] = t.dataset.mx.split('|'); const m = JSON.parse(JSON.stringify(S.matrix)); const set = new Set(m[c]||[]); t.checked ? set.add(role) : set.delete(role); m[c] = [...set]; saveMatrix(m, c, role, t.checked); }
 });
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'rf-q'){ RF.q = t.value; render(); }
+  if (t.id === 'mq'){ MAPST.q = t.value; MAPST.sel = null; refreshMapList(); }
   if (t.id === 'teamQ'){ TEAM.q = t.value; if (!S.user) return; S.user.search(t.value).then(hits => { const o = $('#teamOpts'); if (!o) return;
     o.innerHTML = hits.map(p => `<button data-addp="${esc(p.id)}"><img src="${esc(p.avatarUrl)}" alt="" width="20" height="20" style="border-radius:50%"><span></span></button>`).join(''); o.hidden = !hits.length;
     o.querySelectorAll('button').forEach((b, i) => b.querySelector('span').textContent = hits[i].name || 'Колега'); }); }
@@ -8134,6 +8275,13 @@ document.addEventListener('click', e => {
   if (!e.target.closest('#umenu')) { const dd = $('#umDd'); if (dd && !dd.hidden) toggleUserMenu(false); }
   if (!t) { if (!e.target.closest('.srch')) $('#sres').hidden = true; return; }
   if (t.id === 'umBtn'){ toggleUserMenu(); return; }
+  if (t.dataset.loc){ selectLoc(t.dataset.loc, true); return; }
+  if (t.dataset.locback !== undefined){ MAPST.sel = null; refreshMapList(); return; }
+  if (t.dataset.msvc){ MAPST.svc.has(t.dataset.msvc) ? MAPST.svc.delete(t.dataset.msvc) : MAPST.svc.add(t.dataset.msvc); t.classList.toggle('on'); MAPST.sel = null; refreshMapList(); return; }
+  if (t.dataset.copy !== undefined){ navigator.clipboard?.writeText(t.dataset.copy).then(() => toast('Адресу скопійовано'), () => toast('Не вдалося скопіювати')); return; }
+  if (t.id === 'morigClear'){ MAPST.origin = null; MAPST.originLabel = ''; if (MAPST.originMark){ MAPST.originMark.remove(); MAPST.originMark = null; } lastRoute = null; render(); return; }
+  if (t.id === 'morigGo'){ const q = ($('#morig')?.value || '').trim(); if (!q){ toast('Введіть місто або ZIP'); return; }
+    t.disabled = true; geocodePlace(q).then(g => { t.disabled = false; if (!g){ toast('Не знайшли таке місце в США чи Канаді'); return; } setOrigin(g.lat, g.lng, g.label); }, () => { t.disabled = false; toast('Пошук місця зараз недоступний. Клікніть точку на карті.'); }); return; }
   if (t.dataset.themeSet){ setTheme(t.dataset.themeSet); if (!$('#umDd').hidden) $('#umDd').innerHTML = userMenuHtml(); render(); return; }
   if (t.closest('#umDd') && t.tagName === 'A') toggleUserMenu(false);
   if (t.dataset.sign){ sign(t.dataset.sign); return; }
@@ -8175,7 +8323,7 @@ si.addEventListener('keydown', e => {
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); sel = Math.max(0, Math.min(items.length-1, sel + (e.key==='ArrowDown'?1:-1))); items.forEach((x,i) => x.classList.toggle('on', i===sel)); items[sel]?.scrollIntoView({block:'nearest'}); }
   if (e.key === 'Enter'){ const it = items[Math.max(sel,0)]; if (it){ location.hash = it.getAttribute('href'); sres.hidden = true; si.value = ''; si.blur(); } }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#umDd') && !$('#umDd').hidden) toggleUserMenu(false); if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); si.focus(); si.select(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'morig'){ e.preventDefault(); $('#morigGo')?.click(); } if (e.key === 'Escape' && $('#umDd') && !$('#umDd').hidden) toggleUserMenu(false); if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){ e.preventDefault(); si.focus(); si.select(); } });
 
 render();
 initShared().catch(() => { S.ready = true; S.noAccess = true; render(); });
