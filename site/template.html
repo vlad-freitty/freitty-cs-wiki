@@ -308,6 +308,15 @@ button.lnk:hover{text-decoration:underline}
 .pop-p span{font-size:11px;color:var(--muted)} .pop-p b{font-size:15px;font-variant-numeric:tabular-nums} .pop-p i{font-style:normal;font-size:10.5px;color:var(--muted)}
 .pop-n{font-size:12px;margin-top:8px;padding:6px 8px;border-left:3px solid var(--warn);background:var(--surface-2);border-radius:4px}
 .pop-b{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pop-a a{color:var(--accent)}
+.hrs{border-collapse:collapse;font-size:13px;margin:0}
+.hrs th{text-align:left;font-weight:600;padding:1px 12px 1px 0;white-space:nowrap;color:var(--fg)} .hrs td{padding:1px 0}
+.hrs.sm{font-size:12px;margin-top:6px} .hrs.sm th{color:var(--muted);font-weight:500}
+.rbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:var(--r);padding:8px 12px;margin-bottom:10px;font-size:13.5px}
+.rbar>span{flex:1 1 260px} .rbar .ic{color:var(--accent);flex:none}
+.rbar.warn{border-color:var(--warn);background:var(--warn-soft)}
+.leaflet-interactive.rt-line{stroke:var(--accent);fill:none}
+.leaflet-interactive.mk.mk-off{fill:#9aa4b2}
 /* calculator */
 .cgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
 .cform,.cres{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px}
@@ -586,7 +595,7 @@ function buildIndex(){
       const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : (b.text || '');
       IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:sec, text:norm(txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')), raw:txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, ''), boost:1}); }); });
   LOCS.forEach(l => IDX.push({route:'map-' + l.id, label:'Склад', title:l.name, where:[l.state, l.market?.label].filter(Boolean).join(' · '),
-    text:norm([l.name, l.state, l.addr, l.zip, l.legal, l.interstate, l.hub?.hub, (l.svc || []).map(s => SVC_NAME[s]).join(' ')].join(' ')), raw:[l.addr, l.hours].filter(Boolean).join(' · '), boost:3}));
+    text:norm([l.name, l.state, l.addr, l.zip, l.legal, l.interstate, l.hub?.hub, (l.svc || []).map(s => SVC_NAME[s]).join(' ')].join(' ')), raw:[l.addr, hoursLines(l).join(' · ')].filter(Boolean).join(' · '), boost:3}));
   CARDS.forEach(c => { let sec = '';
     IDX.push({route:'card-'+c.id, label:'Робоча картка', title:c.title, where:'', text:norm(c.title), raw:c.title, boost:3});
     c.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
@@ -819,6 +828,7 @@ const ICONS = {
   repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',
   box:'<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
   map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
+  route:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H16"/>',
   rocket:'<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2"/><path d="M9 15l-3-3c1-4 5-9 12-9 0 7-5 11-9 12z"/><circle cx="14.5" cy="9.5" r="1.5"/>',
   book:'<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20"/>',
   db:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
@@ -1128,6 +1138,34 @@ const LOCS = (typeof NETWORK_LOCATIONS !== 'undefined' ? NETWORK_LOCATIONS : [])
   if (f.place) LOCS.push({id:'hub-' + f.hub.toLowerCase().replace(/[^a-z0-9]+/g, '-'), type:'partner', name:f.place.name, state:f.place.state, lat:f.place.lat, lng:f.place.lng, approx:!!f.place.approx, services:[], hub:f,
     note:{text:'Склад є у Freitty Hub, але точної адреси і контактів у вікі ще немає. Точка на карті — центр міста. Адресу уточнити в Ops.'}});
 });
+/* Directory: ClickUp «Locations Directory» (inputs/clickup/locations.json) — company, address, hours, Google Maps link and number.
+   It is kept up to date by the team, so it wins over the old wiki for these fields. */
+const CU = __CLICKUP__;
+(CU.locations || []).forEach(c => {
+  let l = c.loc ? LOCS.find(x => x.id === c.loc) : null;
+  if (!l){
+    if (!isFinite(c.lat) || !isFinite(c.lng)) return;
+    l = {id:'cu-' + c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'), type:'partner', name:c.name, state:c.state, services:[], isNew:c.status !== 'inactive'};
+    LOCS.push(l);
+  }
+  l.cu = c;
+  if (c.type === 'FREITTY') l.type = 'own'; else if (c.type === 'Complimentary' && l.type !== 'own') l.type = 'partner';
+  if (c.address){ l.addr = c.address; if (l.approx){ l.approx = false; l.note = null; } }
+  if (isFinite(c.lat) && isFinite(c.lng)){ l.lat = c.lat; l.lng = c.lng; }
+  if (c.company) l.legal = c.company;
+  if (c.state) l.state = c.state;
+  if ((c.hours || []).length) l.hours = c.hours;
+  l.inactive = c.status === 'inactive';
+});
+// Hours come as lines «Mon–Fri: 7:00 AM – 5:00 PM» (ClickUp) or one string «Mon-Fri 7am–5pm · Sat on-call» (old wiki).
+const DAY_RE = /^((?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*(?:\s*[-–\/,&]\s*(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)[a-z]*)*)\s*:?\s+(.+)$/i;
+const hoursLines = l => !l.hours ? [] : Array.isArray(l.hours) ? l.hours : String(l.hours).split(/\s*(?:·|\n|;)\s*/).filter(Boolean);
+function hoursHtml(l, compact){
+  const rows = hoursLines(l).map(x => { const m = x.match(/^([^:]{2,24}):\s*(.+)$/) || x.match(DAY_RE); return m ? [m[1].trim(), m[2].trim()] : [null, x]; });
+  if (!rows.length) return '';
+  return `<table class="hrs${compact ? ' sm' : ''}"><tbody>${rows.map(([d, t]) => `<tr>${d ? `<th>${esc(d)}</th><td>${esc(t)}</td>` : `<td colspan="2">${esc(t)}</td>`}</tr>`).join('')}</tbody></table>`;
+}
+const telLink = p => p ? `<a href="tel:${esc(p.replace(/[^\d+]/g, ''))}">${esc(p)}</a>` : '';
 const SIZE_SHORT = {'SQF':'SQF', 'Standard (48x40)':'Std', 'XL (<100x50)':'XL', 'XXL (>100x50)':'XXL', 'U-Box':'U-Box', 'NSO':'NSO', 'Floor load':'Floor load'};
 const SIZES = Object.keys(SIZE_SHORT);
 const HUB_UA = {
@@ -1206,7 +1244,12 @@ function hubServices(l){
 }
 LOCS.forEach(l => { const set = new Set([...(l.services || []), ...hubServices(l)]); l.svc = Object.keys(SVC_NAME).filter(k => set.has(k)); });
 const svcTags = l => l.svc.map(sv => `<span class="tag svc">${esc(SVC_NAME[sv])}</span>`).join('');
-const MAPST = {q:'', kind:'', sort:'', svc:new Set(), sel:null, hl:null, origin:null, originLabel:'', map:null, marks:{}, originMark:null};
+const MAPST = {q:'', kind:'', sort:'', svc:new Set(), sel:null, hl:null, origin:null, originLabel:'', map:null, marks:{}, originMark:null, route:null, routeLayer:null, pendingRoute:null};
+// Driving routes and distances: OSRM public server (OpenStreetMap roads, car profile, no key). Trucks are slower, so times are a floor.
+const OSRM = 'https://router.project-osrm.org';
+const fmtDur = m => { const h = Math.floor(m / 60), mm = Math.round(m % 60); return h ? `${h} год${mm ? ' ' + mm + ' хв' : ''}` : `${mm} хв`; };
+const distShort = l => l._drv ? `${Math.round(l._drv.mi)} mi · ${fmtDur(l._drv.min)}` : l._d != null ? `≈ ${Math.round(l._d)} mi` : null;
+const gmapsDir = (o, l) => `https://www.google.com/maps/dir/?api=1${o ? `&origin=${o.lat},${o.lng}` : ''}&destination=${encodeURIComponent(l.addr || (l.lat + ',' + l.lng))}&travelmode=driving`;
 const isOwnHub = l => l.type === 'own' || l.market?.cls === 'own';
 function milesBetween(a, b){ const R = 3958.8, rad = x => x * Math.PI / 180; const dLa = rad(b.lat - a.lat), dLo = rad(b.lng - a.lng);
   const h = Math.sin(dLa/2)**2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLo/2)**2; return 2 * R * Math.asin(Math.sqrt(h)); }
@@ -1215,8 +1258,8 @@ function mapFiltered(){
   let list = LOCS.filter(l => (!q || norm([l.name, l.state, l.addr, l.zip, l.legal, l.market?.label, l.interstate, l.hub?.hub].join(' ')).includes(q))
     && (!MAPST.kind || (MAPST.kind === 'own') === isOwnHub(l))
     && [...MAPST.svc].every(sv => l.svc.includes(sv)));
-  if (MAPST.origin) list = list.map(l => ({l, d: milesBetween(MAPST.origin, l)})).sort((a, b) => a.d - b.d).map(x => (x.l._d = x.d, x.l));
-  else list = list.map(l => (delete l._d, l)).sort((a, b) => (isOwnHub(b) - isOwnHub(a)) || a.name.localeCompare(b.name));
+  if (MAPST.origin) list = list.map(l => { l._d = milesBetween(MAPST.origin, l); return l; }).sort((a, b) => (a._drv ? a._drv.mi : a._d * 1.3) - (b._drv ? b._drv.mi : b._d * 1.3));
+  else list = list.map(l => (delete l._d, delete l._drv, l)).sort((a, b) => (isOwnHub(b) - isOwnHub(a)) || a.name.localeCompare(b.name));
   const s = HUB_SORT[MAPST.sort];
   if (s){ const v = l => hp(l, s[0], s[1]) || Infinity; list = [...list].sort((a, b) => v(a) - v(b)); } // stable: equal prices keep distance / name order
   return list;
@@ -1231,20 +1274,22 @@ function cardPrices(l){
   return parts.length ? `<div class="pr">${parts.join(' · ')}</div>` : '';
 }
 function locCard(l){
-  return `<button class="lc ${MAPST.sel === l.id || MAPST.hl === l.id ? 'on' : ''}" data-loc="${esc(l.id)}"><div class="t"><b>${esc(l.name)}</b>${l._d != null ? `<span class="d">≈ ${Math.round(l._d)} mi</span>` : `<span class="d">${esc(l.state || '')}</span>`}</div>
+  return `<button class="lc ${MAPST.sel === l.id || MAPST.hl === l.id ? 'on' : ''}" data-loc="${esc(l.id)}"><div class="t"><b>${esc(l.name)}</b>${distShort(l) ? `<span class="d">${distShort(l)}</span>` : `<span class="d">${esc(l.state || '')}</span>`}</div>
    <div class="a">${esc(l.addr || (l.approx ? 'Адресу уточнити · ' + l.state : ''))}</div>${cardPrices(l)}
-   <div class="row">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${svcTags(l)}</div></button>`;
+   <div class="row">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${l.inactive ? '<span class="tag no">Неактивний</span>' : ''}${svcTags(l)}</div></button>`;
 }
-const dirUrl = l => `https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}`;
 function locDetail(l){
-  const find = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.addr || (l.lat + ',' + l.lng))}`;
+  const find = l.cu?.gmapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.addr || (l.lat + ',' + l.lng))}`;
   const f = l.facility || {};
   const kv = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
   return `<div class="ld"><button class="kb sm" data-locback style="align-self:flex-start">← До списку</button>
-   <div><div class="row" style="margin-bottom:6px">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${l.market?.label ? `<span class="tag">${esc(l.market.label)}</span>` : ''}${l.isNew ? '<span class="tag own">Нова</span>' : ''}</div>
-   <h2>${esc(l.name)}</h2>${l.legal ? `<div class="small muted">${esc(l.legal)}</div>` : ''}${l._d != null ? `<div class="small" style="margin-top:4px">≈ ${Math.round(l._d)} миль по прямій від: ${esc(MAPST.originLabel)}</div>` : ''}</div>
-   <div class="actions"><a class="kb sm pri" href="${dirUrl(l)}" target="_blank" rel="noopener">Маршрут у Google Maps</a><a class="kb sm" href="${find}" target="_blank" rel="noopener">Відкрити на карті</a>${l.addr ? `<button class="kb sm" data-copy="${esc(l.addr)}">Копіювати адресу</button>` : ''}${l.hub ? `<a class="kb sm" href="#calc" data-calcfor="${esc(l.hub.hub)}">Порахувати ціну</a>` : ''}</div>
-   <dl class="kv">${kv('Адреса', l.addr)}${kv('Траса', l.interstate)}${kv('Години', l.hours)}${kv('Ворота', l.gate)}${kv('Телефон', l.phone)}${kv('After-hours', l.ah)}${kv('Транспорт', l.vehicles)}</dl>
+   <div><div class="row" style="margin-bottom:6px">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${l.market?.label ? `<span class="tag">${esc(l.market.label)}</span>` : ''}${l.isNew ? '<span class="tag own">Нова</span>' : ''}${l.inactive ? '<span class="tag no">Неактивний у ClickUp</span>' : ''}</div>
+   <h2>${esc(l.name)}</h2>${l.legal ? `<div class="small muted">${esc(l.legal)}</div>` : ''}${distShort(l) ? `<div class="small" style="margin-top:4px">${l._drv ? `${Math.round(l._drv.mi)} миль дорогою, ≈ ${fmtDur(l._drv.min)} за кермом` : `≈ ${Math.round(l._d)} миль по прямій`} від: ${esc(MAPST.originLabel)}</div>` : ''}</div>
+   <div class="actions"><button class="kb sm pri" data-route="${esc(l.id)}">${ic('route', 14)} Побудувати маршрут</button><a class="kb sm" href="${find}" target="_blank" rel="noopener">Google Maps</a>${l.addr ? `<button class="kb sm" data-copy="${esc(l.addr)}">Копіювати адресу</button>` : ''}${l.hub ? `<a class="kb sm" href="#calc" data-calcfor="${esc(l.hub.hub)}">Порахувати ціну</a>` : ''}</div>
+   <dl class="kv">${kv('Адреса', l.addr)}${kv('Компанія', l.legal)}${kv('Траса', l.interstate)}
+    ${hoursLines(l).length ? `<dt>Години</dt><dd>${hoursHtml(l)}${l.cu?.hoursNote ? `<div class="small" style="color:var(--warn)">${esc(l.cu.hoursNote)}</div>` : ''}</dd>` : ''}
+    ${l.cu?.phoneGmaps ? `<dt>Номер у Google Maps</dt><dd>${telLink(l.cu.phoneGmaps)} <span class="small muted">Dialpad</span></dd>` : ''}
+    ${kv('Ворота', l.gate || l.cu?.gate)}${kv('Телефон складу', l.phone)}${kv('After-hours', l.ah)}${kv('Транспорт', l.vehicles)}</dl>
    <div><div class="eyebrow" style="margin-bottom:6px">Сервіси</div><div class="row">${Object.keys(SVC_NAME).map(sv => l.svc.includes(sv) ? `<span class="tag svc">${SVC_NAME[sv]}</span>` : `<span class="tag no">${SVC_NAME[sv]}</span>`).join('')}</div>
    <div class="small muted" style="margin-top:4px">Зі старої вікі і з цін у Freitty Hub: є ціна — є сервіс.</div></div>
    ${l.note?.text ? `<div class="note small">${esc(l.note.text)}</div>` : ''}
@@ -1258,12 +1303,13 @@ function locDetail(l){
 function popupHtml(l){
   const k = (lab, v, u = '') => v ? `<div><span>${esc(lab)}</span><b>${money(v)}</b>${u ? `<i>${esc(u)}</i>` : ''}</div>` : '';
   const note = l.note?.text ? (l.note.text.length > 170 ? l.note.text.slice(0, 170).replace(/\s+\S*$/, '') + '…' : l.note.text) : '';
-  return `<div class="pop"><div class="pop-h"><b>${esc(l.name)}</b><span>${isOwnHub(l) ? 'Хаб Freitty' : 'Партнер'}${l.state ? ' · ' + esc(l.state) : ''}${l._d != null ? ` · ≈ ${Math.round(l._d)} mi` : ''}</span></div>
-   <div class="pop-a">${esc(l.addr || 'Адресу уточнити')}</div>${l.hours ? `<div class="pop-a">Години: ${esc(l.hours)}</div>` : ''}
+  return `<div class="pop"><div class="pop-h"><b>${esc(l.name)}</b><span>${isOwnHub(l) ? 'Хаб Freitty' : 'Партнер'}${l.state ? ' · ' + esc(l.state) : ''}${distShort(l) ? ' · ' + distShort(l) : ''}</span></div>
+   <div class="pop-a">${esc(l.addr || 'Адресу уточнити')}</div>${l.legal ? `<div class="pop-a">${esc(l.legal)}</div>` : ''}${l.inactive ? '<div class="pop-a" style="color:var(--crit)">Неактивний у ClickUp</div>' : ''}
+   ${hoursLines(l).length ? hoursHtml(l, true) : ''}${l.cu?.phoneGmaps ? `<div class="pop-a">Google Maps: ${telLink(l.cu.phoneGmaps)}</div>` : ''}
    <div class="row pop-s">${svcTags(l) || '<span class="small muted">Сервіси не вказані</span>'}</div>
    ${l.hub ? `<div class="pop-p">${k('Мінімальний чек', hp(l, 'Extra fees', 'Minimal charge'))}${k('Cross-Dock Std', hp(l, 'Cross-Dock', 'Standard (48x40)'), 'за палету')}${k('Зберігання Std', hp(l, 'Storage Pricing', 'Standard (48x40)'), '/ день')}${k('Hand Work', hp(l, 'Hand Work', 'Hour price'), '/ год')}</div>` : '<div class="small muted">Цін у Freitty Hub немає</div>'}
    ${note ? `<div class="pop-n">${esc(note)}</div>` : ''}
-   <div class="pop-b"><button class="kb sm pri" data-locfull="${esc(l.id)}">Повна картка</button><a class="kb sm" href="${dirUrl(l)}" target="_blank" rel="noopener">Маршрут</a>${l.hub ? `<a class="kb sm" href="#calc" data-calcfor="${esc(l.hub.hub)}">Порахувати</a>` : ''}</div></div>`;
+   <div class="pop-b"><button class="kb sm pri" data-locfull="${esc(l.id)}">Повна картка</button><button class="kb sm" data-route="${esc(l.id)}">Маршрут</button>${l.hub ? `<a class="kb sm" href="#calc" data-calcfor="${esc(l.hub.hub)}">Порахувати</a>` : ''}</div></div>`;
 }
 function viewMap(){
   const list = mapFiltered(); const sel = LOCS.find(l => l.id === MAPST.sel);
@@ -1278,6 +1324,7 @@ function viewMap(){
    <button class="kb sm pri" id="morigGo">Знайти найближчі</button>${MAPST.origin ? '<button class="kb sm" id="morigClear">Скинути</button>' : ''}
   </div>
   <div class="svcchips" style="margin-bottom:10px"><span class="small muted" style="align-self:center">Робить:</span>${Object.entries(SVC_NAME).map(([k, v]) => `<button data-msvc="${k}" class="${MAPST.svc.has(k) ? 'on' : ''}">${v}</button>`).join('')}<span class="small muted" id="mcount" style="align-self:center">${list.length} з ${LOCS.length}</span></div>
+  <div id="mroute">${routeBar()}</div>
   <div class="mapgrid"><div class="maplist" id="mlist">${sel ? locDetail(sel) : (list.length ? list.map(locCard).join('') : '<div class="empty" style="margin:12px">Нічого не знайдено. Змініть пошук або фільтри.</div>')}</div><div id="lmap"></div></div></div>`;
 }
 function refreshMapList(){
@@ -1302,14 +1349,60 @@ function selectLoc(id, pan){
   if (l && MAPST.map && pan) MAPST.map.setView([l.lat, l.lng], Math.max(MAPST.map.getZoom(), 9));
   if (m && MAPST.map && !m.isPopupOpen()) m.openPopup();
 }
+function routeBar(){
+  const r = MAPST.route, pend = MAPST.pendingRoute && LOCS.find(x => x.id === MAPST.pendingRoute);
+  if (pend) return `<div class="rbar">${ic('route', 15)}<span>Маршрут до <b>${esc(pend.name)}</b>: звідки їде клієнт? Введіть місто або ZIP у полі «Найближчий до» або клікніть точку на карті.</span><button class="kb sm" data-rtclear>Скасувати</button></div>`;
+  if (!r) return '';
+  const l = LOCS.find(x => x.id === r.id); if (!l) return '';
+  const g = `<a class="kb sm" href="${gmapsDir(MAPST.origin, l)}" target="_blank" rel="noopener">Відкрити в Google Maps</a>`;
+  if (r.loading) return `<div class="rbar">${ic('route', 15)}<span>Будую маршрут до <b>${esc(l.name)}</b>…</span></div>`;
+  if (r.err) return `<div class="rbar warn">${ic('route', 15)}<span>Не вдалося побудувати маршрут до <b>${esc(l.name)}</b>. Спробуйте в Google Maps.</span>${g}<button class="kb sm" data-rtclear>Прибрати</button></div>`;
+  return `<div class="rbar">${ic('route', 15)}<span><b>${esc(MAPST.originLabel)}</b> → <b>${esc(l.name)}</b>: <b>${Math.round(r.mi)} mi</b> дорогою · ≈ ${fmtDur(r.min)} за кермом <span class="small muted">(легкове авто; трак їде довше)</span></span>${g}<button class="kb sm" data-rtclear>Прибрати</button></div>`;
+}
+const showRouteBar = () => { const b = $('#mroute'); if (b) b.innerHTML = routeBar(); };
+function clearRoute(){ if (MAPST.routeLayer){ try { MAPST.routeLayer.remove(); } catch {} } MAPST.routeLayer = null; MAPST.route = null; MAPST.pendingRoute = null; showRouteBar(); }
+function drawRoute(){
+  if (!MAPST.map || !MAPST.route?.geom) return;
+  if (MAPST.routeLayer){ try { MAPST.routeLayer.remove(); } catch {} }
+  MAPST.routeLayer = L.geoJSON(MAPST.route.geom, {style:{className:'rt-line', weight:5, opacity:.9}, interactive:false}).addTo(MAPST.map);
+}
+async function routeTo(id){
+  const l = LOCS.find(x => x.id === id); if (!l) return;
+  if (!MAPST.origin){ MAPST.pendingRoute = id; showRouteBar(); const o = $('#morig'); if (o){ o.focus(); o.scrollIntoView({block:'center', behavior:'smooth'}); } return; }
+  MAPST.pendingRoute = null; const o = MAPST.origin; MAPST.route = {id, loading:true}; showRouteBar();
+  try {
+    const r = await fetch(`${OSRM}/route/v1/driving/${o.lng},${o.lat};${l.lng},${l.lat}?overview=full&geometries=geojson`);
+    const j = await r.json(); if (j.code !== 'Ok' || !j.routes?.length) throw new Error('route');
+    if (MAPST.route?.id !== id || MAPST.origin !== o) return;
+    const rt = j.routes[0]; MAPST.route = {id, mi: rt.distance / 1609.344, min: rt.duration / 60, geom: rt.geometry};
+    if (MAPST.map){ MAPST.map.stop(); MAPST.map.closePopup(); }
+    drawRoute(); const b = MAPST.routeLayer?.getBounds(); if (MAPST.map && b?.isValid()) MAPST.map.fitBounds(b, {padding:[40, 40], maxZoom:13, animate:false});
+  } catch { if (MAPST.route?.id === id) MAPST.route = {id, err:true}; }
+  showRouteBar();
+}
+// Road distance and time from the client point to every warehouse (one request); the list then sorts by real driving miles.
+async function driveTable(){
+  const o = MAPST.origin; if (!o) return;
+  const pts = [o, ...LOCS];
+  try {
+    const r = await fetch(`${OSRM}/table/v1/driving/${pts.map(p => (+p.lng).toFixed(5) + ',' + (+p.lat).toFixed(5)).join(';')}?sources=0&annotations=distance,duration`);
+    const j = await r.json(); if (j.code !== 'Ok' || MAPST.origin !== o) return;
+    LOCS.forEach((l, i) => { const d = j.distances?.[0]?.[i + 1], t = j.durations?.[0]?.[i + 1]; l._drv = d == null || t == null ? null : {mi: d / 1609.344, min: t / 60}; });
+    refreshMapList();
+  } catch { /* straight-line distances stay */ }
+}
 function setOrigin(lat, lng, label){
+  LOCS.forEach(l => delete l._drv);
   MAPST.origin = {lat, lng}; MAPST.originLabel = label;
   if (MAPST.map){ if (MAPST.originMark) MAPST.originMark.remove(); MAPST.originMark = L.circleMarker([lat, lng], {radius:7, className:'mk-origin', bubblingMouseEvents:false}).addTo(MAPST.map).bindTooltip(label);
-    const near = mapFiltered().slice(0, 3); const pts = [[lat, lng], ...near.map(l => [l.lat, l.lng])]; MAPST.map.fitBounds(pts, {padding:[40, 40], maxZoom:9}); }
+    if (!(MAPST.pendingRoute || MAPST.route?.id)){ const near = mapFiltered().slice(0, 3); const pts = [[lat, lng], ...near.map(l => [l.lat, l.lng])]; MAPST.map.fitBounds(pts, {padding:[40, 40], maxZoom:9}); } }
   MAPST.sel = null; refreshMapList(); const o = $('#morig'); if (o) o.value = label;
+  driveTable();
+  const again = MAPST.pendingRoute || MAPST.route?.id; if (again) routeTo(again);
 }
 async function geocodePlace(q){
-  const u = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us,ca&q=' + encodeURIComponent(q);
+  const zip = q.trim().match(/^\d{5}$/); // a bare US ZIP is searched as a postal code, not as free text
+  const u = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&' + (zip ? 'country=us&postalcode=' + zip[0] : 'countrycodes=us,ca&q=' + encodeURIComponent(q));
   const r = await fetch(u, {headers:{'Accept-Language':'en'}}); if (!r.ok) throw new Error('geocode');
   const j = await r.json(); return j[0] ? {lat:+j[0].lat, lng:+j[0].lon, label: j[0].display_name.split(',').slice(0, 3).join(',')} : null;
 }
@@ -1322,14 +1415,14 @@ function initMap(){
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
   el.classList.toggle('dark-tiles', dark);
   LOCS.forEach(l => {
-    const m = L.circleMarker([l.lat, l.lng], {radius: isOwnHub(l) ? 9 : 7, className: 'mk' + (isOwnHub(l) ? ' mk-own' : ''), bubblingMouseEvents:false}).addTo(map);
+    const m = L.circleMarker([l.lat, l.lng], {radius: isOwnHub(l) ? 9 : 7, className: 'mk' + (isOwnHub(l) ? ' mk-own' : '') + (l.inactive ? ' mk-off' : ''), bubblingMouseEvents:false}).addTo(map);
     m.bindTooltip(`${l.name} · ${l.state || ''}`, {direction:'top'});
     m.bindPopup(() => popupHtml(l), {maxWidth:320, minWidth:250, autoPanPadding:[24, 24], className:'wpop'});
     m.on('popupopen', () => m.closeTooltip());
     m.on('click', () => pinClicked(l.id)); MAPST.marks[l.id] = m;
   });
   map.on('click', e => setOrigin(e.latlng.lat, e.latlng.lng, `точка на карті (${e.latlng.lat.toFixed(3)}, ${e.latlng.lng.toFixed(3)})`));
-  MAPST.map = map;
+  MAPST.map = map; MAPST.routeLayer = null; drawRoute();
   setTimeout(() => { map.invalidateSize(); if (MAPST.origin) setOrigin(MAPST.origin.lat, MAPST.origin.lng, MAPST.originLabel); else if (MAPST.sel) selectLoc(MAPST.sel, true); else refreshMapList(); }, 60);
 }
 
@@ -1895,7 +1988,9 @@ document.addEventListener('click', e => {
   if (t.dataset.locback !== undefined){ MAPST.sel = null; refreshMapList(); return; }
   if (t.dataset.msvc){ MAPST.svc.has(t.dataset.msvc) ? MAPST.svc.delete(t.dataset.msvc) : MAPST.svc.add(t.dataset.msvc); t.classList.toggle('on'); MAPST.sel = null; refreshMapList(); return; }
   if (t.dataset.copy !== undefined){ navigator.clipboard?.writeText(t.dataset.copy).then(() => toast('Адресу скопійовано'), () => toast('Не вдалося скопіювати')); return; }
-  if (t.id === 'morigClear'){ MAPST.origin = null; MAPST.originLabel = ''; if (MAPST.originMark){ MAPST.originMark.remove(); MAPST.originMark = null; } lastRoute = null; render(); return; }
+  if (t.id === 'morigClear'){ clearRoute(); LOCS.forEach(l => delete l._drv); MAPST.origin = null; MAPST.originLabel = ''; if (MAPST.originMark){ MAPST.originMark.remove(); MAPST.originMark = null; } lastRoute = null; render(); return; }
+  if (t.dataset.route){ routeTo(t.dataset.route); return; }
+  if (t.dataset.rtclear !== undefined){ clearRoute(); return; }
   if (t.id === 'morigGo'){ const q = ($('#morig')?.value || '').trim(); if (!q){ toast('Введіть місто або ZIP'); return; }
     t.disabled = true; geocodePlace(q).then(g => { t.disabled = false; if (!g){ toast('Не знайшли таке місце в США чи Канаді'); return; } setOrigin(g.lat, g.lng, g.label); }, () => { t.disabled = false; toast('Пошук місця зараз недоступний. Клікніть точку на карті.'); }); return; }
   if (t.dataset.themeSet){ setTheme(t.dataset.themeSet); if (!$('#umDd').hidden) $('#umDd').innerHTML = userMenuHtml(); render(); return; }

@@ -14,6 +14,8 @@ sits = rd(os.path.join(ROOT, "site", "situations.json"))
 quiz = rd(os.path.join(ROOT, "site", "quiz.json"))
 # Facility prices copied from Freitty Hub (Facility Passport → Prices); shown on the warehouse map.
 hub = json.dumps(json.loads(rd(os.path.join(ROOT, "inputs", "hub", "facility-prices.json"))), ensure_ascii=False)
+# Warehouse directory from ClickUp (company, address, hours, Google Maps link and phone) for the map.
+cu = json.dumps(json.loads(rd(os.path.join(ROOT, "inputs", "clickup", "locations.json"))), ensure_ascii=False)
 
 # ---------- legacy wiki ----------
 old = rd(OLD).splitlines()
@@ -121,6 +123,7 @@ html = (tpl.replace("__LEGACY_CSS__", legacy_css)
            .replace("__EXTRA__", '{"registry":[],"docs":{}}')
            .replace("__QUIZ__", quiz.replace("</", "<\\/"))
            .replace("__HUB_PRICES__", hub.replace("</", "<\\/"))
+           .replace("__CLICKUP__", cu.replace("</", "<\\/"))
            .replace("__DATA__", data.replace("</", "<\\/")))
 io.open(OUT, "w", encoding="utf-8").write(html)
 # Standalone copy for static hosting (Vercel): the same page wrapped in a full document skeleton.
