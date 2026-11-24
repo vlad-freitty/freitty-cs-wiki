@@ -1,0 +1,2816 @@
+{
+ "_about": "Prices of Freitty network facilities, copied from Freitty Hub → Facility Passport → Prices (excl. taxes). Hub is the source of truth; re-collect and replace this file when prices change. 0 means the field is empty in Hub.",
+ "source": "Freitty Hub · Facility Passport · Prices (excl. taxes)",
+ "url": "https://hub-mobile.freitty.com/facility-passport",
+ "collected": "2026-11-24",
+ "currency": "USD",
+ "categories": [
+  {
+   "name": "Extra fees",
+   "fields": [
+    "Minimal charge",
+    "Open-deck service",
+    "Call fee first hour",
+    "Call fee extra hours",
+    "After-hours fee"
+   ],
+   "hint": null
+  },
+  {
+   "name": "Consolidation",
+   "fields": [
+    "Service price"
+   ],
+   "hint": "Flat fee per operation: load planning, arranging cargo placement within the trailer, taking into account axle weight limits, unloading sequence, and cargo compatibility. Pallet handling billed separately at Cross-dock rates."
+  },
+  {
+   "name": "Cross-Dock",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load"
+   ],
+   "hint": "Freitty standard pricing principle: inbound is free, the full rate is charged on outbound. The rate you enter is the complete price per pallet for the entire service — inbound and outbound combined. It will not be doubled or split at billing. Example: if you enter $7, the customer pays $7 per pallet total — not $7 in + $7 out. This one-rate model keeps quotes simple for customers and consistently brings partners more orders. If your operation prices inbound and outbound separately, add them together and enter the combined figure as one rate."
+  },
+  {
+   "name": "Deconsolidation",
+   "fields": [
+    "Service price"
+   ],
+   "hint": "Flat fee per operation: breaking down an inbound load into multiple outbound shipments — sorting, staging by destination, and preparing each shipment for dispatch. Pallet handling billed separately at Cross-dock rates."
+  },
+  {
+   "name": "Disassembled pallet",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load"
+   ],
+   "hint": "Price to break down / disassemble a pallet, by size."
+  },
+  {
+   "name": "Fix Pallet",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load"
+   ],
+   "hint": "Price to repair or rebuild a damaged or unstable pallet, by size. IMPORTANT: It's not a price for REWORK/RESTACK service."
+  },
+  {
+   "name": "Hand Work",
+   "fields": [
+    "Hour price"
+   ],
+   "hint": "Hourly labor rate for manual handling not covered by a fixed service (hand-sort, loose pieces)."
+  },
+  {
+   "name": "Overweight",
+   "fields": [
+    "Service price"
+   ],
+   "hint": "Flat fee per operation: load planning and re-arranging cargo to meet axle weight limits. Unloading/loading of pallets billed separately at Cross-dock rates."
+  },
+  {
+   "name": "Rebanding - Strapping",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load"
+   ],
+   "hint": "Price to re-band or re-strap freight, by size."
+  },
+  {
+   "name": "Reefer Storage",
+   "fields": [
+    "Trailer price"
+   ],
+   "hint": "Storage charge per pallet per day for temperature-controlled (reefer) storage."
+  },
+  {
+   "name": "Scale pallet",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load"
+   ],
+   "hint": "Price to weigh a pallet, by size."
+  },
+  {
+   "name": "Trailer parking daily",
+   "fields": [
+    "Trailer price"
+   ],
+   "hint": "Charge to park a trailer in your yard, per day."
+  },
+  {
+   "name": "Trailer Parking Monthly",
+   "fields": [
+    "Trailer price"
+   ],
+   "hint": "Charge to park a trailer in your yard, per week."
+  },
+  {
+   "name": "Trailer Parking Weekly",
+   "fields": [
+    "Trailer price"
+   ],
+   "hint": "Charge to park a trailer in your yard, per week."
+  },
+  {
+   "name": "Trailer Rent",
+   "fields": [
+    "Trailer price"
+   ],
+   "hint": "Price to rent out one of your own trailers, per day."
+  },
+  {
+   "name": "Wrapping",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load"
+   ],
+   "hint": "Price to stretch- or shrink-wrap a pallet, by size."
+  },
+  {
+   "name": "Storage Pricing",
+   "fields": [
+    "SQF",
+    "Standard (48x40)",
+    "XL (<100x50)",
+    "XXL (>100x50)",
+    "U-Box",
+    "NSO",
+    "Floor load",
+    "Storage grace period",
+    "Reefer storage grace period"
+   ],
+   "hint": "Charge per pallet per day for storage after the free period."
+  }
+ ],
+ "fieldHints": {
+  "Minimal charge": "The minimum charge for any job, regardless of size — bookings can’t price below this.",
+  "Open-deck service": "Flat charge for handling freight on or off a flatbed / open-deck trailer.",
+  "Call fee first hour": "Charge for the first hour of an after-hours / on-call job.",
+  "Call fee extra hours": "Hourly rate for each additional hour after the first on an after-hours job."
+ },
+ "facilities": [
+  {
+   "hub": "Arlington, TX",
+   "loc": "ace-storage",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 100,
+     "Open-deck service": 175,
+     "Call fee first hour": 175,
+     "Call fee extra hours": 85,
+     "After-hours fee": 125
+    },
+    "Consolidation": {
+     "Service price": 75
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 20,
+     "XL (<100x50)": 25,
+     "XXL (>100x50)": 35,
+     "U-Box": 60,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 75
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 50,
+     "XL (<100x50)": 100,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 0
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 35
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 150
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 350
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 18,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 20,
+     "U-Box": 25,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Baltimore, MD",
+   "loc": null,
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 75,
+     "Open-deck service": 150,
+     "Call fee first hour": 185,
+     "Call fee extra hours": 38,
+     "After-hours fee": 75
+    },
+    "Consolidation": {
+     "Service price": 75
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 18,
+     "XL (<100x50)": 22.5,
+     "XXL (>100x50)": 30,
+     "U-Box": 37.5,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 75
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 22,
+     "XL (<100x50)": 22,
+     "XXL (>100x50)": 22,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 52,
+     "XL (<100x50)": 52,
+     "XXL (>100x50)": 52,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 0
+    },
+    "Overweight": {
+     "Service price": 75
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 3,
+     "XL (<100x50)": 3,
+     "XXL (>100x50)": 3,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 7.5,
+     "XL (<100x50)": 10.5,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 9,
+     "U-Box": 12,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   },
+   "place": {
+    "name": "Baltimore",
+    "state": "MD",
+    "lat": 39.2904,
+    "lng": -76.6122,
+    "approx": true
+   }
+  },
+  {
+   "hub": "Bay Shore, NY",
+   "loc": "mo-trucking",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 125,
+     "Open-deck service": 325,
+     "Call fee first hour": 300,
+     "Call fee extra hours": 95,
+     "After-hours fee": 85
+    },
+    "Consolidation": {
+     "Service price": 60
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 17,
+     "XL (<100x50)": 25,
+     "XXL (>100x50)": 35,
+     "U-Box": 45,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 65
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 215
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 20,
+     "XL (<100x50)": 20,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 35
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 825
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 225
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 20,
+     "XL (<100x50)": 20,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 9,
+     "U-Box": 9,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 2,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Bensenville, IL (Backup)",
+   "loc": "bensenville-backup",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 75,
+     "Open-deck service": 0,
+     "Call fee first hour": 100,
+     "Call fee extra hours": 0,
+     "After-hours fee": 0
+    },
+    "Consolidation": {
+     "Service price": 0
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 8,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 0
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 0
+    },
+    "Overweight": {
+     "Service price": 0
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 5,
+     "XXL (>100x50)": 5,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 8,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 0,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Dallas, TX",
+   "loc": "gold3pl",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 100,
+     "Open-deck service": 50,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 50,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 100
+    },
+    "Cross-Dock": {
+     "SQF": 10,
+     "Standard (48x40)": 12,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 20,
+     "U-Box": 15,
+     "NSO": 0,
+     "Floor load": 150
+    },
+    "Deconsolidation": {
+     "Service price": 100
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 20,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 40,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 50
+    },
+    "Overweight": {
+     "Service price": 200
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 20
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 200
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 75
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 12,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 10,
+     "U-Box": 4,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Denver, CO",
+   "loc": "denver",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 50,
+     "Call fee extra hours": 25,
+     "After-hours fee": 0
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 25
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 250
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 150
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "East Brunswick, NJ",
+   "loc": "rapidships",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 100,
+     "Open-deck service": 100,
+     "Call fee first hour": 300,
+     "Call fee extra hours": 35,
+     "After-hours fee": 200
+    },
+    "Consolidation": {
+     "Service price": 70
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 12,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 20,
+     "U-Box": 25,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 60
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 25,
+     "XL (<100x50)": 25,
+     "XXL (>100x50)": 30,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 80,
+     "XL (<100x50)": 85,
+     "XXL (>100x50)": 85,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 100
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 30
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 250
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 200
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 5,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Fletcher, NC",
+   "loc": "fpl-fletcher",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 65,
+     "Open-deck service": 130,
+     "Call fee first hour": 110,
+     "Call fee extra hours": 50,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 9,
+     "XXL (>100x50)": 11,
+     "U-Box": 11,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 18,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 90,
+     "XL (<100x50)": 90,
+     "XXL (>100x50)": 90,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 90
+    },
+    "Overweight": {
+     "Service price": 150
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 220
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 4,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 4,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 40
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 4,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 9,
+     "U-Box": 9,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Flowery Branch, GA",
+   "loc": "go-solutions",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 150,
+     "Open-deck service": 150,
+     "Call fee first hour": 25,
+     "Call fee extra hours": 40,
+     "After-hours fee": 25
+    },
+    "Consolidation": {
+     "Service price": 25
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 17,
+     "XL (<100x50)": 30,
+     "XXL (>100x50)": 45,
+     "U-Box": 45,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 100
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 40,
+     "XL (<100x50)": 40,
+     "XXL (>100x50)": 40,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 45
+    },
+    "Overweight": {
+     "Service price": 125
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 25
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 500
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 100
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 12,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 6,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Fontana, CA",
+   "loc": "fpl-fontana",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 80,
+     "Open-deck service": 140,
+     "Call fee first hour": 110,
+     "Call fee extra hours": 50,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 60
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 11,
+     "XL (<100x50)": 16,
+     "XXL (>100x50)": 22,
+     "U-Box": 22,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 60
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 20,
+     "XL (<100x50)": 23,
+     "XXL (>100x50)": 25,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 110,
+     "XL (<100x50)": 110,
+     "XXL (>100x50)": 110,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 110
+    },
+    "Overweight": {
+     "Service price": 170
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 220
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 6,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 40
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 11,
+     "XL (<100x50)": 11,
+     "XXL (>100x50)": 13,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 9,
+     "XXL (>100x50)": 11,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Fremont, CA",
+   "loc": "dhana",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 200,
+     "Open-deck service": 150,
+     "Call fee first hour": 0,
+     "Call fee extra hours": 0,
+     "After-hours fee": 0
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 30,
+     "XXL (>100x50)": 50,
+     "U-Box": 75,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 20,
+     "XL (<100x50)": 25,
+     "XXL (>100x50)": 25,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 125,
+     "XL (<100x50)": 125,
+     "XXL (>100x50)": 125,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 75
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 50,
+     "XL (<100x50)": 50,
+     "XXL (>100x50)": 50,
+     "U-Box": 50,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 30
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 600
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 150
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 20,
+     "XL (<100x50)": 20,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 20,
+     "U-Box": 25,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 0,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Greensboro, NC",
+   "loc": "fpl-greensboro",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 65,
+     "Open-deck service": 130,
+     "Call fee first hour": 110,
+     "Call fee extra hours": 50,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 9,
+     "XXL (>100x50)": 11,
+     "U-Box": 11,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 18,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 90,
+     "XL (<100x50)": 90,
+     "XXL (>100x50)": 90,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 90
+    },
+    "Overweight": {
+     "Service price": 150
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 220
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 4,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 4,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 40
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 4,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 9,
+     "U-Box": 10,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Greenville, SC",
+   "loc": "greenville",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 100,
+     "Call fee extra hours": 25,
+     "After-hours fee": 30
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 35,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 2,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 15
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 100
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 70
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 13,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 7,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Hamtramck, MI",
+   "loc": "pm-detroit",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 200,
+     "Call fee extra hours": 100,
+     "After-hours fee": 150
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 0,
+     "Floor load": 100
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 75,
+     "XL (<100x50)": 75,
+     "XXL (>100x50)": 75,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 75
+    },
+    "Overweight": {
+     "Service price": 250
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 5,
+     "XXL (>100x50)": 5,
+     "U-Box": 5,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 20
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 225
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 75
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 5,
+     "U-Box": 10,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Huntley, IL",
+   "loc": "fpl-huntley",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 65,
+     "Open-deck service": 130,
+     "Call fee first hour": 110,
+     "Call fee extra hours": 50,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 9,
+     "XXL (>100x50)": 11,
+     "U-Box": 11,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 18,
+     "XXL (>100x50)": 20,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 90,
+     "XL (<100x50)": 90,
+     "XXL (>100x50)": 90,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 90
+    },
+    "Overweight": {
+     "Service price": 150
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 220
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 4,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 4,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 40
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 10,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 4,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 9,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Markham, IL",
+   "loc": "markham",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 25,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 2,
+     "Floor load": 2
+    },
+    "Trailer parking daily": {
+     "Trailer price": 25
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 250
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 150
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Markham, IL (Backup)",
+   "loc": "markham-backup",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 25,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 2,
+     "Floor load": 2
+    },
+    "Trailer parking daily": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Memphis, TN",
+   "loc": "arnett",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 60,
+     "Open-deck service": 25,
+     "Call fee first hour": 75,
+     "Call fee extra hours": 75,
+     "After-hours fee": 75
+    },
+    "Consolidation": {
+     "Service price": 60
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 20,
+     "XXL (>100x50)": 25,
+     "U-Box": 20,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 90
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 25
+    },
+    "Overweight": {
+     "Service price": 150
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 5,
+     "XXL (>100x50)": 5,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 35
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 12,
+     "XL (<100x50)": 12,
+     "XXL (>100x50)": 12,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 8,
+     "XXL (>100x50)": 9,
+     "U-Box": 9,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 2,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Portland, OR",
+   "loc": "ipa-warehouse",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 300,
+     "Call fee first hour": 100,
+     "Call fee extra hours": 30,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 20,
+     "XXL (>100x50)": 25,
+     "U-Box": 100,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 30,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 50
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 25
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 400
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 150
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 3,
+     "XL (<100x50)": 6,
+     "XXL (>100x50)": 9,
+     "U-Box": 12,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Reno, NV",
+   "loc": "reno",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 100,
+     "Call fee extra hours": 25,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 30
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 300
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 120
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Riverside, CA",
+   "loc": "intl-link",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 350,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 25,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 100
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 10,
+     "XL (<100x50)": 12,
+     "XXL (>100x50)": 17,
+     "U-Box": 20,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 100
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 25,
+     "XL (<100x50)": 25,
+     "XXL (>100x50)": 25,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 45
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 75
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 750
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 200
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 8,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "San Bernardino, CA",
+   "loc": "sb",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 25,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 15,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 30,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 40,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 2,
+     "Floor load": 2
+    },
+    "Trailer parking daily": {
+     "Trailer price": 30
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 120
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 300
+    },
+    "Trailer Rent": {
+     "Trailer price": 100
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Stockton, CA",
+   "loc": "stockton",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 25,
+     "After-hours fee": 50
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 2,
+     "NSO": 2,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 25
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 250
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 100
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 5,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 10,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Stockton, CA (Backup)",
+   "loc": "stockton-backup",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 150,
+     "Call fee first hour": 50,
+     "Call fee extra hours": 25,
+     "After-hours fee": 100
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 10,
+     "XXL (>100x50)": 15,
+     "U-Box": 20,
+     "NSO": 20,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 2,
+     "XXL (>100x50)": 2,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 0
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 0
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 2,
+     "XL (<100x50)": 4,
+     "XXL (>100x50)": 6,
+     "U-Box": 8,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  },
+  {
+   "hub": "Wood Dale, IL",
+   "loc": "fortune",
+   "prices": {
+    "Extra fees": {
+     "Minimal charge": 50,
+     "Open-deck service": 100,
+     "Call fee first hour": 150,
+     "Call fee extra hours": 80,
+     "After-hours fee": 80
+    },
+    "Consolidation": {
+     "Service price": 50
+    },
+    "Cross-Dock": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 8,
+     "XXL (>100x50)": 9,
+     "U-Box": 10,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Deconsolidation": {
+     "Service price": 50
+    },
+    "Disassembled pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 15,
+     "XL (<100x50)": 15,
+     "XXL (>100x50)": 15,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Fix Pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 35,
+     "XL (<100x50)": 35,
+     "XXL (>100x50)": 35,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Hand Work": {
+     "Hour price": 85
+    },
+    "Overweight": {
+     "Service price": 50
+    },
+    "Rebanding - Strapping": {
+     "SQF": 0,
+     "Standard (48x40)": 0,
+     "XL (<100x50)": 0,
+     "XXL (>100x50)": 0,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Reefer Storage": {
+     "Trailer price": 0
+    },
+    "Scale pallet": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 7,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Trailer parking daily": {
+     "Trailer price": 30
+    },
+    "Trailer Parking Monthly": {
+     "Trailer price": 600
+    },
+    "Trailer Parking Weekly": {
+     "Trailer price": 180
+    },
+    "Trailer Rent": {
+     "Trailer price": 0
+    },
+    "Wrapping": {
+     "SQF": 0,
+     "Standard (48x40)": 7,
+     "XL (<100x50)": 9,
+     "XXL (>100x50)": 12,
+     "U-Box": 0,
+     "NSO": 0,
+     "Floor load": 0
+    },
+    "Storage Pricing": {
+     "SQF": 0,
+     "Standard (48x40)": 6,
+     "XL (<100x50)": 7,
+     "XXL (>100x50)": 8,
+     "U-Box": 9,
+     "NSO": 0,
+     "Floor load": 0,
+     "Storage grace period": 1,
+     "Reefer storage grace period": 0
+    }
+   }
+  }
+ ]
+}
