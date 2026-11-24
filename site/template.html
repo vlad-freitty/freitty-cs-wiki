@@ -1163,7 +1163,11 @@ const hoursLines = l => !l.hours ? [] : Array.isArray(l.hours) ? l.hours : Strin
 function hoursHtml(l, compact){
   const rows = hoursLines(l).map(x => { const m = x.match(/^([^:]{2,24}):\s*(.+)$/) || x.match(DAY_RE); return m ? [m[1].trim(), m[2].trim()] : [null, x]; });
   if (!rows.length) return '';
-  return `<table class="hrs${compact ? ' sm' : ''}"><tbody>${rows.map(([d, t]) => `<tr>${d ? `<th>${esc(d)}</th><td>${esc(t)}</td>` : `<td colspan="2">${esc(t)}</td>`}</tr>`).join('')}</tbody></table>`;
+  const mins = (h, m, ap) => (+h % 12 + (/p/i.test(ap) ? 12 : 0)) * 60 + (+m || 0);
+  // «7:00 AM – 5:00 AM» ends the next morning (Markham, confirmed): say so instead of looking like a typo.
+  const night = t => { const m = t.match(/(\d{1,2})(?::(\d\d))?\s*(AM|PM)\s*–\s*(\d{1,2})(?::(\d\d))?\s*(AM|PM)/i);
+    return m && mins(m[4], m[5], m[6]) <= mins(m[1], m[2], m[3]) ? ' <span class="muted">(до ранку наступного дня)</span>' : ''; };
+  return `<table class="hrs${compact ? ' sm' : ''}"><tbody>${rows.map(([d, t]) => `<tr>${d ? `<th>${esc(d)}</th><td>${esc(t)}${night(t)}</td>` : `<td colspan="2">${esc(t)}${night(t)}</td>`}</tr>`).join('')}</tbody></table>`;
 }
 const telLink = p => p ? `<a href="tel:${esc(p.replace(/[^\d+]/g, ''))}">${esc(p)}</a>` : '';
 const SIZE_SHORT = {'SQF':'SQF', 'Standard (48x40)':'Std', 'XL (<100x50)':'XL', 'XXL (>100x50)':'XXL', 'U-Box':'U-Box', 'NSO':'NSO', 'Floor load':'Floor load'};
