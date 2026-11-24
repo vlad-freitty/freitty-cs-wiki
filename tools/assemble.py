@@ -247,14 +247,17 @@ for p in sorted(glob.glob(os.path.join(ROOT, "inputs", "guide", "*.md"))):
     guide.append({"id": gid, "file": os.path.basename(p), "title": m.group(1).strip() if m else gid, "related": GUIDE_RELATED.get(gid, []), "blocks": blocks})
 
 # ---------- work cards: practical one-pagers that sit next to a procedure (not registry documents) ----------
+# handover-protocol is not published: its text is the same as SOP-1.6 «Передача зміни» (~85% overlap), so the procedure is the one place.
+CARDS_SKIP = {"handover-protocol"}
 CARDS = {
-    "handover-protocol": {"title": "Протокол передачі зміни", "related": ["SOP-1.6", "TPL-06", "SOP-1.9", "POL-13", "STD-06", "STD-18"]},
     "cs-duties": {"title": "Обов'язки CS за каналами і системами", "related": ["SOP-1.9", "SOP-1.1", "SOP-1.2", "SOP-1.3", "SOP-1.6", "SOP-1.7", "SOP-7.1", "SOP-3.1", "SOP-3.6", "POL-09"]},
 }
 cards = []
 cpath = os.path.join(DATA, "cards_pdf.json")
 if os.path.exists(cpath):
     for key, c in json.load(io.open(cpath, encoding="utf-8")).items():
+        if key in CARDS_SKIP:
+            continue
         meta = CARDS.get(key, {})
         blocks = [b for b in c["blocks"] if b["t"] != "date"]
         # a legend set in large type before the first numbered section is text, not headings

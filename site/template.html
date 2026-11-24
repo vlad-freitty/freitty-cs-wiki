@@ -294,6 +294,40 @@ button.lnk{border:0;background:none;padding:0;color:var(--accent);font:inherit;f
 button.lnk:hover{text-decoration:underline}
 .phelp{margin-top:8px} .phelp summary{cursor:pointer;color:var(--accent)}
 .phelp dl{margin:6px 0 0} .phelp dt{font-weight:600;margin-top:6px} .phelp dd{margin:0;color:var(--muted)}
+.kb .ic{vertical-align:-2px}
+/* card on the map (pin popup) */
+.wpop .leaflet-popup-content-wrapper,.wpop .leaflet-popup-tip{background:var(--surface);color:var(--fg);border:1px solid var(--line);box-shadow:0 8px 28px rgba(0,0,0,.18)}
+.wpop .leaflet-popup-content{margin:12px 14px;font-size:13px;line-height:1.4}
+.wpop a.kb{color:var(--fg)} .wpop a.kb.pri{color:var(--accent-fg)}
+.wpop .leaflet-popup-close-button{color:var(--muted)}
+.pop-h b{display:block;font-size:15.5px;padding-right:14px} .pop-h span{font-size:12px;color:var(--muted)}
+.pop-a{font-size:12.5px;color:var(--muted);margin-top:4px}
+.pop-s{gap:4px;margin:8px 0}
+.pop-p{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.pop-p div{background:var(--surface-2);border-radius:6px;padding:5px 8px;display:flex;flex-direction:column}
+.pop-p span{font-size:11px;color:var(--muted)} .pop-p b{font-size:15px;font-variant-numeric:tabular-nums} .pop-p i{font-style:normal;font-size:10.5px;color:var(--muted)}
+.pop-n{font-size:12px;margin-top:8px;padding:6px 8px;border-left:3px solid var(--warn);background:var(--surface-2);border-radius:4px}
+.pop-b{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+/* calculator */
+.cgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+.cform,.cres{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px}
+.cres{position:sticky;top:70px}
+.fl{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted)}
+.fl select,.fl input{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:var(--r);padding:7px 9px;font-size:14px;min-width:0;max-width:100%}
+.clines{display:flex;flex-direction:column;gap:8px;margin:12px 0 8px}
+.cline{display:flex;gap:8px;align-items:flex-end} .cline .grow{flex:1;min-width:0} .cline .q input{width:90px}
+.ctot{font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;margin:2px 0 6px}
+.cres .tbl{margin:10px 0}
+.cres tr.sum td{background:var(--surface-2)}
+.cphrase{border:1px dashed var(--line);border-radius:var(--r);padding:9px 11px;margin:6px 0 8px;font-size:13.5px;background:var(--surface-2)}
+.tbl table.pm tr.on td{background:var(--accent-soft)}
+.tbl td.best{color:var(--ok);font-weight:700}
+@media (max-width:900px){.cgrid{grid-template-columns:minmax(0,1fr)}.cres{position:static}}
+/* price matrix */
+.pmx th,.pmx td{white-space:nowrap}
+.pmx th:first-child,.pmx td:first-child{position:sticky;left:0;z-index:1;background:var(--surface)}
+.pmx thead th:first-child{background:var(--surface-2)}
+button.lnk.th{color:var(--fg);font-weight:600;font-size:13px}
 .leaflet-interactive.mk{fill:var(--ok);stroke:#fff;fill-opacity:.95;stroke-width:2}
 .leaflet-interactive.mk.mk-own{fill:var(--accent)}
 .leaflet-interactive.mk.mk-sel{stroke:var(--fg);stroke-width:3.5}
@@ -423,11 +457,18 @@ const MAT = [
   {p:48, to:'WI-06', also:['SOP-1.3']}, {p:50, to:'SOP-3.5', also:['POL-14']},
 ];
 // Interactive tools stay tools, linked from their documents.
+// Old tools 1 (calculator), 2 (price matrix) and 9 (Network & Partners) carried hard-coded 2025 prices and a second map;
+// they are replaced by the warehouse map, calculator and price matrix built on Freitty Hub prices (PRICE_TOOLS).
 const TOOLS = [
-  {p:1, docs:['SOP-2.5','POL-03']}, {p:2, docs:['POL-03','SOP-2.5'], warn:true}, {p:4, docs:['SOP-1.1']},
-  {p:5, docs:['TPL-01','SOP-1.1']}, {p:6, docs:['SOP-3.1','WI-01']}, {p:7, docs:['SOP-2.6','TPL-15']},
-  {p:8, docs:['SOP-3.7','SOP-2.5']}, {p:9, docs:['POL-14','REG-11']},
+  {p:4, docs:['SOP-1.1']}, {p:5, docs:['TPL-01','SOP-1.1']}, {p:6, docs:['SOP-3.1','WI-01']}, {p:7, docs:['SOP-2.6','TPL-15']},
+  {p:8, docs:['SOP-3.7','SOP-2.5']},
 ];
+const PRICE_TOOLS = [
+  {route:'map', title:'Карта складів', icon:'map', docs:['POL-14','REG-11','SOP-2.4'], keys:'карта склади хаби партнери адреса маршрут найближчий network partners map'},
+  {route:'calc', title:'Калькулятор цін', icon:'calc', docs:['SOP-2.5','POL-03'], keys:'калькулятор ціна розрахунок cross-dock reload storage parking handwork after-hours мінімальний чек quote'},
+  {route:'prices', title:'Матриця цін', icon:'dollar', docs:['POL-03','SOP-2.5'], keys:'матриця цін прайс усі хаби порівняння cross-dock storage handwork wrapping parking'},
+];
+const OLD_TOOL_ROUTE = {1:'calc', 2:'prices', 9:'map'};
 // Knowledge that is not a rule: reference section without codes.
 const REFS = [{id:'11', kind:'old', p:11}, {id:'12', kind:'old', p:12}, {id:'13', kind:'old', p:13}, {id:'14', kind:'old', p:14}, {id:'15', kind:'old', p:15}, {id:'pitch', kind:'tool', p:11}];
 const LEG_OK = typeof PAGES !== 'undefined';
@@ -452,9 +493,12 @@ function legacyRaw(kind, p){
 }
 const MAT_BY = {}; MAT.forEach(m => (MAT_BY[m.to] = MAT_BY[m.to] || []).push(m));
 const ALSO_BY = {}; MAT.forEach(m => (m.also||[]).forEach(c => (ALSO_BY[c] = ALSO_BY[c] || []).push(m)));
-const TOOLS_BY = {}; TOOLS.forEach(t => t.docs.forEach(c => (TOOLS_BY[c] = TOOLS_BY[c] || []).push(t)));
+const TOOLS_BY = {};
+TOOLS.forEach(t => t.docs.forEach(c => (TOOLS_BY[c] = TOOLS_BY[c] || []).push({href:'tool-' + t.p, p:t.p})));
+PRICE_TOOLS.forEach(t => t.docs.forEach(c => (TOOLS_BY[c] = TOOLS_BY[c] || []).push({href:t.route, title:t.title})));
 window.show = function(p){
-  if (TOOLS.some(t => t.p === p)) location.hash = 'tool-' + p;
+  if (OLD_TOOL_ROUTE[p]) location.hash = OLD_TOOL_ROUTE[p];
+  else if (TOOLS.some(t => t.p === p)) location.hash = 'tool-' + p;
   else if (p === 11) location.hash = 'ref-pitch';
   else { const m = MAT.find(x => x.p === p); const r = REFS.find(x => x.kind === 'old' && x.p === p);
     location.hash = m ? 'doc-' + slug(m.to) + '--m-' + p : r ? 'ref-' + r.id : 'home'; }
@@ -534,6 +578,7 @@ function buildIndex(){
   }
   MAT.forEach(m => { const body = strip(legacyRaw('old', m.p)); IDX.push({route:'doc-'+slug(m.to)+'--m-'+m.p, label:m.to, title:legTitle('old', m.p), where:'Робочий матеріал', text:norm(legTitle('old', m.p)+' '+legKeys('old', m.p)+' '+body), raw:body, boost:1}); });
   TOOLS.forEach(t => IDX.push({route:'tool-'+t.p, label:'Інструмент', title:legTitle('tool', t.p), where:t.docs.join(', '), text:norm(legTitle('tool', t.p)+' '+legKeys('tool', t.p)), raw:legKeys('tool', t.p), boost:2}));
+  PRICE_TOOLS.forEach(t => IDX.push({route:t.route, label:'Склади і ціни', title:t.title, where:t.docs.join(', '), text:norm(t.title + ' ' + t.keys), raw:t.keys, boost:3}));
   REFS.forEach(r => { const body = r.kind==='old' ? strip(legacyRaw('old', r.p)) : ''; IDX.push({route:'ref-'+r.id, label:'Довідник', title:legTitle(r.kind, r.p), where:'', text:norm(legTitle(r.kind, r.p)+' '+legKeys(r.kind, r.p)+' '+body), raw:body || legKeys(r.kind, r.p), boost:1}); });
   GUIDE.forEach(g => { let sec = '';
     IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:'', text:norm(g.title), raw:g.title, boost:3});
@@ -541,7 +586,7 @@ function buildIndex(){
       const txt = b.t === 'table' ? b.rows.map(r => r.join(' · ')).join(' / ') : (b.text || '');
       IDX.push({route:'guide-'+g.id, label:'Посібник КС', title:guideTitle(g), where:sec, text:norm(txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')), raw:txt.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, ''), boost:1}); }); });
   LOCS.forEach(l => IDX.push({route:'map-' + l.id, label:'Склад', title:l.name, where:[l.state, l.market?.label].filter(Boolean).join(' · '),
-    text:norm([l.name, l.state, l.addr, l.zip, l.legal, l.interstate, (l.services || []).join(' ')].join(' ')), raw:[l.addr, l.hours].filter(Boolean).join(' · '), boost:3}));
+    text:norm([l.name, l.state, l.addr, l.zip, l.legal, l.interstate, l.hub?.hub, (l.svc || []).map(s => SVC_NAME[s]).join(' ')].join(' ')), raw:[l.addr, l.hours].filter(Boolean).join(' · '), boost:3}));
   CARDS.forEach(c => { let sec = '';
     IDX.push({route:'card-'+c.id, label:'Робоча картка', title:c.title, where:'', text:norm(c.title), raw:c.title, boost:3});
     c.blocks.forEach((b, i) => { if (b.t === 'h'){ sec = b.text; return; }
@@ -813,10 +858,11 @@ function sideHtml(route){
     return `<a class="${on}" href="#${href}">${lead}<span class="lb">${esc(label)}</span>${tail}</a>`;
   };
   const group = (id, label, icon, col, inner, count) => `<details class="sg" data-sg="${id}" style="--gc:var(${col})" ${sgOpen[id] === false ? '' : 'open'}><summary class="sgh"><span class="gi">${ic(icon, 15)}</span><span class="gl">${esc(label)}</span>${count?`<span class="n">${count}</span>`:''}</summary><div class="sgb">${inner}</div></details>`;
-  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + item('map','Карта складів', {icon:'map'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + item('questions','Відкриті питання і блокери', {icon:'help'}) + (window.__WIKI_USER__ ? item('settings','Налаштування', {icon:'gear'}) : ''));
+  // Settings live in the user menu (top right); work cards sit with the daily pages.
+  let h = group('work', 'Робота', 'brief', '--g-blue', item('home','Що робити, коли…', {icon:'home'}) + (S.offsite ? '' : item('me','Мої ознайомлення', {icon:'check'})) + item('newbie','Шлях новачка', {icon:'grad'}) + CARDS.map(c => item('card-'+c.id, c.title, {icon:'clipboard'})).join(''));
+  h += group('prices', 'Склади і ціни', 'map', '--g-green', PRICE_TOOLS.map(t => item(t.route, t.title, {icon:t.icon})).join(''), PRICE_TOOLS.length);
   if (S.admin) h += group('admin', 'Адміністрування', 'shieldok', '--g-violet', item('team','Команда і призначення', {icon:'users'}) + item('journal','Журнал ознайомлень', {icon:'list'}));
   if (GUIDE.length) h += group('guide', 'Посібник КС', 'headset', '--g-teal', GUIDE.map(g => item('guide-'+g.id, guideTitle(g), g.id === '00' ? {icon:'star'} : {num:g.id})).join(''), GUIDE.length);
-  if (CARDS.length) h += group('cards', 'Робочі картки', 'clipboard', '--g-cyan', CARDS.map(c => item('card-'+c.id, c.title, {icon:'clipboard'})).join(''), CARDS.length);
   if (LEG_OK) h += group('tools', 'Інструменти', 'wrench', '--g-amber', TOOLS.map(t => item('tool-'+t.p, legTitle('tool', t.p), {icon:TOOL_IC[t.p]})).join(''), TOOLS.length);
   for (const t of Object.keys(TYPES)){
     const list = ALL_CODES.filter(c => TYPE_OF(c) === t && hasAny(c));
@@ -824,7 +870,9 @@ function sideHtml(route){
     h += group('t-'+t, TYPES[t], TYPE_IC[t], TYPE_COL[t], list.map(c => item('doc-'+slug(c), docTitle(c), {code:c, tail: !hasText(c) ? 'мат.' : ''})).join(''), list.length);
   }
   if (LEG_OK) h += group('ref', 'Довідник', 'book', '--g-pink', REFS.map(r => item('ref-'+r.id, legTitle(r.kind, r.p), {icon:REF_IC[r.id]})).join(''), REFS.length);
-  h += group('kb', 'База знань', 'layers', '--g-slate', item('registry','Реєстр документів', {icon:'db'}) + item('roles','Політика ролей', {icon:'shield'}) + item('core','Ядро v1', {icon:'target'}) + item('ready','Готовність бази', {icon:'gauge'}) + item('streams','Потоки', {icon:'flow'}) + item('proposals','Пропозиції змін', {icon:'bulb'}) + item('decisions','Журнал рішень', {icon:'scale'}) + item('archive','Архів версій', {icon:'archive'}) + item('demand','Знімок попиту', {icon:'chart'}) + item('legend','Як влаштована база', {icon:'info'}));
+  h += group('kb', 'База знань', 'layers', '--g-slate', item('registry','Реєстр документів', {icon:'db'}) + item('archive','Архів версій', {icon:'archive'}) + item('roles','Політика ролей', {icon:'shield'}) + item('legend','Як влаштована база', {icon:'info'}));
+  // Pages about building the base itself (design session package): for managers and the static copy, not for daily work.
+  if (S.admin || S.offsite) h += group('dev', 'Розвиток бази', 'bulb', '--g-slate', item('questions','Відкриті питання і блокери', {icon:'help'}) + item('core','Ядро v1', {icon:'target'}) + item('ready','Готовність бази', {icon:'gauge'}) + item('streams','Потоки', {icon:'flow'}) + item('proposals','Пропозиції змін', {icon:'bulb'}) + item('decisions','Журнал рішень', {icon:'scale'}) + item('demand','Знімок попиту', {icon:'chart'}));
   return h;
 }
 
@@ -994,7 +1042,7 @@ function viewDoc(code){
   ${props.length?`<div class="note small"><b>Є пропозиції змін:</b> ${props.map(p => `<a href="#prop-${p.id}">${esc(p.title)}</a>`).join(' · ')}</div>`:''}
   ${CARDS_BY_DOC[code]?`<div class="note small"><b>Робоча картка:</b> ${CARDS_BY_DOC[code].map(c => `<a href="#card-${c.id}">${esc(c.title)}</a>`).join(' · ')}</div>`:''}
   ${GUIDE_BY_DOC[code]?`<div class="note small"><b>У посібнику КС:</b> ${GUIDE_BY_DOC[code].map(g => `<a href="#guide-${g.id}">${esc(guideTitle(g))}</a>`).join(' · ')}</div>`:''}
-  ${tools.length?`<div class="note small"><b>Інструменти до документа:</b> ${tools.map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join(' · ')}</div>`:''}
+  ${tools.length?`<div class="note small"><b>Інструменти до документа:</b> ${tools.map(t => `<a href="#${t.href}">${esc(t.title || legTitle('tool', t.p))}</a>`).join(' · ')}</div>`:''}
   ${d ? `${foldBar}<div class="body">${blocksHtml(d.blocks, ctx)}</div>` : `<div class="note warn small">Офіційний текст документа ще не перенесено у вікі (джерело: ${esc(r.storage||'Notion / Freitty CS')}).${mats.length?' Нижче — робочі матеріали зі старої вікі, що стосуються цього документа.':''}</div>${mats.length?foldBar:''}`}
   ${mats.length?`<h3 style="margin-top:22px">Робочі матеріали${d?' до документа':''}</h3>${mats.map(m => materialHtml(m, !d)).join('')}`:''}
   ${also.length?`<p class="small muted">Пов'язані матеріали в інших документах: ${also.map(m => `<a href="#doc-${slug(m.to)}--m-${m.p}">${esc(legTitle('old', m.p))} (${m.to})</a>`).join(' · ')}</p>`:''}
@@ -1009,14 +1057,13 @@ function viewTool(p){
   return `<div class="wrap"><div class="eyebrow">Інструмент</div><h1 class="ptitle">${esc(legTitle('tool', p))}</h1>
   ${t.docs.length?`<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${t.docs.map(docLink).join('')}</div>`:''}
   ${t.warn?`<div class="note warn small">Довідково. Джерело ціни — прайс Freitty Hub по локації (POL-03 п. 4.1). Якщо цифри тут і в Hub розходяться, правильна ціна — у Hub.</div>`:''}
-  ${p===9?`<div class="note small">Зручніша карта з пошуком найближчого складу — <a href="#map">Карта складів</a>.</div>`:''}
   ${p===RESTACK_TOOL && RESTACK_OK?`<div class="note small">Калькулятор v4: ціни відкалібровані на базі рестаків (рівень липня–листопада 2026) і перевірені на відгуках КС. Головне — правильно обрати рівень хаосу за фото. Difficult+ підтверджує супервізор. Результат онлайн-аналізатора фото можна вставити кнопкою «Paste analyzer result».</div>
   <div class="tool-wrap"><div data-rsk></div></div></div>`:`<div class="tool-wrap legacy"><div class="pi">${legacyRaw('tool', p) || '<p>Інструмент недоступний.</p>'}</div></div></div>`}`;
 }
 function viewRef(id){
   const r = REFS.find(x => x.id === id); if (!r) return viewHome();
   return `<div class="wrap"><article class="read" style="max-width:900px"><div class="eyebrow">Довідник · знання про продукт і клієнтів</div><h1 class="ptitle">${esc(legTitle(r.kind, r.p))}</h1>
-  <p class="lead">Довідковий матеріал зі старої вікі. Це знання, а не правило: обов'язкові вимоги — у політиках і процедурах.</p>${r.kind==='old'?foldBar:''}
+  <p class="lead">Довідковий матеріал зі старої вікі. Це знання, а не правило: обов'язкові вимоги — у політиках і процедурах.</p>${r.id==='14'?`<div class="note warn small">Ціни і перелік складів на цій сторінці — зі старої вікі й можуть бути застарілими. Актуальні — з Freitty Hub: <a href="#prices">Матриця цін</a> · <a href="#calc">Калькулятор цін</a> · <a href="#map">Карта складів</a>.</div>`:''}${r.kind==='old'?foldBar:''}
   <div class="legacy ${r.kind==='tool'?'tool-wrap':''}"><div class="pi" ${r.kind==='old'?`data-sec="r-${r.id}"`:''}>${legacyRaw(r.kind, r.p) || ''}</div></div></article></div>`;
 }
 function viewGuide(id){
@@ -1026,6 +1073,7 @@ function viewGuide(id){
   return `<div class="wrap"><article class="read" style="max-width:860px"><div class="eyebrow"><a href="#guide-00">Посібник КС</a> · AI-аналізатор дзвінків і правила розмови · листопад 2026</div>
   <h1 class="ptitle">${esc(g.title)}</h1>
   ${(g.related||[]).filter(c => REG[c]).length ? `<div class="row" style="margin-bottom:10px"><span class="muted small">Документи:</span>${g.related.filter(c => REG[c]).map(docLink).join('')}</div>` : ''}
+  ${['10','18'].includes(g.id) ? `<div class="note small">Актуальні склади і ціни з Freitty Hub: <a href="#map">Карта складів</a> · <a href="#prices">Матриця цін</a> · <a href="#calc">Калькулятор цін</a>.</div>` : ''}
   ${g.id === '00' ? '<p class="lead">Посібник Оксани (CS Lead) для операторів: як ми ведемо дзвінки і як AI-аналізатор (CAE) їх оцінює. Питання по системі — Влад.</p>' : ''}
   ${foldBar}<div class="body">${blocksHtml(g.blocks, {}, 'g' + g.id + '-')}</div>${nav}</article></div>`;
 }
@@ -1140,23 +1188,33 @@ function hubBlock(l){
    <details class="phelp"><summary class="small">Що означає кожна ціна</summary><dl class="small">${(HUB.categories || []).map(c => `<dt>${esc(c.name)}</dt><dd>${esc(HUB_UA[c.name] || '')}${c.name === 'Extra fees' ? '<br>' + ['Minimal charge','Open-deck service','After-hours fee','Call fee first hour','Call fee extra hours'].map(k => `<b>${esc(k)}</b> — ${esc(HUB_UA[k])}`).join('<br>') : ''}</dd>`).join('')}</dl></details>
   </details>`;
 }
-function hubCompare(list){
-  const rows = list.filter(l => l.hub);
-  const c = (l, cat, f) => { const v = hp(l, cat, f); return `<td class="c">${v ? money(v) : '<span class="muted">—</span>'}</td>`; };
-  return `<table class="pm"><thead><tr><th>Склад</th><th class="c">Мін. чек</th><th class="c">X-Dock Std</th><th class="c">XL</th><th class="c">XXL</th><th class="c">Зберіг. Std / день</th><th class="c">Grace, дн.</th><th class="c">Hand Work / год</th><th class="c">Consol.</th><th class="c">Overweight</th><th class="c">Стоянка / день</th></tr></thead><tbody>
-   ${rows.map(l => `<tr class="${MAPST.sel === l.id ? 'on' : ''}"><td><button class="lnk" data-loc="${esc(l.id)}">${esc(l.hub.hub)}</button>${l._d != null ? ` <span class="small muted">≈ ${Math.round(l._d)} mi</span>` : ''}</td>${c(l, 'Extra fees', 'Minimal charge')}${c(l, 'Cross-Dock', 'Standard (48x40)')}${c(l, 'Cross-Dock', 'XL (<100x50)')}${c(l, 'Cross-Dock', 'XXL (>100x50)')}${c(l, 'Storage Pricing', 'Standard (48x40)')}<td class="c">${hp(l, 'Storage Pricing', 'Storage grace period') || '<span class="muted">—</span>'}</td>${c(l, 'Hand Work', 'Hour price')}${c(l, 'Consolidation', 'Service price')}${c(l, 'Overweight', 'Service price')}${c(l, 'Trailer parking daily', 'Trailer price')}</tr>`).join('')}
-   </tbody></table>${list.length > rows.length ? `<p class="small muted" style="margin:6px 0 0">Без цін у Hub: ${esc(list.filter(l => !l.hub).map(l => l.name).join(', '))}.</p>` : ''}`;
+// Services a warehouse does: from the old wiki's list plus every service that has a price in Hub.
+const SVC_NAME = {'cross-dock':'Cross-dock', storage:'Storage', reefer:'Reefer', overweight:'Overweight', rework:'Rework', hazmat:'Hazmat', consolidation:'Consolidation', deconsolidation:'Deconsolidation', 'open-deck':'Open-deck', parking:'Trailer parking', 'trailer-rent':'Trailer rent'};
+const catHas = (l, cat, fields) => (fields || hubCat(cat)?.fields || []).some(k => hp(l, cat, k));
+function hubServices(l){
+  const s = [];
+  if (catHas(l, 'Cross-Dock')) s.push('cross-dock');
+  if (catHas(l, 'Storage Pricing', SIZES)) s.push('storage');
+  if (catHas(l, 'Reefer Storage')) s.push('reefer');
+  if (catHas(l, 'Overweight')) s.push('overweight');
+  if (catHas(l, 'Consolidation')) s.push('consolidation');
+  if (catHas(l, 'Deconsolidation')) s.push('deconsolidation');
+  if (catHas(l, 'Extra fees', ['Open-deck service'])) s.push('open-deck');
+  if (['Trailer parking daily', 'Trailer Parking Weekly', 'Trailer Parking Monthly'].some(c => catHas(l, c))) s.push('parking');
+  if (catHas(l, 'Trailer Rent')) s.push('trailer-rent');
+  return s;
 }
-const SVC_NAME = {'cross-dock':'Cross-dock', rework:'Rework', storage:'Storage', overweight:'Overweight', reefer:'Reefer', hazmat:'Hazmat'};
-const MAPST = {q:'', kind:'', sort:'', svc:new Set(), sel:null, origin:null, originLabel:'', map:null, marks:{}, originMark:null};
+LOCS.forEach(l => { const set = new Set([...(l.services || []), ...hubServices(l)]); l.svc = Object.keys(SVC_NAME).filter(k => set.has(k)); });
+const svcTags = l => l.svc.map(sv => `<span class="tag svc">${esc(SVC_NAME[sv])}</span>`).join('');
+const MAPST = {q:'', kind:'', sort:'', svc:new Set(), sel:null, hl:null, origin:null, originLabel:'', map:null, marks:{}, originMark:null};
 const isOwnHub = l => l.type === 'own' || l.market?.cls === 'own';
 function milesBetween(a, b){ const R = 3958.8, rad = x => x * Math.PI / 180; const dLa = rad(b.lat - a.lat), dLo = rad(b.lng - a.lng);
   const h = Math.sin(dLa/2)**2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLo/2)**2; return 2 * R * Math.asin(Math.sqrt(h)); }
 function mapFiltered(){
   const q = norm(MAPST.q);
-  let list = LOCS.filter(l => (!q || norm([l.name, l.state, l.addr, l.zip, l.legal, l.market?.label, l.interstate].join(' ')).includes(q))
+  let list = LOCS.filter(l => (!q || norm([l.name, l.state, l.addr, l.zip, l.legal, l.market?.label, l.interstate, l.hub?.hub].join(' ')).includes(q))
     && (!MAPST.kind || (MAPST.kind === 'own') === isOwnHub(l))
-    && [...MAPST.svc].every(sv => (l.services || []).includes(sv)));
+    && [...MAPST.svc].every(sv => l.svc.includes(sv)));
   if (MAPST.origin) list = list.map(l => ({l, d: milesBetween(MAPST.origin, l)})).sort((a, b) => a.d - b.d).map(x => (x.l._d = x.d, x.l));
   else list = list.map(l => (delete l._d, l)).sort((a, b) => (isOwnHub(b) - isOwnHub(a)) || a.name.localeCompare(b.name));
   const s = HUB_SORT[MAPST.sort];
@@ -1173,22 +1231,22 @@ function cardPrices(l){
   return parts.length ? `<div class="pr">${parts.join(' · ')}</div>` : '';
 }
 function locCard(l){
-  return `<button class="lc ${MAPST.sel === l.id ? 'on' : ''}" data-loc="${esc(l.id)}"><div class="t"><b>${esc(l.name)}</b>${l._d != null ? `<span class="d">≈ ${Math.round(l._d)} mi</span>` : `<span class="d">${esc(l.state || '')}</span>`}</div>
+  return `<button class="lc ${MAPST.sel === l.id || MAPST.hl === l.id ? 'on' : ''}" data-loc="${esc(l.id)}"><div class="t"><b>${esc(l.name)}</b>${l._d != null ? `<span class="d">≈ ${Math.round(l._d)} mi</span>` : `<span class="d">${esc(l.state || '')}</span>`}</div>
    <div class="a">${esc(l.addr || (l.approx ? 'Адресу уточнити · ' + l.state : ''))}</div>${cardPrices(l)}
-   <div class="row">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${(l.services || []).map(sv => `<span class="tag svc">${esc(SVC_NAME[sv] || sv)}</span>`).join('')}</div></button>`;
+   <div class="row">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${svcTags(l)}</div></button>`;
 }
+const dirUrl = l => `https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}`;
 function locDetail(l){
-  const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.lat},${l.lng}`;
   const find = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.addr || (l.lat + ',' + l.lng))}`;
-  const all = Object.keys(SVC_NAME);
   const f = l.facility || {};
   const kv = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
   return `<div class="ld"><button class="kb sm" data-locback style="align-self:flex-start">← До списку</button>
    <div><div class="row" style="margin-bottom:6px">${isOwnHub(l) ? '<span class="tag own">Хаб Freitty</span>' : '<span class="tag">Партнер</span>'}${l.market?.label ? `<span class="tag">${esc(l.market.label)}</span>` : ''}${l.isNew ? '<span class="tag own">Нова</span>' : ''}</div>
    <h2>${esc(l.name)}</h2>${l.legal ? `<div class="small muted">${esc(l.legal)}</div>` : ''}${l._d != null ? `<div class="small" style="margin-top:4px">≈ ${Math.round(l._d)} миль по прямій від: ${esc(MAPST.originLabel)}</div>` : ''}</div>
-   <div class="actions"><a class="kb sm pri" href="${dir}" target="_blank" rel="noopener">Маршрут у Google Maps</a><a class="kb sm" href="${find}" target="_blank" rel="noopener">Відкрити на карті</a><button class="kb sm" data-copy="${esc(l.addr || '')}">Копіювати адресу</button></div>
+   <div class="actions"><a class="kb sm pri" href="${dirUrl(l)}" target="_blank" rel="noopener">Маршрут у Google Maps</a><a class="kb sm" href="${find}" target="_blank" rel="noopener">Відкрити на карті</a>${l.addr ? `<button class="kb sm" data-copy="${esc(l.addr)}">Копіювати адресу</button>` : ''}${l.hub ? `<a class="kb sm" href="#calc" data-calcfor="${esc(l.hub.hub)}">Порахувати ціну</a>` : ''}</div>
    <dl class="kv">${kv('Адреса', l.addr)}${kv('Траса', l.interstate)}${kv('Години', l.hours)}${kv('Ворота', l.gate)}${kv('Телефон', l.phone)}${kv('After-hours', l.ah)}${kv('Транспорт', l.vehicles)}</dl>
-   <div><div class="eyebrow" style="margin-bottom:6px">Сервіси</div><div class="row">${all.map(sv => (l.services || []).includes(sv) ? `<span class="tag svc">${SVC_NAME[sv]}</span>` : `<span class="tag no">${SVC_NAME[sv]}</span>`).join('')}</div></div>
+   <div><div class="eyebrow" style="margin-bottom:6px">Сервіси</div><div class="row">${Object.keys(SVC_NAME).map(sv => l.svc.includes(sv) ? `<span class="tag svc">${SVC_NAME[sv]}</span>` : `<span class="tag no">${SVC_NAME[sv]}</span>`).join('')}</div>
+   <div class="small muted" style="margin-top:4px">Зі старої вікі і з цін у Freitty Hub: є ціна — є сервіс.</div></div>
    ${l.note?.text ? `<div class="note small">${esc(l.note.text)}</div>` : ''}
    ${hubBlock(l)}
    ${Object.keys(l.price || {}).length ? `<details class="blk" ${l.hub ? '' : 'open'}><summary><h2>${l.hub ? 'Старі нотатки про ціни (вікі v2.0)' : 'Ціни'}</h2></summary><p class="small muted" style="margin:0 0 6px">${l.hub ? 'Зі старої вікі, можуть бути застарілими. Актуальні ціни — у блоці «Ціни Freitty Hub» вище.' : 'Довідково. Цього складу немає в Freitty Hub; якщо з\'явиться — правильна ціна там (POL-03).'}</p><div class="tbl"><table><tbody>${Object.entries(l.price).map(([k, v]) => `<tr><td>${esc(k)}</td><td style="white-space:nowrap">${esc(v)}</td></tr>`).join('')}</tbody></table></div></details>` : ''}
@@ -1196,10 +1254,22 @@ function locDetail(l){
    ${Object.values(f).some(Boolean) ? `<details class="blk"><summary><h2>Склад і обладнання</h2></summary><dl class="kv" style="padding-bottom:12px">${kv('Тип', f.type)}${kv('Доки', f.docks)}${kv('Навантажувачі', f.forklifts)}${kv('Підлога', f.floor)}${kv('Висота', f.height)}${kv('Паркінг', f.parking)}${kv('Зберігання', f.capacity)}${kv('Сертифікати', f.certifications)}</dl></details>` : ''}
   </div>`;
 }
+// Card that opens on the map itself when a pin is clicked.
+function popupHtml(l){
+  const k = (lab, v, u = '') => v ? `<div><span>${esc(lab)}</span><b>${money(v)}</b>${u ? `<i>${esc(u)}</i>` : ''}</div>` : '';
+  const note = l.note?.text ? (l.note.text.length > 170 ? l.note.text.slice(0, 170).replace(/\s+\S*$/, '') + '…' : l.note.text) : '';
+  return `<div class="pop"><div class="pop-h"><b>${esc(l.name)}</b><span>${isOwnHub(l) ? 'Хаб Freitty' : 'Партнер'}${l.state ? ' · ' + esc(l.state) : ''}${l._d != null ? ` · ≈ ${Math.round(l._d)} mi` : ''}</span></div>
+   <div class="pop-a">${esc(l.addr || 'Адресу уточнити')}</div>${l.hours ? `<div class="pop-a">Години: ${esc(l.hours)}</div>` : ''}
+   <div class="row pop-s">${svcTags(l) || '<span class="small muted">Сервіси не вказані</span>'}</div>
+   ${l.hub ? `<div class="pop-p">${k('Мінімальний чек', hp(l, 'Extra fees', 'Minimal charge'))}${k('Cross-Dock Std', hp(l, 'Cross-Dock', 'Standard (48x40)'), 'за палету')}${k('Зберігання Std', hp(l, 'Storage Pricing', 'Standard (48x40)'), '/ день')}${k('Hand Work', hp(l, 'Hand Work', 'Hour price'), '/ год')}</div>` : '<div class="small muted">Цін у Freitty Hub немає</div>'}
+   ${note ? `<div class="pop-n">${esc(note)}</div>` : ''}
+   <div class="pop-b"><button class="kb sm pri" data-locfull="${esc(l.id)}">Повна картка</button><a class="kb sm" href="${dirUrl(l)}" target="_blank" rel="noopener">Маршрут</a>${l.hub ? `<a class="kb sm" href="#calc" data-calcfor="${esc(l.hub.hub)}">Порахувати</a>` : ''}</div></div>`;
+}
 function viewMap(){
   const list = mapFiltered(); const sel = LOCS.find(l => l.id === MAPST.sel);
-  return `<div class="mapwrap"><div class="eyebrow">Мережа складів</div><h1 class="ptitle">Карта складів</h1>
-  <div class="legend"><span><i style="background:var(--accent)"></i>Хаб Freitty</span><span><i style="background:var(--ok)"></i>Партнер</span><span><i style="background:var(--crit)"></i>Точка клієнта</span><span>Клік по карті — найближчі склади до цієї точки</span></div>
+  return `<div class="mapwrap"><div class="row" style="justify-content:space-between;align-items:flex-end;gap:8px"><div><div class="eyebrow">Склади і ціни</div><h1 class="ptitle">Карта складів</h1></div>
+   <div class="row"><a class="kb sm" href="#calc">${ic('calc', 14)} Калькулятор цін</a><a class="kb sm" href="#prices">${ic('dollar', 14)} Матриця цін</a></div></div>
+  <div class="legend"><span><i style="background:var(--accent)"></i>Хаб Freitty</span><span><i style="background:var(--ok)"></i>Партнер</span><span><i style="background:var(--crit)"></i>Точка клієнта</span><span>Клік по піну — картка складу. Клік по карті — найближчі склади до цієї точки</span></div>
   <div class="maptools">
    <input class="grow" id="mq" type="search" placeholder="Назва, місто, штат, ZIP" value="${esc(MAPST.q)}" aria-label="Пошук складу">
    <select id="mkind" aria-label="Тип"><option value="">Усі склади</option><option value="own" ${MAPST.kind === 'own' ? 'selected' : ''}>Хаби Freitty</option><option value="partner" ${MAPST.kind === 'partner' ? 'selected' : ''}>Партнери</option></select>
@@ -1207,28 +1277,34 @@ function viewMap(){
    <input id="morig" type="search" placeholder="Найближчий до: місто або ZIP" value="${esc(MAPST.originLabel)}" aria-label="Найближчий склад до" style="flex:1 1 200px">
    <button class="kb sm pri" id="morigGo">Знайти найближчі</button>${MAPST.origin ? '<button class="kb sm" id="morigClear">Скинути</button>' : ''}
   </div>
-  <div class="svcchips" style="margin-bottom:10px">${Object.entries(SVC_NAME).map(([k, v]) => `<button data-msvc="${k}" class="${MAPST.svc.has(k) ? 'on' : ''}">${v}</button>`).join('')}<span class="small muted" id="mcount" style="align-self:center">${list.length} з ${LOCS.length}</span></div>
-  <div class="mapgrid"><div class="maplist" id="mlist">${sel ? locDetail(sel) : (list.length ? list.map(locCard).join('') : '<div class="empty" style="margin:12px">Нічого не знайдено. Змініть пошук або фільтри.</div>')}</div><div id="lmap"></div></div>
-  <details class="blk" id="mcmp" style="margin-top:14px"><summary><h2>Порівняння цін складів</h2></summary>
-   <p class="small muted" style="margin:0 0 8px">USD, без податків, з Freitty Hub (Facility Passport → Prices), знято ${esc(HUB.collected)}. Ті самі пошук, фільтри і сортування, що й у списку. Клік по назві — склад на карті.</p>
-   <div class="tbl" id="mcmpBody">${hubCompare(list)}</div></details></div>`;
+  <div class="svcchips" style="margin-bottom:10px"><span class="small muted" style="align-self:center">Робить:</span>${Object.entries(SVC_NAME).map(([k, v]) => `<button data-msvc="${k}" class="${MAPST.svc.has(k) ? 'on' : ''}">${v}</button>`).join('')}<span class="small muted" id="mcount" style="align-self:center">${list.length} з ${LOCS.length}</span></div>
+  <div class="mapgrid"><div class="maplist" id="mlist">${sel ? locDetail(sel) : (list.length ? list.map(locCard).join('') : '<div class="empty" style="margin:12px">Нічого не знайдено. Змініть пошук або фільтри.</div>')}</div><div id="lmap"></div></div></div>`;
 }
 function refreshMapList(){
   const list = mapFiltered(); const sel = LOCS.find(l => l.id === MAPST.sel); const el = $('#mlist'); if (!el) return;
   el.innerHTML = sel ? locDetail(sel) : (list.length ? list.map(locCard).join('') : '<div class="empty" style="margin:12px">Нічого не знайдено. Змініть пошук або фільтри.</div>');
   const c = $('#mcount'); if (c) c.textContent = `${list.length} з ${LOCS.length}`;
-  const cmp = $('#mcmpBody'); if (cmp) cmp.innerHTML = hubCompare(list);
   const vis = new Set(list.map(l => l.id));
-  Object.entries(MAPST.marks).forEach(([id, m]) => { const e = m.getElement && m.getElement(); if (e){ e.classList.toggle('mk-dim', !vis.has(id)); e.classList.toggle('mk-sel', id === MAPST.sel); } });
+  Object.entries(MAPST.marks).forEach(([id, m]) => { const e = m.getElement && m.getElement(); if (e){ e.classList.toggle('mk-dim', !vis.has(id)); e.classList.toggle('mk-sel', id === MAPST.sel || id === MAPST.hl); } });
   if (!sel) el.scrollTop = 0;
 }
+// Pin clicked: the card opens on the map; the list keeps its place and marks the warehouse.
+function pinClicked(id){
+  MAPST.hl = id;
+  if (MAPST.sel){ MAPST.sel = id; refreshMapList(); return; }
+  document.querySelectorAll('#mlist .lc').forEach(b => b.classList.toggle('on', b.dataset.loc === id));
+  Object.entries(MAPST.marks).forEach(([mid, m]) => { const e = m.getElement && m.getElement(); if (e) e.classList.toggle('mk-sel', mid === id); });
+  const b = document.querySelector(`#mlist .lc[data-loc="${CSS.escape(id)}"]`); if (b) b.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
 function selectLoc(id, pan){
-  MAPST.sel = id; refreshMapList();
-  const l = LOCS.find(x => x.id === id); if (l && MAPST.map && pan) MAPST.map.setView([l.lat, l.lng], Math.max(MAPST.map.getZoom(), 9));
+  MAPST.sel = id; MAPST.hl = id; refreshMapList();
+  const l = LOCS.find(x => x.id === id); const m = MAPST.marks[id];
+  if (l && MAPST.map && pan) MAPST.map.setView([l.lat, l.lng], Math.max(MAPST.map.getZoom(), 9));
+  if (m && MAPST.map && !m.isPopupOpen()) m.openPopup();
 }
 function setOrigin(lat, lng, label){
   MAPST.origin = {lat, lng}; MAPST.originLabel = label;
-  if (MAPST.map){ if (MAPST.originMark) MAPST.originMark.remove(); MAPST.originMark = L.circleMarker([lat, lng], {radius:7, className:'mk-origin'}).addTo(MAPST.map).bindTooltip(label);
+  if (MAPST.map){ if (MAPST.originMark) MAPST.originMark.remove(); MAPST.originMark = L.circleMarker([lat, lng], {radius:7, className:'mk-origin', bubblingMouseEvents:false}).addTo(MAPST.map).bindTooltip(label);
     const near = mapFiltered().slice(0, 3); const pts = [[lat, lng], ...near.map(l => [l.lat, l.lng])]; MAPST.map.fitBounds(pts, {padding:[40, 40], maxZoom:9}); }
   MAPST.sel = null; refreshMapList(); const o = $('#morig'); if (o) o.value = label;
 }
@@ -1246,12 +1322,180 @@ function initMap(){
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(map);
   el.classList.toggle('dark-tiles', dark);
   LOCS.forEach(l => {
-    const m = L.circleMarker([l.lat, l.lng], {radius: isOwnHub(l) ? 9 : 7, className: 'mk' + (isOwnHub(l) ? ' mk-own' : '')}).addTo(map);
-    m.bindTooltip(`${l.name} · ${l.state || ''}`); m.on('click', () => selectLoc(l.id, false)); MAPST.marks[l.id] = m;
+    const m = L.circleMarker([l.lat, l.lng], {radius: isOwnHub(l) ? 9 : 7, className: 'mk' + (isOwnHub(l) ? ' mk-own' : ''), bubblingMouseEvents:false}).addTo(map);
+    m.bindTooltip(`${l.name} · ${l.state || ''}`, {direction:'top'});
+    m.bindPopup(() => popupHtml(l), {maxWidth:320, minWidth:250, autoPanPadding:[24, 24], className:'wpop'});
+    m.on('popupopen', () => m.closeTooltip());
+    m.on('click', () => pinClicked(l.id)); MAPST.marks[l.id] = m;
   });
   map.on('click', e => setOrigin(e.latlng.lat, e.latlng.lng, `точка на карті (${e.latlng.lat.toFixed(3)}, ${e.latlng.lng.toFixed(3)})`));
   MAPST.map = map;
   setTimeout(() => { map.invalidateSize(); if (MAPST.origin) setOrigin(MAPST.origin.lat, MAPST.origin.lng, MAPST.originLabel); else if (MAPST.sel) selectLoc(MAPST.sel, true); else refreshMapList(); }, 60);
+}
+
+/* ---------------- price calculator (Freitty Hub prices) ---------------- */
+const HUB_FACS = (HUB.facilities || []).slice().sort((a, b) => a.hub.localeCompare(b.hub));
+const locOfHub = name => LOCS.find(l => l.hub && l.hub.hub === name);
+const SIZE_UNIT = {'SQF':'за SQF', 'Floor load':'за одиницю (як у Hub)'};
+// One entry per thing that can be put into a quote. kind decides what the quantity means.
+const CALC_SVC = (() => {
+  const out = [];
+  const sizedOrder = ['Cross-Dock', 'Storage Pricing', 'Wrapping', 'Fix Pallet', 'Disassembled pallet', 'Rebanding - Strapping', 'Scale pallet'];
+  sizedOrder.forEach(cat => SIZES.forEach(s => out.push({key:cat + '|' + s, cat, field:s, group:cat, label:`${cat} · ${SIZE_SHORT[s]}`,
+    kind: cat === 'Storage Pricing' ? 'stor' : 'pal', unit: cat === 'Storage Pricing' ? 'палет × день' : (SIZE_UNIT[s] || 'за палету')})));
+  const flat = [
+    ['Consolidation', 'Service price', 'Consolidation', 'op', 'за операцію'], ['Deconsolidation', 'Service price', 'Deconsolidation', 'op', 'за операцію'],
+    ['Overweight', 'Service price', 'Overweight', 'op', 'за операцію'], ['Extra fees', 'Open-deck service', 'Open-deck (flatbed)', 'op', 'за операцію'],
+    ['Hand Work', 'Hour price', 'Hand Work', 'hr', 'за годину'], ['Reefer Storage', 'Trailer price', 'Reefer Storage', 'reef', 'палет × день'],
+    ['Trailer parking daily', 'Trailer price', 'Стоянка трейлера · день', 'cnt', 'за день'], ['Trailer Parking Weekly', 'Trailer price', 'Стоянка трейлера · тиждень', 'cnt', 'за тиждень'],
+    ['Trailer Parking Monthly', 'Trailer price', 'Стоянка трейлера · місяць', 'cnt', 'за місяць'], ['Trailer Rent', 'Trailer price', 'Оренда трейлера · день', 'cnt', 'за день'],
+  ];
+  flat.forEach(([cat, field, label, kind, unit]) => out.push({key:cat + '|' + field, cat, field, group:'Інше', label, kind, unit}));
+  return out;
+})();
+const CALC_BY = Object.fromEntries(CALC_SVC.map(s => [s.key, s]));
+const QTY_LABEL = {pal:'Палет', stor:'Палет', reef:'Палет', op:'Операцій', hr:'Годин', cnt:'Кількість'};
+const CALC = {fac: (HUB_FACS.find(f => f.hub === 'Markham, IL') || HUB_FACS[0] || {}).hub, lines:[{key:'Cross-Dock|Standard (48x40)', q:1}], days:1, ah:'none', callH:1};
+const facByName = n => HUB_FACS.find(f => f.hub === n);
+function calcBasket(f, c = CALC){
+  const P = (cat, k) => +((f.prices || {})[cat] || {})[k] || 0;
+  const grace = P('Storage Pricing', 'Storage grace period'), rgrace = P('Storage Pricing', 'Reefer storage grace period');
+  const rows = []; const missing = [];
+  c.lines.forEach(ln => {
+    const s = CALC_BY[ln.key]; if (!s) return; const q = Math.max(0, +ln.q || 0); const price = P(s.cat, s.field);
+    let mult = q, note = '';
+    if (s.kind === 'stor'){ const paid = Math.max(0, c.days - grace); mult = q * paid; note = `${q} × ${paid} дн.` + (grace ? ` (перші ${grace} дн. безкоштовно)` : ''); }
+    if (s.kind === 'reef'){ const paid = Math.max(0, c.days - rgrace); mult = q * paid; note = `${q} × ${paid} дн.` + (rgrace ? ` (перші ${rgrace} дн. безкоштовно)` : ''); }
+    if (!price) missing.push(s.label);
+    rows.push({s, q, price, amount: price * mult, note});
+  });
+  const subtotal = rows.reduce((a, r) => a + r.amount, 0);
+  const min = P('Extra fees', 'Minimal charge');
+  const minApplied = subtotal > 0 && subtotal < min;
+  let ah = 0, ahLabel = '';
+  if (c.ah === 'fee'){ ah = P('Extra fees', 'After-hours fee'); ahLabel = 'After-hours fee'; if (!ah) missing.push('After-hours fee'); }
+  if (c.ah === 'call'){ const first = P('Extra fees', 'Call fee first hour'), extra = P('Extra fees', 'Call fee extra hours'); const h = Math.max(1, +c.callH || 1);
+    ah = first + (h - 1) * extra; ahLabel = `Виклик поза годинами: ${h} год`; if (!first || (h > 1 && !extra)) missing.push('Call fee'); }
+  const total = (subtotal > 0 ? Math.max(subtotal, min) : 0) + ah;
+  return {rows, subtotal, min, minApplied, ah, ahLabel, total, missing, grace};
+}
+function calcPhrase(f, b){
+  const items = b.rows.filter(r => r.q && r.price).map(r => {
+    if (r.s.kind === 'stor' || r.s.kind === 'reef') return `${r.q} pallet${r.q > 1 ? 's' : ''} of ${r.s.kind === 'reef' ? 'reefer ' : ''}storage (${money(r.price)} per pallet per day)`;
+    if (r.s.kind === 'pal') return `${r.q} × ${r.s.cat} ${SIZE_SHORT[r.s.field]} at ${money(r.price)}`;
+    if (r.s.kind === 'hr') return `${r.q} hour${r.q > 1 ? 's' : ''} of hand work at ${money(r.price)}/hour`;
+    return `${r.q} × ${r.s.label.replace(/ · /, ' ')} at ${money(r.price)}`;
+  });
+  if (!items.length) return '';
+  const xd = b.rows.some(r => r.s.cat === 'Cross-Dock' && r.amount);
+  const stor = b.rows.some(r => r.s.kind === 'stor');
+  return `The total at our ${f.hub} location is ${money(b.total)}: ${items.join(', ')}.`
+    + (xd ? ' The cross-dock rate is the full price per pallet, in and out included.' : '')
+    + (b.minApplied ? ` The minimum charge of ${money(b.min)} applies.` : '')
+    + (stor && b.grace ? ` The first ${b.grace === 1 ? '24 hours' : b.grace + ' days'} of storage are free.` : '')
+    + (b.ah ? ` After-hours: a one-time ${money(b.ah)} fee is included.` : '');
+}
+function calcResult(){
+  const f = facByName(CALC.fac); if (!f) return '<div class="empty">Немає даних Hub.</div>';
+  const b = calcBasket(f); const phrase = calcPhrase(f, b);
+  return `<div class="cres"><div class="eyebrow">${esc(f.hub)}</div><div class="ctot">${money(b.total)}</div>
+   ${b.minApplied ? `<div class="chip warn">Застосовано мінімальний чек ${money(b.min)}</div>` : b.min ? `<div class="small muted">Мінімальний чек складу: ${money(b.min)}</div>` : ''}
+   <div class="tbl"><table class="pm"><tbody>${b.rows.map(r => `<tr><td>${esc(r.s.label)}<div class="small muted">${r.price ? `${money(r.price)} ${esc(r.s.unit)}` : 'немає ціни в Hub'}${r.note ? ' · ' + esc(r.note) : ` · ${r.q}`}</div></td><td class="c">${r.price ? money(r.amount) : '—'}</td></tr>`).join('')}
+    ${b.minApplied ? `<tr><td>Доплата до мінімального чеку</td><td class="c">${money(b.min - b.subtotal)}</td></tr>` : ''}
+    ${b.ahLabel ? `<tr><td>${esc(b.ahLabel)}</td><td class="c">${b.ah ? money(b.ah) : '—'}</td></tr>` : ''}
+    <tr class="sum"><td><b>Разом</b> <span class="small muted">USD, без податків</span></td><td class="c"><b>${money(b.total)}</b></td></tr></tbody></table></div>
+   ${b.missing.length ? `<div class="note warn small">На цьому складі в Hub немає ціни: ${esc([...new Set(b.missing)].join(', '))}. Ці позиції не пораховані — уточніть ціну в Hub або оберіть інший склад.</div>` : ''}
+   ${phrase ? `<div class="eyebrow" style="margin-top:10px">Фраза клієнту</div><div class="cphrase">${esc(phrase)}</div><button class="kb sm" data-copytext="${esc(phrase)}">Скопіювати фразу</button>` : ''}
+  </div>`;
+}
+function calcCompare(){
+  const rows = HUB_FACS.map(f => ({f, b: calcBasket(f)})).sort((x, y) => (x.b.missing.length > 0) - (y.b.missing.length > 0) || x.b.total - y.b.total);
+  const best = rows.find(r => !r.b.missing.length);
+  return `<table class="pm"><thead><tr><th>Склад</th><th class="c">Разом</th><th>Примітка</th></tr></thead><tbody>${rows.map(({f, b}) => `<tr class="${f.hub === CALC.fac ? 'on' : ''}">
+   <td><button class="lnk" data-calcpick="${esc(f.hub)}">${esc(f.hub)}</button></td><td class="c ${best && best.f === f ? 'best' : ''}">${b.missing.length ? '<span class="muted">—</span>' : money(b.total)}</td>
+   <td class="small muted">${b.missing.length ? 'немає ціни: ' + esc([...new Set(b.missing)].join(', ')) : b.minApplied ? 'мінімальний чек ' + money(b.min) : ''}</td></tr>`).join('')}</tbody></table>`;
+}
+function calcForm(){
+  const f = facByName(CALC.fac); const P = (cat, k) => f ? +((f.prices || {})[cat] || {})[k] || 0 : 0;
+  const groups = [...new Set(CALC_SVC.map(s => s.group))];
+  const opts = sel => groups.map(g => `<optgroup label="${esc(g)}">${CALC_SVC.filter(s => s.group === g).map(s => { const v = P(s.cat, s.field);
+    return `<option value="${esc(s.key)}" ${s.key === sel ? 'selected' : ''} ${v || s.key === sel ? '' : 'disabled'}>${esc(s.label)}${v ? ' — ' + money(v) : ' — немає в Hub'}</option>`; }).join('')}</optgroup>`).join('');
+  const needDays = CALC.lines.some(ln => ['stor', 'reef'].includes(CALC_BY[ln.key]?.kind));
+  return `<div class="cform">
+   <label class="fl"><span>Склад</span><select id="calc-fac">${HUB_FACS.map(x => `<option ${x.hub === CALC.fac ? 'selected' : ''}>${esc(x.hub)}</option>`).join('')}</select></label>
+   <div class="clines">${CALC.lines.map((ln, i) => { const s = CALC_BY[ln.key];
+     return `<div class="cline"><label class="fl grow"><span>Послуга</span><select data-clsvc="${i}">${opts(ln.key)}</select></label>
+      <label class="fl q"><span>${QTY_LABEL[s?.kind] || 'Кількість'}</span><input type="number" min="0" step="1" id="cl-q-${i}" data-clq="${i}" value="${esc(ln.q)}"></label>
+      <button class="kb sm" data-clrm="${i}" aria-label="Прибрати рядок" ${CALC.lines.length < 2 ? 'disabled' : ''}>✕</button></div>`; }).join('')}</div>
+   <button class="kb sm" id="calc-add">＋ Додати послугу</button>
+   <div class="row" style="gap:10px;margin-top:12px;align-items:flex-end">
+    <label class="fl"><span>Днів зберігання${needDays ? '' : ' (для Storage)'}</span><input type="number" min="0" step="1" id="calc-days" value="${esc(CALC.days)}" style="width:110px"></label>
+    <label class="fl"><span>Поза робочими годинами</span><select id="calc-ah"><option value="none" ${CALC.ah === 'none' ? 'selected' : ''}>Ні</option><option value="fee" ${CALC.ah === 'fee' ? 'selected' : ''}>After-hours fee${P('Extra fees', 'After-hours fee') ? ' — ' + money(P('Extra fees', 'After-hours fee')) : ''}</option><option value="call" ${CALC.ah === 'call' ? 'selected' : ''}>Виклик (call fee) погодинно</option></select></label>
+    ${CALC.ah === 'call' ? `<label class="fl"><span>Годин виклику</span><input type="number" min="1" step="1" id="calc-callh" value="${esc(CALC.callH)}" style="width:90px"></label>` : ''}
+   </div></div>`;
+}
+function calcInner(){
+  return `<div class="cgrid">${calcForm()}<div id="calcRes">${calcResult()}</div></div>
+  <details class="blk" id="calc-cmp" open><summary><h2>Цей самий набір на інших складах</h2></summary><p class="small muted" style="margin:0 0 6px">З мінімальним чеком кожного складу. Клік по назві — порахувати там.</p><div class="tbl" id="calcCmp">${calcCompare()}</div></details>`;
+}
+function viewCalc(){
+  return `<div class="wrap"><div class="eyebrow">Склади і ціни</div><h1 class="ptitle">Калькулятор цін</h1>
+  <p class="lead">Ціни з Freitty Hub (Facility Passport → Prices, без податків), знято ${esc(HUB.collected)}. Мінімальний чек складу додається сам. Як називати ціну — <a href="#doc-SOP-2_5">SOP-2.5</a>, розкриття зборів — <a href="#doc-POL-03">POL-03</a>. Якщо цифра тут і в Hub розходиться, правильна — у Hub.</p>
+  <div class="row" style="margin-bottom:10px"><a class="kb sm" href="#map">${ic('map', 14)} Карта складів</a><a class="kb sm" href="#prices">${ic('dollar', 14)} Матриця цін</a><a class="kb sm" href="#tool-8">${ic('box', 14)} Restack Estimator</a></div>
+  <div id="calcBox">${calcInner()}</div></div>`;
+}
+const calcRedraw = () => { const b = $('#calcBox'); if (b) b.innerHTML = calcInner(); };
+const calcRefresh = () => { const r = $('#calcRes'), c = $('#calcCmp'); if (r) r.innerHTML = calcResult(); if (c) c.innerHTML = calcCompare(); };
+// Keep the chosen services when switching warehouse; a service without a price there stays and is flagged.
+function calcSetFac(name){ if (facByName(name)) CALC.fac = name; }
+
+/* ---------------- price matrix: all warehouses × Hub prices ---------------- */
+const PM = {cat:'key', q:'', sort:-1, dir:1};
+const PM_KEY = [
+  ['Мін. чек', 'Extra fees', 'Minimal charge'], ['X-Dock Std', 'Cross-Dock', 'Standard (48x40)'], ['X-Dock XL', 'Cross-Dock', 'XL (<100x50)'], ['X-Dock XXL', 'Cross-Dock', 'XXL (>100x50)'], ['X-Dock U-Box', 'Cross-Dock', 'U-Box'],
+  ['Зберіг. Std / день', 'Storage Pricing', 'Standard (48x40)'], ['Grace, дн.', 'Storage Pricing', 'Storage grace period'], ['Hand Work / год', 'Hand Work', 'Hour price'],
+  ['Consol.', 'Consolidation', 'Service price'], ['Deconsol.', 'Deconsolidation', 'Service price'], ['Overweight', 'Overweight', 'Service price'],
+  ['After-hours', 'Extra fees', 'After-hours fee'], ['Open-deck', 'Extra fees', 'Open-deck service'], ['Стоянка / день', 'Trailer parking daily', 'Trailer price'],
+];
+const hpF = (f, cat, k) => +((f.prices || {})[cat] || {})[k] || 0;
+const isCount = k => /grace/i.test(k);
+function pmCols(){
+  if (PM.cat === 'key') return PM_KEY.map(([label, cat, field]) => ({label, cat, field}));
+  const c = hubCat(PM.cat); if (!c) return [];
+  return c.fields.filter(k => HUB_FACS.some(f => hpF(f, c.name, k))).map(k => ({label: SIZE_SHORT[k] || (k === 'Service price' || k === 'Hour price' || k === 'Trailer price' ? 'Ціна' : k), cat:c.name, field:k}));
+}
+function pmRows(){
+  const q = norm(PM.q); const cols = pmCols();
+  let rows = HUB_FACS.filter(f => !q || norm(f.hub + ' ' + (locOfHub(f.hub)?.name || '') + ' ' + (locOfHub(f.hub)?.addr || '')).includes(q));
+  if (PM.sort >= 0 && cols[PM.sort]){ const c = cols[PM.sort]; const v = f => hpF(f, c.cat, c.field) || (PM.dir > 0 ? Infinity : -Infinity); rows = [...rows].sort((a, b) => PM.dir * (v(a) - v(b))); }
+  return {rows, cols};
+}
+function pmTable(){
+  const {rows, cols} = pmRows();
+  if (!cols.length) return '<div class="empty">У Hub немає цін цієї категорії.</div>';
+  const best = cols.map(c => { const vals = HUB_FACS.map(f => hpF(f, c.cat, c.field)).filter(Boolean); return isCount(c.field) ? Math.max(...vals) : Math.min(...vals); });
+  const fmt = (c, v) => !v ? '<span class="muted">—</span>' : isCount(c.field) ? String(v) : money(v);
+  return `<table class="pm pmx"><thead><tr><th>Склад</th>${cols.map((c, i) => `<th class="c"><button class="lnk th" data-pmsort="${i}" title="${esc(c.cat + ' · ' + c.field)}">${esc(c.label)}${PM.sort === i ? (PM.dir > 0 ? ' ↑' : ' ↓') : ''}</button></th>`).join('')}</tr></thead><tbody>
+   ${rows.map(f => { const l = locOfHub(f.hub); return `<tr><td>${l ? `<a href="#map-${esc(l.id)}">${esc(f.hub)}</a>` : esc(f.hub)}</td>${cols.map((c, i) => { const v = hpF(f, c.cat, c.field); return `<td class="c ${v && v === best[i] ? 'best' : ''}">${fmt(c, v)}</td>`; }).join('')}</tr>`; }).join('')}
+   </tbody></table>`;
+}
+function viewPrices(){
+  const cats = HUB.categories || [];
+  return `<div class="wrap"><div class="row" style="justify-content:space-between;align-items:flex-end;gap:8px"><div><div class="eyebrow">Склади і ціни</div><h1 class="ptitle">Матриця цін</h1></div>
+   <div class="row"><a class="kb sm" href="#calc">${ic('calc', 14)} Калькулятор цін</a><a class="kb sm" href="#map">${ic('map', 14)} Карта складів</a><button class="kb sm" id="pm-csv">Завантажити CSV</button></div></div>
+  <p class="lead">Усі ${HUB_FACS.length} складів Freitty Hub. USD, без податків, з Facility Passport → Prices, знято ${esc(HUB.collected)}. Зеленим — найнижча ціна в колонці. «—» — у Hub не заповнено. Клік по заголовку — сортування, по складу — картка на карті.</p>
+  <div class="maptools"><input class="grow" id="pm-q" type="search" placeholder="Склад, місто, штат" value="${esc(PM.q)}" aria-label="Пошук складу"></div>
+  <div class="svcchips" style="margin-bottom:6px"><button data-pmcat="key" class="${PM.cat === 'key' ? 'on' : ''}">Ключові ціни</button>${cats.map(c => `<button data-pmcat="${esc(c.name)}" class="${PM.cat === c.name ? 'on' : ''}" title="${esc(HUB_UA[c.name] || '')}">${esc(c.name)}</button>`).join('')}</div>
+  <p class="small muted" id="pm-hint" style="margin:0 0 6px">${PM.cat === 'key' ? 'Найчастіші питання клієнтів в одній таблиці. Повний перелік — у категоріях вище.' : esc(HUB_UA[PM.cat] || '')}</p>
+  <div class="tbl" id="pmBody">${pmTable()}</div></div>`;
+}
+const pmRefresh = () => { const b = $('#pmBody'); if (b) b.innerHTML = pmTable(); };
+function pmCsv(){
+  const cols = []; (HUB.categories || []).forEach(c => c.fields.forEach(k => { if (HUB_FACS.some(f => hpF(f, c.name, k))) cols.push([c.name, k]); }));
+  const q = v => `"${String(v).replace(/"/g, '""')}"`;
+  const lines = [['Facility', ...cols.map(([c, k]) => `${c}: ${k}`)].map(q).join(','), ...HUB_FACS.map(f => [q(f.hub), ...cols.map(([c, k]) => hpF(f, c, k) || '')].join(','))];
+  const blob = new Blob(['﻿' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `freitty-hub-prices-${HUB.collected}.csv`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 function viewSettings(){
   const WU = window.__WIKI_USER__; const acc = myAccess(); const t = themeNow(); const role = myRole();
@@ -1337,7 +1581,7 @@ function viewNewbie(){
   ${step('Перший тиждень: як ми працюємо', 'Парасолькова політика обслуговування, комунікація, ескалація, робочий час, збої і робоча зміна.', stage2)}
   ${step('До допуску на самостійну роботу', 'Решта обов\'язкових документів ролі. Допуск — за SOP-6.4.', stage3)}
   ${GUIDE.length?`<div class="step"><div class="num"></div><div class="card"><b>Посібник КС: дзвінки і оцінка</b><p class="small muted" style="margin:4px 0 8px">Порядок читання з посібника: шпаргалка, AI-аналізатор, правила розмови, кваліфікації, hazmat, що не рахується проти тебе.</p><div class="rel">${['02','01','03','04','09','16'].map(id => GUIDE.find(g => g.id === id)).filter(Boolean).map(g => `<a href="#guide-${g.id}">${esc(guideTitle(g))}</a>`).join('')}</div></div></div>`:''}
-  <div class="step"><div class="num"></div><div class="card"><b>Довідник і інструменти</b><p class="small muted" style="margin:4px 0 8px">Не обов'язкові, але потрібні в роботі з першого дня.</p><div class="rel">${REFS.map(r => `<a href="#ref-${r.id}">${esc(legTitle(r.kind, r.p))}</a>`).join('')}${TOOLS.slice(0,4).map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join('')}</div></div></div></div></div>`;
+  <div class="step"><div class="num"></div><div class="card"><b>Довідник і інструменти</b><p class="small muted" style="margin:4px 0 8px">Не обов'язкові, але потрібні в роботі з першого дня.</p><div class="rel">${REFS.map(r => `<a href="#ref-${r.id}">${esc(legTitle(r.kind, r.p))}</a>`).join('')}${PRICE_TOOLS.map(t => `<a href="#${t.route}">${esc(t.title)}</a>`).join('')}${TOOLS.slice(0,3).map(t => `<a href="#tool-${t.p}">${esc(legTitle('tool', t.p))}</a>`).join('')}</div></div></div></div></div>`;
 }
 const CONFLICTS = [
   {t:'Способи оплати: SOP-1.9 називає Stripe і EFS, POL-03 — лише Stripe.', refs:['SOP-1.9#10.7','POL-03#6.7']},
@@ -1515,7 +1759,7 @@ function parseRoute(){
   const h = decodeURIComponent(location.hash.slice(1)) || 'home';
   if (h.startsWith('doc-')){ const [base, anchor] = h.slice(4).split('--'); return {view:'doc', code:unslug(base), anchor}; }
   if (h.startsWith('prop-')) return {view:'prop', id:h.slice(5)};
-  let m = h.match(/^tool-(\d+)$/); if (m) return {view:'tool', p:+m[1]};
+  let m = h.match(/^tool-(\d+)$/); if (m) return OLD_TOOL_ROUTE[+m[1]] ? {view:'redirect', to:OLD_TOOL_ROUTE[+m[1]]} : {view:'tool', p:+m[1]};
   m = h.match(/^ref-([\w]+)$/); if (m) return {view:'ref', id:m[1]};
   m = h.match(/^guide-(\d\d)$/); if (m) return {view:'guide', id:m[1]};
   m = h.match(/^card-([\w-]+)$/); if (m) return {view:'card', id:m[1]};
@@ -1526,6 +1770,7 @@ function parseRoute(){
 function render(){
   const r = parseRoute(); const route = decodeURIComponent(location.hash.slice(1)) || 'home';
   if (r.view === 'old'){ window.show(r.p); return; }
+  if (r.view === 'redirect'){ location.replace('#' + r.to); return; }
   const oldVer = r.view === 'doc' && /^(ver|diff)-/.test(r.anchor || '');
   const routeKey = r.view === 'doc' && !oldVer ? 'doc-' + slug(r.code) : route;
   $('#side').innerHTML = sideHtml(route);
@@ -1533,7 +1778,7 @@ function render(){
   $('#meCnt').textContent = S.uid && prog.req.length ? `${prog.ok}/${prog.req.length}` : '—';
   chip.classList.toggle('due', prog.overdue.length > 0); chip.hidden = !!S.offsite;
   const keep = routeKey === lastRoute; const y = window.scrollY;
-  if (keep && (r.view === 'tool' || r.view === 'map' || (r.view === 'ref' && r.id === 'pitch'))) return; // interactive tools keep their own state
+  if (keep && (r.view === 'tool' || r.view === 'map' || r.view === 'calc' || r.view === 'prices' || (r.view === 'ref' && r.id === 'pitch'))) return; // interactive tools keep their own state
   const openState = {}; if (keep) $('#main').querySelectorAll('details[id]').forEach(d => openState[d.id] = d.open);
   let html;
   switch (r.view){
@@ -1558,12 +1803,14 @@ function render(){
     case 'roles': html = viewRoles(); break;
     case 'settings': html = viewSettings(); break;
     case 'map': html = viewMap(); break;
+    case 'calc': html = viewCalc(); break;
+    case 'prices': html = viewPrices(); break;
     case 'newbie': html = viewNewbie(); break;
     case 'questions': html = viewQuestions(); break;
     default: html = viewHome();
   }
   const ae = document.activeElement; const focusId = ae && ae.id && $('#main').contains(ae) ? ae.id : null; const selStart = focusId && ae.selectionStart;
-  $('#main').innerHTML = html; $('#main').classList.toggle('wide', r.view === 'map');
+  $('#main').innerHTML = html; $('#main').classList.toggle('wide', r.view === 'map' || r.view === 'prices');
   sectionize($('#main'));
   if (keep) Object.entries(openState).forEach(([id, o]) => { const d = document.getElementById(id); if (d) d.open = o; });
   if (focusId){ const el = document.getElementById(focusId); if (el){ el.focus(); try { if (selStart != null) el.setSelectionRange(selStart, selStart); } catch {} } }
@@ -1585,14 +1832,12 @@ function render(){
 }
 function legacyInit(p){
   setTimeout(() => { try {
-    if (p === 1) addLine();
     if (p === 4) updProg();
     if (p === RESTACK_TOOL){
       const el = document.querySelector('[data-rsk]');
       if (el && RESTACK_OK) RestackWidget.mount(el, JSON.parse(document.getElementById('restack-rules').textContent), {useHash:false});
       else rstkInit();
     }
-    if (p === 9){ if (typeof netLeafletMap !== 'undefined' && netLeafletMap){ try { netLeafletMap.remove(); } catch {} } netLeafletMap = null; netLeafletInited = false; netActiveServices = new Set(); netActiveTypes = new Set(); netCurrentTab = 'cards'; }
   } catch (e) { console.warn('tool init', e); } }, 30);
 }
 window.addEventListener('hashchange', () => { lastRoute = null; const dd = $('#umDd'); if (dd && !dd.hidden) toggleUserMenu(false); render(); });
@@ -1611,6 +1856,9 @@ document.addEventListener('change', e => {
   if (t.id === 'teamRoleFilter'){ TEAM.roleFilter = t.value; render(); }
   if (t.id === 'mkind'){ MAPST.kind = t.value; MAPST.sel = null; refreshMapList(); }
   if (t.id === 'msort'){ MAPST.sort = t.value; MAPST.sel = null; refreshMapList(); }
+  if (t.id === 'calc-fac'){ calcSetFac(t.value); calcRedraw(); }
+  if (t.dataset.clsvc){ const ln = CALC.lines[+t.dataset.clsvc]; if (ln){ ln.key = t.value; calcRedraw(); } }
+  if (t.id === 'calc-ah'){ CALC.ah = t.value; calcRedraw(); }
   if (t.dataset.setrole && t.value) setPersonRole(t.dataset.setrole, t.value, false);
   if (t.dataset.mx){ const [c, role] = t.dataset.mx.split('|'); const m = JSON.parse(JSON.stringify(S.matrix)); const set = new Set(m[c]||[]); t.checked ? set.add(role) : set.delete(role); m[c] = [...set]; saveMatrix(m, c, role, t.checked); }
 });
@@ -1618,6 +1866,10 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'rf-q'){ RF.q = t.value; render(); }
   if (t.id === 'mq'){ MAPST.q = t.value; MAPST.sel = null; refreshMapList(); }
+  if (t.dataset.clq){ const ln = CALC.lines[+t.dataset.clq]; if (ln){ ln.q = Math.max(0, Math.floor(+t.value || 0)); calcRefresh(); } }
+  if (t.id === 'calc-days'){ CALC.days = Math.max(0, Math.floor(+t.value || 0)); calcRefresh(); }
+  if (t.id === 'calc-callh'){ CALC.callH = Math.max(1, Math.floor(+t.value || 1)); calcRefresh(); }
+  if (t.id === 'pm-q'){ PM.q = t.value; pmRefresh(); }
   if (t.id === 'teamQ'){ TEAM.q = t.value; if (!S.user) return; S.user.search(t.value).then(hits => { const o = $('#teamOpts'); if (!o) return;
     o.innerHTML = hits.map(p => `<button data-addp="${esc(p.id)}"><img src="${esc(p.avatarUrl)}" alt="" width="20" height="20" style="border-radius:50%"><span></span></button>`).join(''); o.hidden = !hits.length;
     o.querySelectorAll('button').forEach((b, i) => b.querySelector('span').textContent = hits[i].name || 'Колега'); }); }
@@ -1628,7 +1880,18 @@ document.addEventListener('click', e => {
   if (!e.target.closest('#umenu')) { const dd = $('#umDd'); if (dd && !dd.hidden) toggleUserMenu(false); }
   if (!t) { if (!e.target.closest('.srch')) $('#sres').hidden = true; return; }
   if (t.id === 'umBtn'){ toggleUserMenu(); return; }
-  if (t.dataset.loc){ selectLoc(t.dataset.loc, true); if (t.closest('#mcmp')) $('.mapgrid')?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  if (t.dataset.loc){ selectLoc(t.dataset.loc, true); return; }
+  if (t.dataset.locfull){ selectLoc(t.dataset.locfull, false); if (innerWidth < 900) $('#mlist')?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  if (t.dataset.calcfor){ calcSetFac(t.dataset.calcfor); return; } // the link itself opens #calc
+  if (t.dataset.calcpick){ calcSetFac(t.dataset.calcpick); calcRedraw(); $('#calcBox')?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  if (t.id === 'calc-add'){ const f = facByName(CALC.fac); const used = new Set(CALC.lines.map(l => l.key));
+    const next = CALC_SVC.find(s => !used.has(s.key) && f && hpF(f, s.cat, s.field)) || CALC_SVC[0]; CALC.lines.push({key:next.key, q:1}); calcRedraw(); return; }
+  if (t.dataset.clrm){ CALC.lines.splice(+t.dataset.clrm, 1); calcRedraw(); return; }
+  if (t.dataset.copytext !== undefined){ navigator.clipboard?.writeText(t.dataset.copytext).then(() => toast('Скопійовано'), () => toast('Не вдалося скопіювати')); return; }
+  if (t.dataset.pmsort){ const i = +t.dataset.pmsort; PM.dir = PM.sort === i ? -PM.dir : 1; PM.sort = i; pmRefresh(); return; }
+  if (t.dataset.pmcat){ PM.cat = t.dataset.pmcat; PM.sort = -1; PM.dir = 1; document.querySelectorAll('[data-pmcat]').forEach(b => b.classList.toggle('on', b === t));
+    const h = $('#pm-hint'); if (h) h.textContent = PM.cat === 'key' ? 'Найчастіші питання клієнтів в одній таблиці. Повний перелік — у категоріях вище.' : (HUB_UA[PM.cat] || ''); pmRefresh(); return; }
+  if (t.id === 'pm-csv'){ pmCsv(); return; }
   if (t.dataset.locback !== undefined){ MAPST.sel = null; refreshMapList(); return; }
   if (t.dataset.msvc){ MAPST.svc.has(t.dataset.msvc) ? MAPST.svc.delete(t.dataset.msvc) : MAPST.svc.add(t.dataset.msvc); t.classList.toggle('on'); MAPST.sel = null; refreshMapList(); return; }
   if (t.dataset.copy !== undefined){ navigator.clipboard?.writeText(t.dataset.copy).then(() => toast('Адресу скопійовано'), () => toast('Не вдалося скопіювати')); return; }
